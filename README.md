@@ -13,7 +13,7 @@
 sn-redux is a convention driven way of building SenseNet applications using Redux. It contains all the action types, actions and reducers for [built-in SenseNet Actions 
 and Functions](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
 
-sn-redux gives you an standard set of:
+sn-redux gives you a standard set of:
 
 * action types: e.g. ADD_CONTENT_SUCCESS
 * actions: e.g. updateContentSuccess, updateContentFailure
