@@ -15,7 +15,7 @@ and Functions](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
 
 sn-redux gives you a standard set of:
 
-* action types: e.g. ADD_CONTENT_SUCCESS
+* action types: e.g. CREATE_CONTENT_SUCCESS
 * actions: e.g. updateContentSuccess, updateContentFailure
 * reducers: for the action types above e.g. updateContentSuccess
 * epics: for streams of actions that are related to the same process e.g. createContentEpic
@@ -162,7 +162,7 @@ dispatch(Actions.CreateContent(parentPath, content))
 * Using Raw Javascript and HTML (TODO)
 * [Using React](http://download.sensenet.com/aniko/sn7/examples/react/index.html)
 * Using Angular (TODO)
-* Using Angular2 (TODO)
+* [Using Angular2](https://github.com/SenseNet/sn-angular2-redux-todo-app)
 * [Using Vue](https://github.com/SenseNet/sn-vue-redux-todo-app)
 * Using Aurelia (TODO)
 * Using Ember (TODO)
