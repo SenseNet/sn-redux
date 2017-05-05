@@ -3,9 +3,9 @@ import { combineReducers } from 'redux';
 
 /**
  * Module for defining Redux reducers.
- * 
+ *
  * _Actions describe the fact that something happened, but don't specify how the application's state changes in response. This is the job of a reducer._
- * 
+ *
  * Following module contains the reducers of sn-redux, some 'reducer groups' and the root reducer which could be passed to the store creator function. Using a root reduces means
  * that you define which combination of reducers will be used and eventually defines which type of actions can be called on the store.
  */
