@@ -38,7 +38,7 @@ import { schema } from 'normalizr';
  *
  * ![Normalized content](http://download.sensenet.com/aniko/sn7/jsapidocs/img/normalized-content.png)
 */
-export module Schemas{
+export module Schemas {
     /**
      * Schema of a Content.
      *
