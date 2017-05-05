@@ -2,7 +2,7 @@
   "name": "sn-redux",
   "version": "1.1.0-beta.2",
   "description": "A set of redux actions, reducers and redux-ovbservable epics for Sense/Net ECM",
-  "main": "dist/sn-redux.js",
+  "main": "dist/src/sn-redux.js",
   "scripts": {
     "commit": "git-cz",
     "gulp": "gulp",
@@ -11,6 +11,11 @@
     "report-coverage": "cat ./coverage/lcov.info | codecov",
     "semantic-release": "semantic-release pre && semantic-release post"
   },
+  "files": [
+    "dist",
+    "src",
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/SenseNet/sn-redux.git"
