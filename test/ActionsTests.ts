@@ -435,12 +435,9 @@ describe('Actions', () => {
         it('should create an action to a user login success', () => {
             const expectedAction = {
                 type: 'USER_LOGIN_SUCCESS',
-                response: {
-                    Name: 'alba',
-                    DisplayName: 'Alba Monday'
-                }
+                response: true
             }
-            expect(Actions.UserLoginSuccess({ response: { d: { Name: 'alba', DisplayName: 'Alba Monday' } } })).to.deep.equal(expectedAction)
+            expect(Actions.UserLoginSuccess(true)).to.deep.equal(expectedAction)
         });
         it('should create an action to a user login failure', () => {
             const expectedAction = {

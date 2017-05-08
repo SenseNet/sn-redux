@@ -10,6 +10,7 @@ describe('Epics', () => {
 
     let repo: Mocks.MockRepository = new Mocks.MockRepository();
     (repo.Authentication as Mocks.MockAuthService).stateSubject.next(Authentication.LoginState.Authenticated);
+    (repo.httpProviderRef as Mocks.MockHttpProvider).UseTimeout = false;
 
     beforeEach(() => {
         (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'XMLHttpRequest is not supported by your browser'});
@@ -57,7 +58,7 @@ describe('Epics', () => {
             const content = new ContentTypes.Task({
                 Name: 'My Task',
                 DueDate: null
-            }, repo);
+            }, repo)['options'];
             store.dispatch({ type: 'CREATE_CONTENT_REQUEST', path: '/workspaces/Project', content });
             expect(store.getActions()).to.be.deep.eq(
                 [{
@@ -164,16 +165,17 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.checkoutContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Checkout Content failed'});
             store.dispatch({ type: 'CHECKOUT_CONTENT_REQUEST', id: 111 });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'CHECKOUT_CONTENT_REQUEST',
-                    id: 111
-                },
-                {
-                    type: 'CHECKOUT_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'CHECKOUT_CONTENT_REQUEST',
+                        id: 111
+                    },
+                    {
+                        type: 'CHECKOUT_CONTENT_FAILURE',
+                        message: 'Checkout Content failed'
+                    }]);
         })
     });
     describe('checkinContent Epic', () => {
@@ -189,17 +191,20 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.checkinContentEpic);
         });
         it('handles the error', () => {
+
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Checkin Content failed'});
+
             store.dispatch({ type: 'CHECKIN_CONTENT_REQUEST', id: 111, checkinComment: 'comment' });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'CHECKIN_CONTENT_REQUEST',
-                    id: 111,
-                    checkinComment: 'comment'
-                },
-                {
-                    type: 'CHECKIN_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'CHECKIN_CONTENT_REQUEST',
+                        id: 111,
+                        checkinComment: 'comment'
+                    },
+                    {
+                        type: 'CHECKIN_CONTENT_FAILURE',
+                        message: 'Checkin Content failed'
+                    }]);
         })
     });
     describe('publishContent Epic', () => {
@@ -215,16 +220,18 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.publishContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Publish Content failed'});
             store.dispatch({ type: 'PUBLISH_CONTENT_REQUEST', id: 111 });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'PUBLISH_CONTENT_REQUEST',
-                    id: 111
-                },
-                {
-                    type: 'PUBLISH_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
+
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'PUBLISH_CONTENT_REQUEST',
+                        id: 111
+                    },
+                    {
+                        type: 'PUBLISH_CONTENT_FAILURE',
+                        message: 'Publish Content failed'
+                    }]);
         })
     });
     describe('approveContent Epic', () => {
@@ -240,16 +247,17 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.approveContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Approve Content failed'});
             store.dispatch({ type: 'APPROVE_CONTENT_REQUEST', id: 111 });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'APPROVE_CONTENT_REQUEST',
-                    id: 111
-                },
-                {
-                    type: 'APPROVE_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'APPROVE_CONTENT_REQUEST',
+                        id: 111
+                    },
+                    {
+                        type: 'APPROVE_CONTENT_FAILURE',
+                        message: 'Approve Content failed'
+                    }]);
         })
     });
     describe('rejectContent Epic', () => {
@@ -265,30 +273,19 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.rejectContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Reject Content failed'});
             store.dispatch({ type: 'REJECT_CONTENT_REQUEST', id: 111, rejectReason: 'reason' });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'REJECT_CONTENT_REQUEST',
-                    id: 111,
-                    rejectReason: 'reason'
-                },
-                {
-                    type: 'REJECT_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'REJECT_CONTENT_REQUEST',
+                        id: 111,
+                        rejectReason: 'reason'
+                    },
+                    {
+                        type: 'REJECT_CONTENT_FAILURE',
+                        message: 'Reject Content failed'
+                    }]);
         });
-        it('handles the error', () => {
-            store.dispatch({ type: 'REJECT_CONTENT_REQUEST', id: 111 });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'REJECT_CONTENT_REQUEST',
-                    id: 111
-                },
-                {
-                    type: 'REJECT_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
-        })
     });
     describe('undocheckoutContent Epic', () => {
         let store;
@@ -303,6 +300,7 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.undocheckoutContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Undo Checkout failed'});
             store.dispatch({ type: 'UNDOCHECKOUT_CONTENT_REQUEST', id: 111 });
             expect(store.getActions()).to.be.deep.eq(
                 [{
@@ -311,7 +309,7 @@ describe('Epics', () => {
                 },
                 {
                     type: 'UNDOCHECKOUT_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
+                    message: 'Undo Checkout failed'
                 }]);
         })
     });
@@ -328,16 +326,17 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.forceundocheckoutContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'ForceUndoCheckout failed'});
             store.dispatch({ type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST', id: 111 });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST',
-                    id: 111
-                },
-                {
-                    type: 'FORCEUNDOCHECKOUT_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST',
+                        id: 111
+                    },
+                    {
+                        type: 'FORCEUNDOCHECKOUT_CONTENT_FAILURE',
+                        message: 'ForceUndoCheckout failed'
+                    }]);
         })
     });
     describe('restoreVersion Epic', () => {
@@ -353,18 +352,19 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.restoreversionContentEpic);
         });
         it('handles the error', () => {
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'Restore failed'});
             store.dispatch({ type: 'RESTOREVERSION_CONTENT_REQUEST', id: 111, version: 'A.1.0' });
-            expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'RESTOREVERSION_CONTENT_REQUEST',
-                    id: 111,
-                    version: 'A.1.0'
-                },
-                {
-                    type: 'RESTOREVERSION_CONTENT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
-                }]);
-        })
+                expect(store.getActions()).to.be.deep.eq(
+                    [{
+                        type: 'RESTOREVERSION_CONTENT_REQUEST',
+                        id: 111,
+                        version: 'A.1.0'
+                    },
+                    {
+                        type: 'RESTOREVERSION_CONTENT_FAILURE',
+                        message: 'Restore failed'
+                    }]);
+        });
     });
     describe('login Epic', () => {
         let store;
