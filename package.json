@@ -4,11 +4,19 @@
   "description": "A set of redux actions, reducers and redux-ovbservable epics for Sense/Net ECM",
   "main": "dist/src/sn-redux.js",
   "scripts": {
+    "lint": "node tslint --project ./tsconfig.json",
+    "clean": "rimraf dist",
+    "precommit": "npm run lint",
     "commit": "git-cz",
     "gulp": "gulp",
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec dist/test/*Tests.js",
+    "pretest": "npm run build",
+    "test": "nyc mocha -p tsconfig.json dist/test/index.js",
     "check-coverage": "istanbul check-coverage ",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
+    "prebuild": "npm run lint && npm run clean",
+    "build": "tsc",
+    "typedoc:md": "gulp typedoc:md",
+    "typedoc:html": "gulp typedoc",
     "semantic-release": "semantic-release pre && semantic-release post"
   },
   "files": [
@@ -31,15 +39,29 @@
   "bugs": {
     "url": "https://github.com/SenseNet/sn-redux/issues"
   },
+  "nyc": {
+    "exclude": "dist/test/**/*.*",
+    "include": "dist/src/**/*.js",
+    "check-coverage": true,
+    "cache": true,
+    "all": true,
+    "reporter": [
+      "lcov",
+      "text-summary",
+      "json"
+    ]
+  },
   "homepage": "https://sensenet.com",
   "dependencies": {
     "@reactivex/rxjs": "^5.3.1",
-   
     "normalizr": "^3.2.2",
+    "nyc": "^10.3.0",
     "redux": "3.6.0",
-    "redux-thunk": "^2.2.0",
     "redux-logger": "2.8.2",
     "redux-observable": "^0.14.1",
+    "redux-thunk": "^2.2.0",
+    "rimraf": "^2.6.1",
+    "rxjs": "^5.3.1",
     "sn-client-js": "1.1.1-development.4"
   },
   "devDependencies": {
@@ -54,19 +76,13 @@
     "cz-conventional-changelog": "2.0.0",
     "del": "2.2.2",
     "gulp": "3.9.1",
-    "gulp-istanbul": "1.1.1",
-    "gulp-mocha": "3.0.1",
-    "gulp-sourcemaps": "2.4.1",
-    "gulp-tslint": "7.1.0",
     "gulp-typedoc": "2.0.2",
-    "gulp-typescript": "3.1.5",
     "mocha": "3.3.0",
     "nock": "9.0.9",
     "normalizr": "3.2.2",
     "redux": "^3.6.0",
     "redux-mock-store": "1.2.3",
     "redux-observable": "0.14.1",
-    "remap-istanbul": "0.9.1",
     "semantic-release": "^6.3.2",
     "tslint": "5.2.0",
     "typedoc": "0.6.0",
