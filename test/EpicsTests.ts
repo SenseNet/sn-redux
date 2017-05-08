@@ -4,11 +4,14 @@ import * as nock from 'nock';
 import * as Chai from 'chai';
 import configureMockStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
-import * as SN from 'sn-client-js';
+import { Mocks, ContentTypes, HttpProviders } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 const expect = Chai.expect;
 
 describe('Epics', () => {
+
+    let repo = new Mocks.MockRepository();
+
     let window = {
         'siteUrl': 'https://daily.demo.sensenet.com'
     }
@@ -17,11 +20,12 @@ describe('Epics', () => {
     })
     describe('fetchContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.fetchContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.fetchContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
             store = mockStore();
+            (repo.httpProviderRef as Mocks.MockHttpProvider).setError('FETCH_CONTENT_FAILURE');
         });
 
         after(() => {
@@ -44,7 +48,7 @@ describe('Epics', () => {
     });
     describe('createContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.createContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.createContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -56,7 +60,10 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.createContentEpic);
         });
         it('handles the error', () => {
-            const content = SN.Content.Create('Article', { DisplayName: 'My article' })
+            const content = new ContentTypes.Task({
+                Name: 'My Task',
+                DueDate: null
+            }, repo);
             store.dispatch({ type: 'CREATE_CONTENT_REQUEST', path: '/workspaces/Project', content });
             expect(store.getActions()).to.be.deep.eq(
                 [{
@@ -72,7 +79,7 @@ describe('Epics', () => {
     });
     describe('updateContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.updateContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.updateContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -100,7 +107,7 @@ describe('Epics', () => {
     });
     describe('deleteContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.deleteContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.deleteContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -127,7 +134,7 @@ describe('Epics', () => {
     });
     describe('deleteBatch Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.deleteBatchEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.deleteBatchEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -155,7 +162,7 @@ describe('Epics', () => {
     });
     describe('checkoutContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.checkoutContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.checkoutContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -181,7 +188,7 @@ describe('Epics', () => {
     });
     describe('checkinContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.checkinContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.checkinContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -208,7 +215,7 @@ describe('Epics', () => {
     });
     describe('publishContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.publishContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.publishContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -234,7 +241,7 @@ describe('Epics', () => {
     });
     describe('approveContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.approveContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.approveContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -260,7 +267,7 @@ describe('Epics', () => {
     });
     describe('rejectContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.rejectContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.rejectContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         beforeEach(() => {
@@ -299,7 +306,7 @@ describe('Epics', () => {
     });
     describe('undocheckoutContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.undocheckoutContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.undocheckoutContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -325,7 +332,7 @@ describe('Epics', () => {
     });
     describe('forceundocheckoutContent Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.forceundocheckoutContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.forceundocheckoutContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -351,7 +358,7 @@ describe('Epics', () => {
     });
     describe('restoreVersion Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.restoreversionContentEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.restoreversionContentEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -378,7 +385,7 @@ describe('Epics', () => {
     });
     describe('login Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.userLoginEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.userLoginEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {
@@ -406,7 +413,7 @@ describe('Epics', () => {
     });
     describe('logout Epic', () => {
         let store;
-        const epicMiddleware = createEpicMiddleware(Epics.userLogoutEpic);
+        const epicMiddleware = createEpicMiddleware(Epics.userLogoutEpic, {dependencies: {repository: repo}});
         const mockStore = configureMockStore([epicMiddleware]);
 
         before(() => {

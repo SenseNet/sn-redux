@@ -1,7 +1,8 @@
 ///<reference path="../node_modules/@types/mocha/index.d.ts"/>
-import * as SN from 'sn-client-js';
+import { ContentTypes } from 'sn-client-js';
 import { Actions } from '../src/Actions'
 import * as Chai from 'chai';
+import { Content, Mocks } from "sn-client-js";
 const expect = Chai.expect;
 
 describe('Actions', () => {
@@ -33,7 +34,11 @@ describe('Actions', () => {
         });
     });
     describe('CreateContent', () => {
-        const content = SN.Content.Create('Article', { DisplayName: 'My content', Id: 123 })
+        const content = new ContentTypes.Task({
+            Id: 123,
+            Name: 'My Content',
+            DueDate: null
+        }, new Mocks.MockRepository())
         it('should create an action to a create content request', () => {
             const expectedAction = {
                 type: 'CREATE_CONTENT_REQUEST',

@@ -1,4 +1,5 @@
-export * from './ActionsTests';
-export * from './EpicsTests';
-export * from './ReducersTests';
+import * as ActionsTests from './ActionsTests';
+import * as EpicsTests from './EpicsTests';
+import * as ReducersTests from './ReducersTests';
 
+export { ActionsTests, EpicsTests, ReducersTests };
