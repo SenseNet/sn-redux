@@ -22,7 +22,7 @@ describe('Actions', () => {
                 response: { entities: {}, result: [] },
                 filter: "?$select=Id,Type&metadata=no"
             }
-            expect(Actions.ReceiveContent({ d: { results: [] } }, '?$select=Id,Type&metadata=no')).to.deep.equal(expectedAction)
+            expect(Actions.ReceiveContent({ d: { results: [], __count: 0 } }, '?$select=Id,Type&metadata=no')).to.deep.equal(expectedAction)
         });
         it('should create an action to content fetch request failure', () => {
             const expectedAction = {

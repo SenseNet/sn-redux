@@ -48,7 +48,9 @@ export module Epics {
 
                 return dependencies.repository.Contents.Fetch(action.path)
                     .map((response) => Actions.ReceiveContent(response, params))
-                    .catch(error => Observable.of(Actions.ReceiveContentFailure(params, error)))
+                    .catch(error => {
+                        return Observable.of(Actions.ReceiveContentFailure(params, error))
+                    })
             }
             );
     }
@@ -231,9 +233,11 @@ export module Epics {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Authentication.Login(action.userName, action.password)
-                    // const Action = new SN.ODataApi.CustomAction({ name: 'Login', path: '/Root', isAction: true, requiredParams: ['username', 'password'], noCache: true });
-                    // return SN.ODataApiActionObservables.Login(Action, { data: { 'username': action.userName, 'password': action.password } })
-                    .map(Actions.UserLoginSuccess)
+                    .map(result => { return result ?
+                            Actions.UserLoginSuccess(result)
+                            :
+                            Actions.UserLoginFailure({message: "Failed to log in."});
+                        })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
     }

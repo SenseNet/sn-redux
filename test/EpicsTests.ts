@@ -1,22 +1,19 @@
-///<reference path="../node_modules/@types/mocha/index.d.ts"/>
-import 'rxjs';
-import * as nock from 'nock';
 import * as Chai from 'chai';
 import configureMockStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
-import { Mocks, ContentTypes, HttpProviders } from 'sn-client-js';
+import { Mocks, ContentTypes, HttpProviders, Authentication } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 const expect = Chai.expect;
+import 'rxjs';
 
 describe('Epics', () => {
 
-    let repo = new Mocks.MockRepository();
+    let repo: Mocks.MockRepository = new Mocks.MockRepository();
+    (repo.Authentication as Mocks.MockAuthService).stateSubject.next(Authentication.LoginState.Authenticated);
 
-    let window = {
-        'siteUrl': 'https://daily.demo.sensenet.com'
-    }
     beforeEach(() => {
-        window['siteUrl'] = "https://daily.demo.sensenet.com";
+        (repo.httpProviderRef as Mocks.MockHttpProvider).setError({message: 'XMLHttpRequest is not supported by your browser'});
+
     })
     describe('fetchContent Epic', () => {
         let store;
@@ -25,11 +22,9 @@ describe('Epics', () => {
 
         before(() => {
             store = mockStore();
-            (repo.httpProviderRef as Mocks.MockHttpProvider).setError('FETCH_CONTENT_FAILURE');
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.fetchContentEpic);
         });
         it('handles the error', () => {
@@ -56,7 +51,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.createContentEpic);
         });
         it('handles the error', () => {
@@ -87,7 +81,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.updateContentEpic);
         });
         it('handles the error', () => {
@@ -115,7 +108,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.deleteContentEpic);
         });
         it('handles the error', () => {
@@ -142,7 +134,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.deleteBatchEpic);
         });
         it('handles the error', () => {
@@ -170,7 +161,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.checkoutContentEpic);
         });
         it('handles the error', () => {
@@ -196,7 +186,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.checkinContentEpic);
         });
         it('handles the error', () => {
@@ -223,7 +212,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.publishContentEpic);
         });
         it('handles the error', () => {
@@ -249,7 +237,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.approveContentEpic);
         });
         it('handles the error', () => {
@@ -275,7 +262,6 @@ describe('Epics', () => {
         });
 
         afterEach(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.rejectContentEpic);
         });
         it('handles the error', () => {
@@ -314,7 +300,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.undocheckoutContentEpic);
         });
         it('handles the error', () => {
@@ -340,7 +325,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.forceundocheckoutContentEpic);
         });
         it('handles the error', () => {
@@ -366,7 +350,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.restoreversionContentEpic);
         });
         it('handles the error', () => {
@@ -393,7 +376,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.userLoginEpic);
         });
         it('handles the error', () => {
@@ -407,7 +389,7 @@ describe('Epics', () => {
                 },
                 {
                     type: 'USER_LOGIN_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
+                    message: 'Failed to log in.'
                 }]);
         })
     });
@@ -421,7 +403,6 @@ describe('Epics', () => {
         });
 
         after(() => {
-            nock.cleanAll();
             epicMiddleware.replaceEpic(Epics.userLogoutEpic);
         });
         it('handles the error', () => {
@@ -434,8 +415,7 @@ describe('Epics', () => {
                     password: 'alba'
                 },
                 {
-                    type: 'USER_LOGOUT_FAILURE',
-                    message: 'XMLHttpRequest is not supported by your browser'
+                    type: 'USER_LOGOUT_SUCCESS'
                 }]);
         })
     });

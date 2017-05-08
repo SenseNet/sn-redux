@@ -129,7 +129,7 @@ export module Actions {
      * @param filter {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
      */
-    export const ReceiveContent = (response: any, filter: string) =>
+    export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, filter: string) =>
         ({
             type: 'FETCH_CONTENT_SUCCESS',
             response: normalize(response.d.results, Schemas.arrayOfContent),
@@ -495,7 +495,7 @@ export module Actions {
     */
     export const UserLoginSuccess = (response: any) => ({
         type: 'USER_LOGIN_SUCCESS',
-        response: response.response.d
+        response: response
     })
     /**
      * Action creator for the step when login of a user is failed.
