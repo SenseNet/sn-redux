@@ -29,16 +29,16 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.fetchContentEpic);
         });
         it('handles the error', () => {
-            store.dispatch({ type: 'FETCH_CONTENT_REQUEST', path: '/workspaces/Project', filter: `isOf('Task') and Status eq %27Completed%27` });
+            store.dispatch({ type: 'FETCH_CONTENT_REQUEST', path: '/workspaces/Project', options: {} });
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'FETCH_CONTENT_REQUEST',
                     path: '/workspaces/Project',
-                    filter: `isOf('Task') and Status eq %27Completed%27`
+                    options: {}
                 },
                 {
                     type: 'FETCH_CONTENT_FAILURE',
-                    filter: new ODataApi.ODataParams({filter: `isOf('Task') and Status eq %27Completed%27`, select: ["Id", "Type"]}),
+                    params: new ODataApi.ODataParams({select: ["Id", "Type"]}),
                     message: 'XMLHttpRequest is not supported by your browser'
                 }]);
         })

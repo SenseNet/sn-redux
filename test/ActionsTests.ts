@@ -12,7 +12,7 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'FETCH_CONTENT_REQUEST',
                 path: '/workspaces/project',
-                filter: "?$select=Id,Type&metadata=no"
+                options: {}
             }
             expect(Actions.RequestContent(path, {})).to.deep.equal(expectedAction)
         });
@@ -20,7 +20,7 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'FETCH_CONTENT_SUCCESS',
                 response: { entities: {}, result: [] },
-                filter: "?$select=Id,Type&metadata=no"
+                params: "?$select=Id,Type&metadata=no"
             }
             expect(Actions.ReceiveContent({ d: { results: [], __count: 0 } }, '?$select=Id,Type&metadata=no')).to.deep.equal(expectedAction)
         });
@@ -28,7 +28,7 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'FETCH_CONTENT_FAILURE',
                 message: 'error',
-                filter: "?$select=Id,Type&metadata=no"
+                params: "?$select=Id,Type&metadata=no"
             }
             expect(Actions.ReceiveContentFailure('?$select=Id,Type&metadata=no', { message: 'error' })).to.deep.equal(expectedAction)
         });

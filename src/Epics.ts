@@ -44,7 +44,7 @@ export module Epics {
     export const fetchContentEpic = (action$, store, dependencies?: { repository: Repository } ) => {
         return action$.ofType('FETCH_CONTENT_REQUEST')
             .mergeMap(action => {
-                let params = new ODataApi.ODataParams({filter: `${action.filter}`});
+                let params = new ODataApi.ODataParams(action.options || {});
                 return dependencies.repository.Contents.Fetch(new ODataApi.ODataRequestOptions({
                     path: action.path,
                     params

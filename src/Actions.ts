@@ -121,7 +121,7 @@ export module Actions {
     export const RequestContent = (path: string, options: ODataApi.IODataParams = {}) => ({
         type: 'FETCH_CONTENT_REQUEST',
         path,
-        filter: ODataHelper.buildUrlParamString(options)
+        options: options
     });
     /**
      * Action creator for the step when a fetching request ends successfully.
@@ -129,11 +129,11 @@ export module Actions {
      * @param filter {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
      */
-    export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, filter: any) =>
+    export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, params: any) =>
         ({
             type: 'FETCH_CONTENT_SUCCESS',
             response: normalize(response.d.results, Schemas.arrayOfContent),
-            filter
+            params
         })
     /**
      * Action creator for the step when a fetching request failed.
@@ -141,9 +141,9 @@ export module Actions {
      * @param error {any} The catched error object.
      * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
     */
-    export const ReceiveContentFailure = (filter: any, error: any) => ({
+    export const ReceiveContentFailure = (params: any, error: any) => ({
         type: 'FETCH_CONTENT_FAILURE',
-        filter,
+        params,
         message: error.message
     });
     /**
