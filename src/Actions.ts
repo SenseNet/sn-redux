@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-import { Content, ODataApi, ODataHelper } from 'sn-client-js';
+import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
 
 /**
  * Module that contains the action creators.
@@ -129,7 +129,7 @@ export module Actions {
      * @param filter {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
      */
-    export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, filter: string) =>
+    export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, filter: any) =>
         ({
             type: 'FETCH_CONTENT_SUCCESS',
             response: normalize(response.d.results, Schemas.arrayOfContent),
@@ -141,7 +141,7 @@ export module Actions {
      * @param error {any} The catched error object.
      * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
     */
-    export const ReceiveContentFailure = (filter: string, error: any) => ({
+    export const ReceiveContentFailure = (filter: any, error: any) => ({
         type: 'FETCH_CONTENT_FAILURE',
         filter,
         message: error.message
@@ -152,7 +152,7 @@ export module Actions {
      * @param content {Content} Content that have to be created in the Content Respository.
      * @returns {Object} Returns a redux action with the properties type, path of the parent and content.
      */
-    export const CreateContent = (path: string, content: Content) => ({ type: 'CREATE_CONTENT_REQUEST', content, path });
+    export const CreateContent = <T extends Content, K extends T['options']>(path: string, contentType: { new(arg: K, arg2: Repository.IRepository<any, any>): T}, contentOptions: K) => ({ type: 'CREATE_CONTENT_REQUEST', contentOptions, path, contentType });
     /**
      * Action creator for the step when Content creation on the server ends successfully.
      * @param response {any} JSON response of the ajax request.

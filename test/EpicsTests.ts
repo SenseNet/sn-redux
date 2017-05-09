@@ -1,7 +1,7 @@
 import * as Chai from 'chai';
 import configureMockStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
-import { Mocks, ContentTypes, HttpProviders, Authentication } from 'sn-client-js';
+import { Mocks, ContentTypes, HttpProviders, Authentication, ODataApi } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 const expect = Chai.expect;
 import 'rxjs';
@@ -29,15 +29,16 @@ describe('Epics', () => {
             epicMiddleware.replaceEpic(Epics.fetchContentEpic);
         });
         it('handles the error', () => {
-            store.dispatch({ type: 'FETCH_CONTENT_REQUEST', path: '/workspaces/Project' });
+            store.dispatch({ type: 'FETCH_CONTENT_REQUEST', path: '/workspaces/Project', filter: `isOf('Task') and Status eq %27Completed%27` });
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'FETCH_CONTENT_REQUEST',
-                    path: '/workspaces/Project'
+                    path: '/workspaces/Project',
+                    filter: `isOf('Task') and Status eq %27Completed%27`
                 },
                 {
                     type: 'FETCH_CONTENT_FAILURE',
-                    filter: 'undefined',
+                    filter: new ODataApi.ODataParams({filter: `isOf('Task') and Status eq %27Completed%27`, select: ["Id", "Type"]}),
                     message: 'XMLHttpRequest is not supported by your browser'
                 }]);
         })

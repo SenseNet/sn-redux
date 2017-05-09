@@ -3,7 +3,7 @@ import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
 import { Observable } from '@reactivex/rxjs';
-import { Repository, Content } from 'sn-client-js';
+import { Repository, Content, ODataApi } from 'sn-client-js';
 
 /**
  * Module for redux-observable Epics of the Sense/Net built-in OData actions.
@@ -44,9 +44,11 @@ export module Epics {
     export const fetchContentEpic = (action$, store, dependencies?: { repository: Repository } ) => {
         return action$.ofType('FETCH_CONTENT_REQUEST')
             .mergeMap(action => {
-                let params = `${action.filter}`;
-
-                return dependencies.repository.Contents.Fetch(action.path)
+                let params = new ODataApi.ODataParams({filter: `${action.filter}`});
+                return dependencies.repository.Contents.Fetch(new ODataApi.ODataRequestOptions({
+                    path: action.path,
+                    params
+                }))
                     .map((response) => Actions.ReceiveContent(response, params))
                     .catch(error => {
                         return Observable.of(Actions.ReceiveContentFailure(params, error))
@@ -61,9 +63,7 @@ export module Epics {
     export function createContentEpic(action$, store, dependencies?: { repository: Repository }) {
         return action$.ofType('CREATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                let content = action.content;
-                content['__ContentType'] = content.Type;
-                return dependencies.repository.Contents.Create(action.path, content, action.contentType)
+                return dependencies.repository.Contents.Create(action.path, action.contentOptions, action.contentType)
                     .map(Actions.CreateContentSuccess)
                     .catch(error => Observable.of(Actions.CreateContentFailure(error)))
             })
