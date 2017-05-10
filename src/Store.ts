@@ -65,7 +65,7 @@ export module Store {
         }
 
         if (typeof rootEpic === 'undefined' || rootEpic === null) {
-            epicMiddleware = createEpicMiddleware(Epics.fetchContentEpic, {dependencies: { repository } });
+            epicMiddleware = createEpicMiddleware(Epics.rootEpic, {dependencies: { repository } });
         }
         else {
             epicMiddleware = createEpicMiddleware(rootEpic, {dependencies: {repository } });
