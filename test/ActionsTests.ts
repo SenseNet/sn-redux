@@ -12,9 +12,10 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'FETCH_CONTENT_REQUEST',
                 path: '/workspaces/project',
-                options: {}
+                options: {},
+                contentType: Content
             }
-            expect(Actions.RequestContent(path, {})).to.deep.equal(expectedAction)
+            expect(Actions.RequestContent(path, {}, Content)).to.deep.equal(expectedAction)
         });
         it('should create an action to receive content', () => {
             const expectedAction = {

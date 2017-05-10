@@ -118,10 +118,11 @@ export module Actions {
      * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
      * @returns {Object} Returns a redux action with the properties type, path and filter.
      */
-    export const RequestContent = (path: string, options: ODataApi.IODataParams = {}) => ({
+    export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams = {}, contentType?: {new(...args): T}) => ({
         type: 'FETCH_CONTENT_REQUEST',
         path,
-        options: options
+        options: options,
+        contentType
     });
     /**
      * Action creator for the step when a fetching request ends successfully.

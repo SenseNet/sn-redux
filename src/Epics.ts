@@ -48,7 +48,7 @@ export module Epics {
                 return dependencies.repository.Contents.Fetch(new ODataApi.ODataRequestOptions({
                     path: action.path,
                     params
-                }))
+                }), action.contentType || Content)
                     .map((response) => Actions.ReceiveContent(response, params))
                     .catch(error => {
                         return Observable.of(Actions.ReceiveContentFailure(params, error))
