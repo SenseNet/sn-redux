@@ -64,7 +64,7 @@ describe('Actions', () => {
                     result: 123
                 }
             }
-            expect(Actions.CreateContentSuccess({ response: { d: { DisplayName: 'My content', Id: 123 } } })).to.deep.equal(expectedAction)
+            expect(Actions.CreateContentSuccess({ d: { DisplayName: 'My content', Id: 123 } })).to.deep.equal(expectedAction)
         });
         it('should create an action to content creation failure', () => {
             const expectedAction = {

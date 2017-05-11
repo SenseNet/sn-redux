@@ -162,7 +162,7 @@ export module Actions {
     export const CreateContentSuccess = (response: any) =>
         ({
             type: 'CREATE_CONTENT_SUCCESS',
-            response: normalize(response.response.d, Schemas.content)
+            response: normalize(response.d, Schemas.content)
         });
     /**
      * Action creator for the step when Content creation failed on the server.
@@ -476,6 +476,14 @@ export module Actions {
     export const RestoreVersionFailure = (error: any) => ({
         type: 'RESTOREVERSION_CONTENT_FAILURE',
         message: error.message
+    })
+
+    /**
+      * Action creator for check user state in a sense NET portal.
+      * @returns {Object} Returns a redux action with the properties.
+    */
+    export const CheckLoginState = () => ({
+        type: 'CHECK_LOGIN_STATE_REQUEST'
     })
 
     /**

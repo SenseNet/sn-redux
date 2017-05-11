@@ -3,7 +3,7 @@ import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
 import { Observable } from '@reactivex/rxjs';
-import { Repository, Content, ODataApi } from 'sn-client-js';
+import { Repository, Content, ODataApi, Authentication } from 'sn-client-js';
 
 /**
  * Module for redux-observable Epics of the Sense/Net built-in OData actions.
@@ -225,10 +225,28 @@ export module Epics {
                     .catch(error => Observable.of(Actions.RestoreVersionFailure(error)))
             })
     }
+
     /**
-         * Epic to login a user to a Sense/Net portal. It is related to three redux actions, returns ```LoginUser``` action and sends the response to the
-         * ```LoginUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LoginUserFailure``` action.
-         */
+     * Epic to wait for the current login state to be initialized
+     */
+    export const checkLoginStateEpic = (action$, store, dependencies?: { repository: Repository }) => {
+        return action$.ofType('CHECK_LOGIN_STATE_REQUEST')
+            .mergeMap(action => {
+                return dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
+                    .first()
+                    .map(result => { return result === Authentication.LoginState.Authenticated ?
+                            Actions.UserLoginSuccess(result)
+                            :
+                            Actions.UserLoginFailure({message: "Failed to log in."});
+                        })
+                    .catch(error => Observable.of(Actions.UserLoginFailure(error)))
+            })
+    }
+
+    /**
+     * Epic to login a user to a Sense/Net portal. It is related to three redux actions, returns ```LoginUser``` action and sends the response to the
+     * ```LoginUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LoginUserFailure``` action.
+     */
     export const userLoginEpic = (action$, store, dependencies?: { repository: Repository }) => {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
@@ -271,6 +289,7 @@ export module Epics {
         undocheckoutContentEpic,
         forceundocheckoutContentEpic,
         restoreversionContentEpic,
+        checkLoginStateEpic,
         userLoginEpic,
         userLogoutEpic
     );
