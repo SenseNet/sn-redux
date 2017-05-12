@@ -153,7 +153,7 @@ export module Actions {
      * @param content {Content} Content that have to be created in the Content Respository.
      * @returns {Object} Returns a redux action with the properties type, path of the parent and content.
      */
-    export const CreateContent = <T extends Content, K extends T['options']>(path: string, contentType: { new(arg: K, arg2: Repository.IRepository<any, any>): T}, contentOptions: K) => ({ type: 'CREATE_CONTENT_REQUEST', contentOptions, path, contentType });
+    export const CreateContent = <T extends Content, K extends T['options']>(path: string, contentType: { new(arg: K, arg2: Repository.IRepository<any, any>): T}, contentOptions: K) => ({ type: 'CREATE_CONTENT_REQUEST', content: contentOptions, path, contentType });
     /**
      * Action creator for the step when Content creation on the server ends successfully.
      * @param response {any} JSON response of the ajax request.
@@ -179,7 +179,7 @@ export module Actions {
       * @param fields {Object} Object with the field value pairs that have to be modified.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
-    export const UpdateContent = (id: number, fields: Object) => ({ type: 'UPDATE_CONTENT_REQUEST', id, fields });
+    export const UpdateContent = <T extends Content, K extends T['options']>(id: number, contentType: {new(...args): T}, fields: Partial<K>) => ({ type: 'UPDATE_CONTENT_REQUEST', id, contentType, fields });
     /**
      * Action creator for the step when Content modification on the server ends successfully.
      * @param response {any} JSON response of the ajax request.

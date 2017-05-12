@@ -1,7 +1,7 @@
 import * as Chai from 'chai';
 import configureMockStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
-import { Mocks, ContentTypes, HttpProviders, Authentication, ODataApi } from 'sn-client-js';
+import { Mocks, ContentTypes, HttpProviders, Authentication, ODataApi, Content } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 const expect = Chai.expect;
 import 'rxjs';
@@ -60,12 +60,13 @@ describe('Epics', () => {
                 Name: 'My Task',
                 DueDate: null
             }, repo)['options'];
-            store.dispatch({ type: 'CREATE_CONTENT_REQUEST', path: '/workspaces/Project', content });
+            store.dispatch({ type: 'CREATE_CONTENT_REQUEST', path: '/workspaces/Project', content, contentType: Content });
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'CREATE_CONTENT_REQUEST',
                     path: '/workspaces/Project',
-                    content
+                    content,
+                    contentType: Content
                 },
                 {
                     type: 'CREATE_CONTENT_FAILURE',

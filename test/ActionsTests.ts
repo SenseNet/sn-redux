@@ -44,10 +44,10 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'CREATE_CONTENT_REQUEST',
                 path: '/workspaces/project',
-                contentOptions: content,
+                content,
                 contentType: ContentTypes.Task,
             };
-            expect(Actions.CreateContent(path, ContentTypes.Task, content as IContentOptions)).to.deep.equal(expectedAction)
+            expect(Actions.CreateContent(path, ContentTypes.Task, content as any)).to.deep.equal(expectedAction)
         });
         it('should create an action to create content success', () => {
             const expectedAction = {
@@ -79,9 +79,12 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'UPDATE_CONTENT_REQUEST',
                 id: 123,
-                fields: { Index: 2 }
+                fields: { Index: 2 },
+                contentType: ContentTypes.Task
             }
-            expect(Actions.UpdateContent(123, { Index: 2 })).to.deep.equal(expectedAction)
+            expect(Actions.UpdateContent(123, ContentTypes.Task, {
+                Index: 2
+            })).to.deep.equal(expectedAction)
         });
         it('should create an action to update content success', () => {
             const expectedAction = {

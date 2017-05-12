@@ -63,7 +63,7 @@ export module Epics {
     export function createContentEpic(action$, store, dependencies?: { repository: Repository }) {
         return action$.ofType('CREATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Contents.Create(action.path, action.contentOptions, action.contentType)
+                return dependencies.repository.Contents.Create(action.path, action.content, action.contentType)
                     .map(Actions.CreateContentSuccess)
                     .catch(error => Observable.of(Actions.CreateContentFailure(error)))
             })
@@ -75,7 +75,7 @@ export module Epics {
     export const updateContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
         return action$.ofType('UPDATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Contents.Patch(action.id, action.fields)
+                return dependencies.repository.Contents.Patch(action.id, action.contentType, action.fields)
                     .map(Actions.UpdateContentSuccess)
                     .catch(error => Observable.of(Actions.UpdateContentFailure(error)))
             })
