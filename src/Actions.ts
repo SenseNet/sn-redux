@@ -179,7 +179,7 @@ export module Actions {
       * @param fields {Object} Object with the field value pairs that have to be modified.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
-    export const UpdateContent = <T extends Content, K extends T['options']>(id: number, contentType: {new(...args): T}, fields: Partial<K>) => ({ type: 'UPDATE_CONTENT_REQUEST', id, contentType, fields });
+    export const UpdateContent = <T extends Content, K extends T['options']>(id: number, contentType: {new(...args): T} | object, fields: Partial<K>) => ({ type: 'UPDATE_CONTENT_REQUEST', id, contentType, fields });
     /**
      * Action creator for the step when Content modification on the server ends successfully.
      * @param response {any} JSON response of the ajax request.
