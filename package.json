@@ -1,6 +1,6 @@
 {
   "name": "sn-redux",
-  "version": "1.1.0-development.2",
+  "version": "2.0.0-RC.1",
   "description": "A set of redux actions, reducers and redux-ovbservable epics for Sense/Net ECM",
   "main": "dist/src/sn-redux.js",
   "scripts": {
@@ -23,7 +23,8 @@
   "files": [
     "dist",
     "src",
-    "test"
+    "test",
+    "documentation"
   ],
   "repository": {
     "type": "git",
@@ -62,7 +63,7 @@
     "redux-thunk": "^2.2.0",
     "rimraf": "^2.6.1",
     "rxjs": "^5.3.1",
-    "sn-client-js": "1.1.1-development.7"
+    "sn-client-js": "^2.0.0-RC.1"
   },
   "devDependencies": {
     "@types/chai": "3.4.35",
@@ -76,6 +77,7 @@
     "cz-conventional-changelog": "2.0.0",
     "del": "2.2.2",
     "gulp": "3.9.1",
+    "gulp-rename": "^1.2.2",
     "gulp-typedoc": "2.0.2",
     "mocha": "3.3.0",
     "nock": "9.0.9",
@@ -86,6 +88,8 @@
     "semantic-release": "^6.3.2",
     "tslint": "5.2.0",
     "typedoc": "0.6.0",
+    "typedoc-md-theme": "^1.0.1",
+    "typedoc-plugin-external-module-name": "^1.0.9",
     "typescript": "2.3.2"
   },
   "czConfig": {
