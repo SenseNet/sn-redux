@@ -10,7 +10,7 @@
     "commit": "git-cz",
     "gulp": "gulp",
     "pretest": "npm run build",
-    "test": "nyc mocha -p tsconfig.json dist/test/index.js",
+    "test": "nyc mocha dist/test/index.js",
     "check-coverage": "istanbul check-coverage ",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
     "prebuild": "npm run lint && npm run clean",
@@ -41,9 +41,9 @@
     "url": "https://github.com/SenseNet/sn-redux/issues"
   },
   "nyc": {
-    "exclude": "dist/test/**/*.*",
-    "include": "dist/src/**/*.js",
     "cache": true,
+    "include": "dist/src/**/*.*",
+    "exclude": "dist/src/**/sn-redux.js",
     "all": true,
     "reporter": [
       "lcov",
