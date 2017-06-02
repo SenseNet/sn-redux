@@ -56,7 +56,7 @@
   "dependencies": {
     "@reactivex/rxjs": "^5.4.0",
     "normalizr": "^3.2.3",
-    "nyc": "^10.3.2",
+    "nyc": "^11.0.1",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.6",
     "redux-observable": "^0.14.1",
