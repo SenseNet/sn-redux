@@ -65,7 +65,7 @@
     "sn-client-js": "^2.0.0-RC.2"
   },
   "devDependencies": {
-    "@types/chai": "^3.5.2",
+    "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
     "@types/nock": "^8.2.1",
     "@types/orchestrator": "^0.3.0",
