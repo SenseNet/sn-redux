@@ -15,7 +15,7 @@ describe('Actions', () => {
                 options: {},
                 contentType: Content
             }
-            expect(Actions.RequestContent(path, {}, Content)).to.deep.equal(expectedAction)
+            expect(Actions.RequestContent({}, Content)).to.deep.equal(expectedAction)
         });
         it('should create an action to receive content', () => {
             const expectedAction = {
@@ -47,7 +47,7 @@ describe('Actions', () => {
                 content,
                 contentType: ContentTypes.Task,
             };
-            expect(Actions.CreateContent(path, ContentTypes.Task, content as any)).to.deep.equal(expectedAction)
+            expect(Actions.CreateContent(content as any, ContentTypes.Task)).to.deep.equal(expectedAction)
         });
         it('should create an action to create content success', () => {
             const expectedAction = {
