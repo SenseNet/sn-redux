@@ -3,7 +3,7 @@ import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
 import { Observable } from '@reactivex/rxjs';
-import { Repository, Content, ODataApi, Authentication } from 'sn-client-js';
+import { Content, ODataApi, Authentication } from 'sn-client-js';
 
 /**
  * Module for redux-observable Epics of the Sense/Net built-in OData actions.
@@ -34,18 +34,16 @@ import { Repository, Content, ODataApi, Authentication } from 'sn-client-js';
  * ```
  */
 
-type Repository = Repository.BaseRepository<any, any>;
-
 export module Epics {
     /**
      * Epic for fetching content from the Content Repository. It is related to three redux actions, returns the ```RequestContent``` action and sends the JSON response to the
      * ```ReceiveContent``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveContentFailure``` action.
      */
-    export const fetchContentEpic = (action$, store, dependencies?: { repository: Repository } ) => {
+    export const fetchContentEpic = (action$, store) => {
         return action$.ofType('FETCH_CONTENT_REQUEST')
             .mergeMap(action => {
                 let params = new ODataApi.ODataParams(action.options || {});
-                return dependencies.repository.Content.Fetch(new ODataApi.ODataRequestOptions({
+                return action.content.Fetch(new ODataApi.ODataRequestOptions({
                     path: action.path,
                     params
                 }), action.contentType || Content)
@@ -60,10 +58,10 @@ export module Epics {
      * Epic for creating a Content in the Content Repository. It is related to three redux actions, returns ```CreateContent``` action and sends the JSON response to the
      * ```CreateContentSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```CreateContentFailure``` action.
      */
-    export function createContentEpic(action$, store, dependencies?: { repository: Repository }) {
+    export function createContentEpic(action$, store) {
         return action$.ofType('CREATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.Post(action.path, action.content, action.contentType)
+                return (action.path, action.content, action.contentType)
                     .map(Actions.CreateContentSuccess)
                     .catch(error => Observable.of(Actions.CreateContentFailure(error)))
             })
@@ -72,7 +70,7 @@ export module Epics {
      * Epic for updating metadata of a Content in the Content Repository. It is related to three redux actions, returns ```UpdateContent``` action and sends the JSON response to the
      * ```UpdateContentSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```UpdateContentFailure``` action.
      */
-    export const updateContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const updateContentEpic = (action$, store) => {
         return action$.ofType('UPDATE_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.Patch(action.id, action.contentType, action.fields)
@@ -84,7 +82,7 @@ export module Epics {
      * Epic to delete a Content from the Content Repository. It is related to three redux actions, returns ```Delete``` action and sends the response to the
      * ```DeleteSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```DeleteFailure``` action.
      */
-    export const deleteContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const deleteContentEpic = (action$, store) => {
         return action$.ofType('DELETE_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.Delete(action.id, action.permanently)
@@ -100,7 +98,7 @@ export module Epics {
      * Epic to delete multiple Content from the Content Repository. It is related to three redux actions, returns ```DeleteBatch``` action and sends the response to the
      * ```DeleteBatchSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```DeleteBatchFailure``` action.
      */
-    export const deleteBatchEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const deleteBatchEpic = (action$, store) => {
         return action$.ofType('DELETE_BATCH_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction(
@@ -124,7 +122,7 @@ export module Epics {
      * Epic to checkout a Content in the Content Repository. It is related to three redux actions, returns ```CheckOut``` action and sends the response to the
      * ```CheckOutSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```CheckOutFailure``` action.
      */
-    export const checkoutContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const checkoutContentEpic = (action$, store) => {
         return action$.ofType('CHECKOUT_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction({ name: 'CheckOut', id: action.id, isAction: true })
@@ -137,7 +135,7 @@ export module Epics {
          * Epic to checkin a Content in the Content Repository. It is related to three redux actions, returns ```CheckIn``` action and sends the response to the
          * ```CheckInSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```CheckInFailure``` action.
          */
-    export const checkinContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const checkinContentEpic = (action$, store) => {
         return action$.ofType('CHECKIN_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction(
@@ -152,7 +150,7 @@ export module Epics {
          * Epic to publish a Content in the Content Repository. It is related to three redux actions, returns ```Publish``` action and sends the response to the
          * ```PublishSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```PublishFailure``` action.
          */
-    export const publishContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const publishContentEpic = (action$, store) => {
         return action$.ofType('PUBLISH_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction({ name: 'Publish', id: action.id, isAction: true })
@@ -164,7 +162,7 @@ export module Epics {
          * Epic to approve a Content in the Content Repository. It is related to three redux actions, returns ```Approve``` action and sends the response to the
          * ```ApproveSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ApproveFailure``` action.
          */
-    export const approveContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const approveContentEpic = (action$, store) => {
         return action$.ofType('APPROVE_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction({ name: 'Approve', id: action.id, isAction: true })
@@ -176,7 +174,7 @@ export module Epics {
          * Epic to reject a Content in the Content Repository. It is related to three redux actions, returns ```Reject``` action and sends the response to the
          * ```RejectSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```RejectFailure``` action.
          */
-    export const rejectContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const rejectContentEpic = (action$, store) => {
         return action$.ofType('REJECT_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction(
@@ -191,7 +189,7 @@ export module Epics {
          * Epic to undo checkout a Content in the Content Repository. It is related to three redux actions, returns ```UndoCheckout``` action and sends the response to the
          * ```UndoCheckoutSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```UndoCheckoutFailure``` action.
          */
-    export const undocheckoutContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const undocheckoutContentEpic = (action$, store) => {
         return action$.ofType('UNDOCHECKOUT_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction({ name: 'UndoCheckout', id: action.id, isAction: true })
@@ -203,7 +201,7 @@ export module Epics {
          * Epic to force undo checkout a Content in the Content Repository. It is related to three redux actions, returns ```ForceUndoCheckout``` action and sends the response to the
          * ```ForceUndoCheckoutSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ForceUndoCheckoutFailure``` action.
          */
-    export const forceundocheckoutContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const forceundocheckoutContentEpic = (action$, store) => {
         return action$.ofType('FORCEUNDOCHECKOUT_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction({ name: 'ForceUndoCheckout', id: action.id, isAction: true })
@@ -215,7 +213,7 @@ export module Epics {
          * Epic to restore a version of a Content in the Content Repository. It is related to three redux actions, returns ```RestoreVersion``` action and sends the response to the
          * ```RestoreVersionSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```RestoreVersionFailure``` action.
          */
-    export const restoreversionContentEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const restoreversionContentEpic = (action$, store) => {
         return action$.ofType('RESTOREVERSION_CONTENT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Content.CreateCustomAction(
@@ -229,16 +227,17 @@ export module Epics {
     /**
      * Epic to wait for the current login state to be initialized
      */
-    export const checkLoginStateEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const checkLoginStateEpic = (action$, store) => {
         return action$.ofType('CHECK_LOGIN_STATE_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
                     .first()
-                    .map(result => { return result === Authentication.LoginState.Authenticated ?
+                    .map(result => {
+                        return result === Authentication.LoginState.Authenticated ?
                             Actions.UserLoginSuccess(result)
                             :
-                            Actions.UserLoginFailure({message: "Failed to log in."});
-                        })
+                            Actions.UserLoginFailure({ message: "Failed to log in." });
+                    })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
     }
@@ -247,15 +246,16 @@ export module Epics {
      * Epic to login a user to a Sense/Net portal. It is related to three redux actions, returns ```LoginUser``` action and sends the response to the
      * ```LoginUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LoginUserFailure``` action.
      */
-    export const userLoginEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const userLoginEpic = (action$, store) => {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Authentication.Login(action.userName, action.password)
-                    .map(result => { return result ?
+                    .map(result => {
+                        return result ?
                             Actions.UserLoginSuccess(result)
                             :
-                            Actions.UserLoginFailure({message: "Failed to log in."});
-                        })
+                            Actions.UserLoginFailure({ message: "Failed to log in." });
+                    })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
     }
@@ -263,7 +263,7 @@ export module Epics {
          * Epic to logout a user from a Sense/Net portal. It is related to three redux actions, returns ```LogoutUser``` action and sends the response to the
          * ```LogoutUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LogoutUserFailure``` action.
          */
-    export const userLogoutEpic = (action$, store, dependencies?: { repository: Repository }) => {
+    export const userLogoutEpic = (action$, store) => {
         return action$.ofType('USER_LOGOUT_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Authentication.Logout()
