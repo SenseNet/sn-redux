@@ -15,7 +15,7 @@ describe('Actions', () => {
                 options: {},
                 contentType: Content
             }
-            expect(Actions.RequestContent({}, Content)).to.deep.equal(expectedAction)
+            expect(Actions.RequestContent(path, {}, Content)).to.deep.equal(expectedAction)
         });
         it('should create an action to receive content', () => {
             const expectedAction = {
@@ -43,7 +43,6 @@ describe('Actions', () => {
         it('should create an action to a create content request', () => {
             const expectedAction = {
                 type: 'CREATE_CONTENT_REQUEST',
-                path: '/workspaces/project',
                 content,
                 contentType: ContentTypes.Task,
             };
@@ -78,13 +77,12 @@ describe('Actions', () => {
         it('should create an action to an update content request', () => {
             const expectedAction = {
                 type: 'UPDATE_CONTENT_REQUEST',
-                id: 123,
                 fields: { Index: 2 },
                 contentType: ContentTypes.Task
             }
-            expect(Actions.UpdateContent(123, ContentTypes.Task, {
+            expect(Actions.UpdateContent({
                 Index: 2
-            })).to.deep.equal(expectedAction)
+            }, ContentTypes.Task)).to.deep.equal(expectedAction)
         });
         it('should create an action to update content success', () => {
             const expectedAction = {
