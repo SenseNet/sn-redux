@@ -118,8 +118,9 @@ export module Actions {
      * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
      * @returns {Object} Returns a redux action with the properties type, path and filter.
      */
-    export const RequestContent = <T extends Content>(options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
+    export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
         type: 'FETCH_CONTENT_REQUEST',
+        path,
         options: options,
         contentType
     });
@@ -182,7 +183,11 @@ export module Actions {
       * @param fields {Object} Object with the field value pairs that have to be modified.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
-    export const UpdateContent = <T extends Content, K extends T['options']>(id: number, contentType: { new(...args): T } | object, fields: Partial<K>) => ({ type: 'UPDATE_CONTENT_REQUEST', id, contentType, fields });
+    export const UpdateContent = <T extends Content, K extends T['options']>(fields: Partial<K>, contentType: { new(...args): T } | object) => ({
+        type: 'UPDATE_CONTENT_REQUEST',
+        contentType,
+        fields
+    });
     /**
      * Action creator for the step when Content modification on the server ends successfully.
      * @param response {any} JSON response of the ajax request.
