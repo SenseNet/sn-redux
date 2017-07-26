@@ -3,7 +3,7 @@ import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
 import { Observable } from '@reactivex/rxjs';
-import { Content, ODataApi, Authentication } from 'sn-client-js';
+import { Repository, Content, Collection, ODataApi, Authentication } from 'sn-client-js';
 
 /**
  * Module for redux-observable Epics of the Sense/Net built-in OData actions.
@@ -39,14 +39,12 @@ export module Epics {
      * Epic for fetching content from the Content Repository. It is related to three redux actions, returns the ```RequestContent``` action and sends the JSON response to the
      * ```ReceiveContent``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveContentFailure``` action.
      */
-    export const fetchContentEpic = (action$, store) => {
+    export const fetchContentEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('FETCH_CONTENT_REQUEST')
             .mergeMap(action => {
                 let params = new ODataApi.ODataParams(action.options || {});
-                return action.content.Fetch(new ODataApi.ODataRequestOptions({
-                    path: action.path,
-                    params
-                }), action.contentType || Content)
+                let collection = new Collection.Collection([], dependencies.repository, action.contentType);
+                return collection.Read(action.path, params)
                     .map((response) => Actions.ReceiveContent(response, params))
                     .catch(error => {
                         return Observable.of(Actions.ReceiveContentFailure(params, error))
@@ -61,7 +59,7 @@ export module Epics {
     export function createContentEpic(action$, store) {
         return action$.ofType('CREATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return (action.path, action.content, action.contentType)
+                return action.content.Save()
                     .map(Actions.CreateContentSuccess)
                     .catch(error => Observable.of(Actions.CreateContentFailure(error)))
             })
@@ -73,7 +71,7 @@ export module Epics {
     export const updateContentEpic = (action$, store) => {
         return action$.ofType('UPDATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.Patch(action.id, action.contentType, action.fields)
+                return action.content.Save()
                     .map(Actions.UpdateContentSuccess)
                     .catch(error => Observable.of(Actions.UpdateContentFailure(error)))
             })
@@ -85,7 +83,7 @@ export module Epics {
     export const deleteContentEpic = (action$, store) => {
         return action$.ofType('DELETE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.Delete(action.id, action.permanently)
+                return action.content.Delete(action.id, action.permanently)
                     .map((response) => {
                         const state = store.getState();
                         const ids = Reducers.getIds(state.collection);
@@ -101,7 +99,7 @@ export module Epics {
     export const deleteBatchEpic = (action$, store) => {
         return action$.ofType('DELETE_BATCH_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction(
+                return action.content.CreateCustomAction(
                     { name: 'DeleteBatch', path: action.path, isAction: true, requiredParams: ['paths'] },
                     { data: { 'paths': action.ids, 'permanently': action.permanently } })
                     .map((response) => {
@@ -125,7 +123,7 @@ export module Epics {
     export const checkoutContentEpic = (action$, store) => {
         return action$.ofType('CHECKOUT_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction({ name: 'CheckOut', id: action.id, isAction: true })
+                return action.content.CreateCustomAction({ name: 'CheckOut', id: action.id, isAction: true })
                     .map(Actions.CheckOutSuccess)
                     .catch(error => Observable.of(Actions.CheckOutFailure(error)))
             })
@@ -138,7 +136,7 @@ export module Epics {
     export const checkinContentEpic = (action$, store) => {
         return action$.ofType('CHECKIN_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction(
+                return action.content.Content.CreateCustomAction(
                     { name: 'CheckIn', id: action.id, isAction: true, params: ['checkInComment'] },
                     { data: { 'checkInComments': action.checkInComment } }
                 )
@@ -153,7 +151,7 @@ export module Epics {
     export const publishContentEpic = (action$, store) => {
         return action$.ofType('PUBLISH_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction({ name: 'Publish', id: action.id, isAction: true })
+                return action.content.Content.CreateCustomAction({ name: 'Publish', id: action.id, isAction: true })
                     .map(Actions.PublishSuccess)
                     .catch(error => Observable.of(Actions.PublishFailure(error)))
             })
@@ -165,7 +163,7 @@ export module Epics {
     export const approveContentEpic = (action$, store) => {
         return action$.ofType('APPROVE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction({ name: 'Approve', id: action.id, isAction: true })
+                return action.content.Content.CreateCustomAction({ name: 'Approve', id: action.id, isAction: true })
                     .map(Actions.ApproveSuccess)
                     .catch(error => Observable.of(Actions.ApproveFailure(error)))
             })
@@ -177,7 +175,7 @@ export module Epics {
     export const rejectContentEpic = (action$, store) => {
         return action$.ofType('REJECT_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction(
+                return action.content.Content.CreateCustomAction(
                     { name: 'Reject', id: action.id, isAction: true, params: ['rejectReason'] },
                     { data: { 'rejectReason': action.rejectReason ? action.rejectReason : '' } }
                 )
@@ -192,7 +190,7 @@ export module Epics {
     export const undocheckoutContentEpic = (action$, store) => {
         return action$.ofType('UNDOCHECKOUT_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction({ name: 'UndoCheckout', id: action.id, isAction: true })
+                return action.content.Content.CreateCustomAction({ name: 'UndoCheckout', id: action.id, isAction: true })
                     .map(Actions.UndoCheckoutSuccess)
                     .catch(error => Observable.of(Actions.UndoCheckoutFailure(error)))
             })
@@ -204,7 +202,7 @@ export module Epics {
     export const forceundocheckoutContentEpic = (action$, store) => {
         return action$.ofType('FORCEUNDOCHECKOUT_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction({ name: 'ForceUndoCheckout', id: action.id, isAction: true })
+                return action.content.Content.CreateCustomAction({ name: 'ForceUndoCheckout', id: action.id, isAction: true })
                     .map(Actions.ForceUndoCheckoutSuccess)
                     .catch(error => Observable.of(Actions.ForceUndoCheckoutFailure(error)))
             })
@@ -216,7 +214,7 @@ export module Epics {
     export const restoreversionContentEpic = (action$, store) => {
         return action$.ofType('RESTOREVERSION_CONTENT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Content.CreateCustomAction(
+                return action.content.Content.CreateCustomAction(
                     { name: 'RestoreVersion', id: action.id, isAction: true, params: ['version'] },
                     { data: { 'version': action.version } })
                     .map(Actions.RestoreVersionSuccess)
@@ -230,7 +228,7 @@ export module Epics {
     export const checkLoginStateEpic = (action$, store) => {
         return action$.ofType('CHECK_LOGIN_STATE_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
+                return action.content.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
                     .first()
                     .map(result => {
                         return result === Authentication.LoginState.Authenticated ?
@@ -249,7 +247,7 @@ export module Epics {
     export const userLoginEpic = (action$, store) => {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Authentication.Login(action.userName, action.password)
+                return action.content.Authentication.Login(action.userName, action.password)
                     .map(result => {
                         return result ?
                             Actions.UserLoginSuccess(result)
@@ -266,7 +264,7 @@ export module Epics {
     export const userLogoutEpic = (action$, store) => {
         return action$.ofType('USER_LOGOUT_REQUEST')
             .mergeMap(action => {
-                return dependencies.repository.Authentication.Logout()
+                return action.content.Authentication.Logout()
                     .map(Actions.UserLogoutSuccess)
                     .catch(error => Observable.of(Actions.UserLogoutFailure(error)))
             })

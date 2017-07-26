@@ -65,10 +65,10 @@ export module Store {
         }
 
         if (typeof rootEpic === 'undefined' || rootEpic === null) {
-            epicMiddleware = createEpicMiddleware(Epics.rootEpic);
+            epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } });
         }
         else {
-            epicMiddleware = createEpicMiddleware(rootEpic);
+            epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } });
         }
         let middlewareArray = [];
         if (typeof middlewares === 'undefined' || middlewares === null) {
