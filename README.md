@@ -174,12 +174,8 @@ dispatch(Actions.CreateContent(parentPath, content))
 * [redux-observable](https://redux-observable.js.org/)
 
 ## Example applications
-* Using Raw Javascript and HTML (TODO)
 * [Using React](https://github.com/SenseNet/sn-react-redux-todo-app)
 * [Using Angular](https://github.com/blaskodaniel/sn-angular-redux-todo-app)
 * [Using Angular2](https://github.com/SenseNet/sn-angular2-redux-todo-app)
 * [Using Vue.js](https://github.com/SenseNet/sn-vue-redux-todo-app)
 * [Using Aurelia](https://github.com/B3zo0/sn7-aurelia-redux-todo-app)
-* Using Ember (TODO)
-* Using Polymer (TODO)
-* Using React Native (TODO)
