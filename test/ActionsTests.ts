@@ -33,6 +33,101 @@ describe('Actions', () => {
             expect(Actions.ReceiveContentFailure('?$select=Id,Type&metadata=no', { message: 'error' })).to.deep.equal(expectedAction)
         });
     });
+    describe('LoadContent', () => {
+        it('should create an action to a load content request', () => {
+            const expectedAction = {
+                type: 'LOAD_CONTENT_REQUEST',
+                id: 123,
+                options: {},
+                contentType: Content
+            }
+            expect(Actions.LoadContent(123, {}, Content)).to.deep.equal(expectedAction)
+        });
+        it('should create an action to receive a loaded content', () => {
+            const expectedAction = {
+                type: 'LOAD_CONTENT_SUCCESS',
+                params: {},
+                response: {
+                    entities: {
+                        collection: {
+                            123: {
+                                DisplayName: 'My content',
+                                Id: 123
+                            }
+                        }
+                    },
+                    result: 123
+                }
+            }
+            expect(Actions.ReceiveLoadedContent({ d: { DisplayName: 'My content', Id: 123 } }, {})).to.deep.equal(expectedAction)
+        });
+    });
+    describe('ReloadContent', () => {
+        it('should create an action to a reload content request', () => {
+            const expectedAction = {
+                type: 'RELOAD_CONTENT_REQUEST',
+                actionName: 'edit'
+            }
+            expect(Actions.ReloadContent('edit')).to.deep.equal(expectedAction)
+        });
+        it('should create an action to receive the reloaded content', () => {
+            const expectedAction = {
+                type: 'RELOAD_CONTENT_SUCCESS',
+                response: {
+                    entities: {
+                        collection: {
+                            123: {
+                                DisplayName: 'My content',
+                                Id: 123
+                            }
+                        }
+                    },
+                    result: 123
+                }
+            }
+            expect(Actions.ReceiveReloadedContent({ d: { DisplayName: 'My content', Id: 123 } })).to.deep.equal(expectedAction)
+        });
+        it('should create an action to content load request failure', () => {
+            const expectedAction = {
+                type: 'RELOAD_CONTENT_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.ReceiveReloadedContentFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    });
+    describe('ReloadContentFields', () => {
+        it('should create an action to a reload fields of a content request', () => {
+            const expectedAction = {
+                type: 'RELOAD_CONTENTFIELDS_REQUEST',
+                fields: []
+            }
+            expect(Actions.ReloadContentFields()).to.deep.equal(expectedAction)
+        });
+        it('should create an action to receive the reloaded fields of a content', () => {
+            const expectedAction = {
+                type: 'RELOAD_CONTENTFIELDS_SUCCESS',
+                response: {
+                    entities: {
+                        collection: {
+                            123: {
+                                DisplayName: 'My content',
+                                Id: 123
+                            }
+                        }
+                    },
+                    result: 123
+                }
+            }
+            expect(Actions.ReceiveReloadedContentFields({ d: { DisplayName: 'My content', Id: 123 } })).to.deep.equal(expectedAction)
+        });
+        it('should create an action to content load request failure', () => {
+            const expectedAction = {
+                type: 'RELOAD_CONTENTFIELDS_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.ReceiveReloadedContentFieldsFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    });
     describe('CreateContent', () => {
         const content = {
             Id: 123,

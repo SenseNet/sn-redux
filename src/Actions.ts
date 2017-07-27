@@ -148,6 +148,103 @@ export module Actions {
         message: error.message
     });
     /**
+     * Action creator for loading a content from Sense/Net Content Repository.
+     * @param id {number} Path of the requested item.
+     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
+     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     */
+    export const LoadContent = <T extends Content>(id: number, options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
+        type: 'LOAD_CONTENT_REQUEST',
+        id,
+        options: options,
+        contentType
+    });
+    /**
+     * Action creator for the step when a loading request ends successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @param filter {string} String with the url params.
+     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     */
+    export const ReceiveLoadedContent = (response: any, params: any) =>
+        ({
+            type: 'LOAD_CONTENT_SUCCESS',
+            response: normalize(response.d, Schemas.content),
+            params
+        })
+    /**
+     * Action creator for the step when a loading request failed.
+     * @param filter {string} String with the url params.
+     * @param error {any} The catched error object.
+     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+    */
+    export const ReceiveLoadedContentFailure = (params: any, error: any) => ({
+        type: 'LOAD_CONTENT_FAILURE',
+        params,
+        message: error.message
+    });
+    /**
+     * Action creator for reloading a content from Sense/Net Content Repository.
+     * @param id {number} Path of the requested item.
+     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
+     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     */
+    export const ReloadContent = <T extends Content>(actionName: 'edit' | 'view') => ({
+        type: 'RELOAD_CONTENT_REQUEST',
+        actionName
+    });
+    /**
+     * Action creator for the step when a reloading request ends successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @param filter {string} String with the url params.
+     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     */
+    export const ReceiveReloadedContent = (response: any) =>
+        ({
+            type: 'RELOAD_CONTENT_SUCCESS',
+            response: normalize(response.d, Schemas.content)
+        })
+    /**
+     * Action creator for the step when a reloading request failed.
+     * @param filter {string} String with the url params.
+     * @param error {any} The catched error object.
+     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+    */
+    export const ReceiveReloadedContentFailure = (error: any) => ({
+        type: 'RELOAD_CONTENT_FAILURE',
+        message: error.message
+    });
+    /**
+     * Action creator for reloading fields of a content from Sense/Net Content Repository.
+     * @param id {number} Path of the requested item.
+     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
+     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     */
+    export const ReloadContentFields = <T extends Content>(...fields: any[]) => ({
+        type: 'RELOAD_CONTENTFIELDS_REQUEST',
+        fields
+    });
+    /**
+     * Action creator for the step when a reloading fields of a content request ends successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @param filter {string} String with the url params.
+     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     */
+    export const ReceiveReloadedContentFields = (response: any) =>
+        ({
+            type: 'RELOAD_CONTENTFIELDS_SUCCESS',
+            response: normalize(response.d, Schemas.content)
+        })
+    /**
+     * Action creator for the step when a reloading fields of a content request failed.
+     * @param filter {string} String with the url params.
+     * @param error {any} The catched error object.
+     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+    */
+    export const ReceiveReloadedContentFieldsFailure = (error: any) => ({
+        type: 'RELOAD_CONTENTFIELDS_FAILURE',
+        message: error.message
+    });
+    /**
      * Action creator for creating a Content in the Content Repository.
      * @param path {string} Path of the parent item.
      * @param content {Content} Content that have to be created in the Content Respository.

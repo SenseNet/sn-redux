@@ -53,6 +53,52 @@ export module Epics {
             );
     }
     /**
+     * Epic for loading content from the Content Repository. It is related to three redux actions, returns the ```LoadContent``` action and sends the JSON response to the
+     * ```ReceiveLoadedContent``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveLoadedContentFailure``` action.
+     */
+    export const loadContentEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+        return action$.ofType('LOAD_CONTENT_REQUEST')
+            .mergeMap(action => {
+                let params = new ODataApi.ODataParams(action.options || {});
+                return dependencies.repository.Load(action.id, params)
+                    .map((response) => Actions.ReceiveLoadedContent(response, params))
+                    .catch(error => {
+                        return Observable.of(Actions.ReceiveLoadedContentFailure(params, error))
+                    })
+            }
+            );
+    }
+    /**
+     * Epic for reloading content from the Content Repository. It is related to three redux actions, returns the ```ReloadContent``` action and sends the JSON response to the
+     * ```ReceiveReloadedContent``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveReloadedContentFailure``` action.
+     */
+    export const reloadContentEpic = (action$, store) => {
+        return action$.ofType('RELOAD_CONTENT_REQUEST')
+            .mergeMap(action => {
+                return action.content.Reload(action.actionname)
+                    .map((response) => Actions.ReceiveReloadedContent(response))
+                    .catch(error => {
+                        return Observable.of(Actions.ReceiveReloadedContentFailure(error))
+                    })
+            }
+            );
+    }
+    /**
+     * Epic for reloading fields of a content from the Content Repository. It is related to three redux actions, returns the ```ReloadContentFields``` action and sends the JSON response to the
+     * ```ReceiveReloadedContentFields``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveReloadedContentFieldsFailure``` action.
+     */
+    export const reloadContentFieldsEpic = (action$, store) => {
+        return action$.ofType('RELOAD_CONTENTFIELDS_REQUEST')
+            .mergeMap(action => {
+                return action.content.ReloadFields(action.fields)
+                    .map((response) => Actions.ReceiveReloadedContentFields(response))
+                    .catch(error => {
+                        return Observable.of(Actions.ReceiveReloadedContentFieldsFailure(error))
+                    })
+            }
+            );
+    }
+    /**
      * Epic for creating a Content in the Content Repository. It is related to three redux actions, returns ```CreateContent``` action and sends the JSON response to the
      * ```CreateContentSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```CreateContentFailure``` action.
      */
