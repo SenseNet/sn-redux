@@ -6,18 +6,18 @@ import { Observable } from '@reactivex/rxjs';
 import { Repository, Content, Collection, ODataApi, Authentication } from 'sn-client-js';
 
 /**
- * Module for redux-observable Epics of the Sense/Net built-in OData actions.
+ * Module for redux-observable Epics of the sensenet built-in OData actions.
  *
  * _An Epic is the core primitive of [redux-observable](https://redux-observable.js.org). It is a function which takes a stream of actions and returns a stream of actions._
  *
  * Learn more about redux-observable Epics [here](https://redux-observable.js.org/docs/basics/Epics.html);
  *
- * In Sense/Net's case it means that the action steps (for exmaple request, success, fail) or multiple actions can be combined into Epics. It's extremely useful if you have
+ * In sensenet's case it means that the action steps (for exmaple request, success, fail) or multiple actions can be combined into Epics. It's extremely useful if you have
  * to work with async action or you have a complex process with multiple steps that have to wait for each other like validation, multiple step saving, etc.
  *
- * Following epics cover the CRUD operations and all the other built-in Sense/Net OData Actions. All of these Epics are combined into one root Epic. If you want to use them in
+ * Following epics cover the CRUD operations and all the other built-in sensenet OData Actions. All of these Epics are combined into one root Epic. If you want to use them in
  * your application without any customization you don't have to do anything special, because it is set as default at the store creation, but if you want add you custom Epics to it
- * use combineEpics on Sense/Nets root Epic and yours.
+ * use combineEpics on sensenets root Epic and yours.
  *
  * ```
  * import { combineEpics } from 'redux-observable';
@@ -287,7 +287,7 @@ export module Epics {
     }
 
     /**
-     * Epic to login a user to a Sense/Net portal. It is related to three redux actions, returns ```LoginUser``` action and sends the response to the
+     * Epic to login a user to a sensenet portal. It is related to three redux actions, returns ```LoginUser``` action and sends the response to the
      * ```LoginUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LoginUserFailure``` action.
      */
     export const userLoginEpic = (action$, store) => {
@@ -304,7 +304,7 @@ export module Epics {
             })
     }
     /**
-         * Epic to logout a user from a Sense/Net portal. It is related to three redux actions, returns ```LogoutUser``` action and sends the response to the
+         * Epic to logout a user from a sensenet portal. It is related to three redux actions, returns ```LogoutUser``` action and sends the response to the
          * ```LogoutUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LogoutUserFailure``` action.
          */
     export const userLogoutEpic = (action$, store) => {
@@ -316,7 +316,7 @@ export module Epics {
             })
     }
     /**
-     * sn-redux root Epic, the main Epic combination that is used on a default Sense/Net application. Contains Epics related to CRUD operations and thr other built-in Sense/Net
+     * sn-redux root Epic, the main Epic combination that is used on a default sensenet application. Contains Epics related to CRUD operations and thr other built-in sensenet
      * [OData Actions and Function](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
      */
     export const rootEpic = combineEpics(

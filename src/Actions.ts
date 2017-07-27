@@ -10,8 +10,8 @@ import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
  *
  * Learn more about Redux actions [here](http://redux.js.org/docs/basics/Actions.html)
  *
- * Following are Redux actions but they're all related with a Sense/Net built-in action. Since this Sense/Net built-in actions are OData actions and functions and they get and set
- * data throught ajax request we have to handle the main steps of their process separately. So there're three separate redux action for every Sense/Net action:
+ * Following are Redux actions but they're all related with a sensenet built-in action. Since this sensenet built-in actions are OData actions and functions and they get and set
+ * data throught ajax request we have to handle the main steps of their process separately. So there're three separate redux action for every sensenet action:
  * one for the request itself and two for the two possible end of an ajax request, success and fail.
  *
  * All of the JSON responses with content or collection are normalized so you shouldn't care about how to handle nested data structure, normalizr takes JSON and a schema and replaces
@@ -113,10 +113,11 @@ import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
  */
 export module Actions {
     /**
-     * Action creator for requesting a content from Sense/Net Content Repository to get its children content.
+     * Action creator for requesting a content from sensenet Content Repository to get its children content.
      * @param path {string} Path of the requested parent item.
      * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
-     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     * @param contentType {ContentType} Content Type of the requested content.
+     * @returns {Object} Returns a redux action with the properties type, path, options and contentType.
      */
     export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
         type: 'FETCH_CONTENT_REQUEST',
@@ -128,7 +129,7 @@ export module Actions {
      * Action creator for the step when a fetching request ends successfully.
      * @param response {any} JSON response of the ajax request.
      * @param filter {string} String with the url params.
-     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
     export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, params: any) =>
         ({
@@ -140,7 +141,7 @@ export module Actions {
      * Action creator for the step when a fetching request failed.
      * @param filter {string} String with the url params.
      * @param error {any} The catched error object.
-     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+     * @returns {Object} Returns a redux action with the properties type, params and errormessage.
     */
     export const ReceiveContentFailure = (params: any, error: any) => ({
         type: 'FETCH_CONTENT_FAILURE',
@@ -148,10 +149,11 @@ export module Actions {
         message: error.message
     });
     /**
-     * Action creator for loading a content from Sense/Net Content Repository.
+     * Action creator for loading a content from sensenet Content Repository.
      * @param id {number} Path of the requested item.
      * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
-     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     * @param contentType {ContentType} Content Type of the requested content.
+     * @returns {Object} Returns a redux action with the properties id, options and contentType.
      */
     export const LoadContent = <T extends Content>(id: number, options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
         type: 'LOAD_CONTENT_REQUEST',
@@ -162,8 +164,8 @@ export module Actions {
     /**
      * Action creator for the step when a loading request ends successfully.
      * @param response {any} JSON response of the ajax request.
-     * @param filter {string} String with the url params.
-     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     * @param params {string} String with the url params.
+     * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
     export const ReceiveLoadedContent = (response: any, params: any) =>
         ({
@@ -173,9 +175,9 @@ export module Actions {
         })
     /**
      * Action creator for the step when a loading request failed.
-     * @param filter {string} String with the url params.
+     * @param params {string} String with the url params.
      * @param error {any} The catched error object.
-     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+     * @returns {Object} Returns a redux action with the properties type, params and errormessage.
     */
     export const ReceiveLoadedContentFailure = (params: any, error: any) => ({
         type: 'LOAD_CONTENT_FAILURE',
@@ -183,10 +185,9 @@ export module Actions {
         message: error.message
     });
     /**
-     * Action creator for reloading a content from Sense/Net Content Repository.
-     * @param id {number} Path of the requested item.
-     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
-     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     * Action creator for reloading a content from sensenet Content Repository.
+     * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
+     * @returns {Object} Returns a redux action with the properties type and actionName.
      */
     export const ReloadContent = <T extends Content>(actionName: 'edit' | 'view') => ({
         type: 'RELOAD_CONTENT_REQUEST',
@@ -195,8 +196,7 @@ export module Actions {
     /**
      * Action creator for the step when a reloading request ends successfully.
      * @param response {any} JSON response of the ajax request.
-     * @param filter {string} String with the url params.
-     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     * @returns {Object} Returns a redux action with the properties type, normalized response.
      */
     export const ReceiveReloadedContent = (response: any) =>
         ({
@@ -205,19 +205,17 @@ export module Actions {
         })
     /**
      * Action creator for the step when a reloading request failed.
-     * @param filter {string} String with the url params.
      * @param error {any} The catched error object.
-     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+     * @returns {Object} Returns a redux action with the properties type and errormessage.
     */
     export const ReceiveReloadedContentFailure = (error: any) => ({
         type: 'RELOAD_CONTENT_FAILURE',
         message: error.message
     });
     /**
-     * Action creator for reloading fields of a content from Sense/Net Content Repository.
-     * @param id {number} Path of the requested item.
-     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
-     * @returns {Object} Returns a redux action with the properties type, path and filter.
+     * Action creator for reloading fields of a content from sensenet Content Repository.
+     * @param fields {any[]} List of the fields to be loaded
+     * @returns {Object} Returns a redux action with the properties type and fields.
      */
     export const ReloadContentFields = <T extends Content>(...fields: any[]) => ({
         type: 'RELOAD_CONTENTFIELDS_REQUEST',
@@ -226,8 +224,7 @@ export module Actions {
     /**
      * Action creator for the step when a reloading fields of a content request ends successfully.
      * @param response {any} JSON response of the ajax request.
-     * @param filter {string} String with the url params.
-     * @returns {Object} Returns a redux action with the properties type, normalized response and filter.
+     * @returns {Object} Returns a redux action with the properties type and normalized response.
      */
     export const ReceiveReloadedContentFields = (response: any) =>
         ({
@@ -236,9 +233,8 @@ export module Actions {
         })
     /**
      * Action creator for the step when a reloading fields of a content request failed.
-     * @param filter {string} String with the url params.
      * @param error {any} The catched error object.
-     * @returns {Object} Returns a redux action with the properties type, filter and errormessage.
+     * @returns {Object} Returns a redux action with the properties type and errormessage.
     */
     export const ReceiveReloadedContentFieldsFailure = (error: any) => ({
         type: 'RELOAD_CONTENTFIELDS_FAILURE',
@@ -276,8 +272,8 @@ export module Actions {
     });
     /**
       * Action creator for updating a Content in the Content Repository.
-      * @param id {number} Id of the Content that has to be updated.
-      * @param fields {Object} Object with the field value pairs that have to be modified.
+      * @param content {Object} Object with the field value pairs that have to be modified.
+      * @param contentType {ContentType} Type of the content.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
     export const UpdateContent = <T extends Content, K extends T['options']>(content: Partial<K>, contentType: { new(...args): T } | object) => ({
@@ -314,6 +310,7 @@ export module Actions {
     /**
       * Action creator for the step when Content deleted successfully.
       * @param index {number} Index of the item in the state collection.
+      * @param id {number} Id of the item in the state collection.
       * @returns {Object} Returns a redux action with the properties type and index.
     */
     export const DeleteSuccess = (index: number, id: number) => ({
@@ -332,7 +329,7 @@ export module Actions {
     })
     /**
       * Action creator for deleting multiple Content from the Content Repository.
-      * @param path {string} Path of the parent Content.
+      * @param path {string} Path of parent the Content.
       * @param ids {string[]} Array of ids of the Content that should be deleted.
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
@@ -592,7 +589,7 @@ export module Actions {
     })
 
     /**
-      * Action creator for login a user to a Sense/Net portal.
+      * Action creator for login a user to a sensenet portal.
       * @param userName {string} Login name of the user.
       * @param password {string} Password of the user.
       * @returns {Object} Returns a redux action with the properties userName and password.
@@ -622,7 +619,7 @@ export module Actions {
     })
 
     /**
-      * Action creator for logout a user from a Sense/Net portal.
+      * Action creator for logout a user from a sensenet portal.
       * @returns {Object} Returns a redux action.
     */
     export const UserLogout = () => ({
