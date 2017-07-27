@@ -38,7 +38,7 @@ describe('Epics', () => {
                 },
                 {
                     type: 'FETCH_CONTENT_FAILURE',
-                    params: new ODataApi.ODataParams({select: ["Id", "Type"]}),
+                    params: new ODataApi.ODataParams({select: ['Id', 'Type']}),
                     message: 'XMLHttpRequest is not supported by your browser'
                 }]);
         })

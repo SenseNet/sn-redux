@@ -102,7 +102,7 @@ export module Epics {
      * Epic for creating a Content in the Content Repository. It is related to three redux actions, returns ```CreateContent``` action and sends the JSON response to the
      * ```CreateContentSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```CreateContentFailure``` action.
      */
-    export function createContentEpic(action$, store) {
+    export const createContentEpic = (action$, store) => {
         return action$.ofType('CREATE_CONTENT_REQUEST')
             .mergeMap(action => {
                 return action.content.Save()
@@ -280,7 +280,7 @@ export module Epics {
                         return result === Authentication.LoginState.Authenticated ?
                             Actions.UserLoginSuccess(result)
                             :
-                            Actions.UserLoginFailure({ message: "Failed to log in." });
+                            Actions.UserLoginFailure({ message: 'Failed to log in.' });
                     })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
@@ -298,7 +298,7 @@ export module Epics {
                         return result ?
                             Actions.UserLoginSuccess(result)
                             :
-                            Actions.UserLoginFailure({ message: "Failed to log in." });
+                            Actions.UserLoginFailure({ message: 'Failed to log in.' });
                     })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })

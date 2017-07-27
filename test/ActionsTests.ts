@@ -1,7 +1,7 @@
 ///<reference path="../node_modules/@types/mocha/index.d.ts"/>
 import { Actions } from '../src/Actions'
 import * as Chai from 'chai';
-import { Content, Mocks, IContentOptions, ContentTypes } from "sn-client-js";
+import { Content, Mocks, IContentOptions, ContentTypes } from 'sn-client-js';
 const expect = Chai.expect;
 
 describe('Actions', () => {
@@ -20,7 +20,7 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'FETCH_CONTENT_SUCCESS',
                 response: { entities: {}, result: [] },
-                params: "?$select=Id,Type&metadata=no"
+                params: '?$select=Id,Type&metadata=no'
             }
             expect(Actions.ReceiveContent({ d: { results: [], __count: 0 } }, '?$select=Id,Type&metadata=no')).to.deep.equal(expectedAction)
         });
@@ -28,7 +28,7 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'FETCH_CONTENT_FAILURE',
                 message: 'error',
-                params: "?$select=Id,Type&metadata=no"
+                params: '?$select=Id,Type&metadata=no'
             }
             expect(Actions.ReceiveContentFailure('?$select=Id,Type&metadata=no', { message: 'error' })).to.deep.equal(expectedAction)
         });
@@ -186,7 +186,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -269,7 +269,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -303,7 +303,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -336,7 +336,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -369,7 +369,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -403,7 +403,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -436,7 +436,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -469,7 +469,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
@@ -503,7 +503,7 @@ describe('Actions', () => {
                     entities: {
                         collection: {
                             123: {
-                                DisplayName: "My content",
+                                DisplayName: 'My content',
                                 Id: 123,
                                 Index: 2
                             }
