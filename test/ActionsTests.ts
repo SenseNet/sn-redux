@@ -1,8 +1,7 @@
 ///<reference path="../node_modules/@types/mocha/index.d.ts"/>
-import { ContentTypes } from 'sn-client-js';
 import { Actions } from '../src/Actions'
 import * as Chai from 'chai';
-import { Content, Mocks, IContentOptions } from "sn-client-js";
+import { Content, Mocks, IContentOptions, ContentTypes } from "sn-client-js";
 const expect = Chai.expect;
 
 describe('Actions', () => {
@@ -40,6 +39,7 @@ describe('Actions', () => {
             Name: 'My Content',
             DueDate: null,
         };
+
         it('should create an action to a create content request', () => {
             const expectedAction = {
                 type: 'CREATE_CONTENT_REQUEST',
@@ -77,7 +77,7 @@ describe('Actions', () => {
         it('should create an action to an update content request', () => {
             const expectedAction = {
                 type: 'UPDATE_CONTENT_REQUEST',
-                fields: { Index: 2 },
+                content: { Index: 2 },
                 contentType: ContentTypes.Task
             }
             expect(Actions.UpdateContent({
