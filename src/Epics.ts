@@ -271,10 +271,10 @@ export module Epics {
     /**
      * Epic to wait for the current login state to be initialized
      */
-    export const checkLoginStateEpic = (action$, store) => {
+    export const checkLoginStateEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('CHECK_LOGIN_STATE_REQUEST')
             .mergeMap(action => {
-                return action.content.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
+                return dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
                     .first()
                     .map(result => {
                         return result === Authentication.LoginState.Authenticated ?
