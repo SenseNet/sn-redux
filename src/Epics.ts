@@ -290,10 +290,10 @@ export module Epics {
      * Epic to login a user to a sensenet portal. It is related to three redux actions, returns ```LoginUser``` action and sends the response to the
      * ```LoginUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LoginUserFailure``` action.
      */
-    export const userLoginEpic = (action$, store) => {
+    export const userLoginEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
-                return action.content.Authentication.Login(action.userName, action.password)
+                return dependencies.repository.Authentication.Login(action.userName, action.password)
                     .map(result => {
                         return result ?
                             Actions.UserLoginSuccess(result)
@@ -307,10 +307,10 @@ export module Epics {
          * Epic to logout a user from a sensenet portal. It is related to three redux actions, returns ```LogoutUser``` action and sends the response to the
          * ```LogoutUserSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```LogoutUserFailure``` action.
          */
-    export const userLogoutEpic = (action$, store) => {
+    export const userLogoutEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('USER_LOGOUT_REQUEST')
             .mergeMap(action => {
-                return action.content.Authentication.Logout()
+                return dependencies.repository.Authentication.Logout()
                     .map(Actions.UserLogoutSuccess)
                     .catch(error => Observable.of(Actions.UserLogoutFailure(error)))
             })
