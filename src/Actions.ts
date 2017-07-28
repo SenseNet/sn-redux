@@ -131,10 +131,10 @@ export module Actions {
      * @param filter {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
-    export const ReceiveContent = (response: ODataApi.ODataCollectionResponse<any>, params: any) =>
+    export const ReceiveContent = (response: Content[], params: any) =>
         ({
             type: 'FETCH_CONTENT_SUCCESS',
-            response: normalize(response.d.results, Schemas.arrayOfContent),
+            response: normalize(response, Schemas.arrayOfContent),
             params
         })
     /**
@@ -170,7 +170,7 @@ export module Actions {
     export const ReceiveLoadedContent = (response: any, params: any) =>
         ({
             type: 'LOAD_CONTENT_SUCCESS',
-            response: normalize(response.d, Schemas.content),
+            response: normalize(response, Schemas.content),
             params
         })
     /**
@@ -201,7 +201,7 @@ export module Actions {
     export const ReceiveReloadedContent = (response: any) =>
         ({
             type: 'RELOAD_CONTENT_SUCCESS',
-            response: normalize(response.d, Schemas.content)
+            response: normalize(response, Schemas.content)
         })
     /**
      * Action creator for the step when a reloading request failed.
@@ -229,7 +229,7 @@ export module Actions {
     export const ReceiveReloadedContentFields = (response: any) =>
         ({
             type: 'RELOAD_CONTENTFIELDS_SUCCESS',
-            response: normalize(response.d, Schemas.content)
+            response: normalize(response, Schemas.content)
         })
     /**
      * Action creator for the step when a reloading fields of a content request failed.
@@ -246,10 +246,9 @@ export module Actions {
      * @param content {Content} Content that have to be created in the Content Respository.
      * @returns {Object} Returns a redux action with the properties type, path of the parent and content.
      */
-    export const CreateContent = <T extends Content, K extends T['options']>(options: K, contentType: { new(arg: K, arg2: Repository.BaseRepository): T }) => ({
+    export const CreateContent = <T extends Content>(content: T) => ({
         type: 'CREATE_CONTENT_REQUEST',
-        content: options,
-        contentType
+        content
     });
     /**
      * Action creator for the step when Content creation on the server ends successfully.
@@ -259,7 +258,7 @@ export module Actions {
     export const CreateContentSuccess = (response: any) =>
         ({
             type: 'CREATE_CONTENT_SUCCESS',
-            response: normalize(response.d, Schemas.content)
+            response: normalize(response, Schemas.content)
         });
     /**
      * Action creator for the step when Content creation failed on the server.
@@ -276,9 +275,8 @@ export module Actions {
       * @param contentType {ContentType} Type of the content.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
-    export const UpdateContent = <T extends Content, K extends T['options']>(content: Partial<K>, contentType: { new(...args): T } | object) => ({
+    export const UpdateContent = <T extends Content>(content: Partial<T>) => ({
         type: 'UPDATE_CONTENT_REQUEST',
-        contentType,
         content
     });
     /**
@@ -289,7 +287,7 @@ export module Actions {
     export const UpdateContentSuccess = (response: any) =>
         ({
             type: 'UPDATE_CONTENT_SUCCESS',
-            response: normalize(response.response.d, Schemas.content)
+            response: normalize(response, Schemas.content)
         });
     /**
      * Action creator for the step when Content modification failed on the server.
