@@ -167,7 +167,7 @@ export module Actions {
      * @param params {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
-    export const ReceiveLoadedContent = (response: any, params: any) =>
+    export const ReceiveLoadedContent = (response: Content, params: any) =>
         ({
             type: 'LOAD_CONTENT_SUCCESS',
             response: normalize(response, Schemas.content),
@@ -198,7 +198,7 @@ export module Actions {
      * @param response {any} JSON response of the ajax request.
      * @returns {Object} Returns a redux action with the properties type, normalized response.
      */
-    export const ReceiveReloadedContent = (response: any) =>
+    export const ReceiveReloadedContent = (response: Content) =>
         ({
             type: 'RELOAD_CONTENT_SUCCESS',
             response: normalize(response, Schemas.content)
@@ -226,7 +226,7 @@ export module Actions {
      * @param response {any} JSON response of the ajax request.
      * @returns {Object} Returns a redux action with the properties type and normalized response.
      */
-    export const ReceiveReloadedContentFields = (response: any) =>
+    export const ReceiveReloadedContentFields = (response: Content) =>
         ({
             type: 'RELOAD_CONTENTFIELDS_SUCCESS',
             response: normalize(response, Schemas.content)
@@ -255,7 +255,7 @@ export module Actions {
      * @param response {any} JSON response of the ajax request.
      * @returns {Object} Returns a redux action with the properties type and the normalized response.
      */
-    export const CreateContentSuccess = (response: any) =>
+    export const CreateContentSuccess = (response: Content) =>
         ({
             type: 'CREATE_CONTENT_SUCCESS',
             response: normalize(response, Schemas.content)
@@ -284,7 +284,7 @@ export module Actions {
      * @param response {any} JSON response of the ajax request.
      * @returns {Object} Returns a redux action with the properties type and the response.
      */
-    export const UpdateContentSuccess = (response: any) =>
+    export const UpdateContentSuccess = (response: Content) =>
         ({
             type: 'UPDATE_CONTENT_SUCCESS',
             response: normalize(response, Schemas.content)

@@ -277,12 +277,8 @@ export module Epics {
                 return dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
                     .first()
                     .map(result => {
-                        return result === Authentication.LoginState.Authenticated ?
-                            Actions.UserLoginSuccess(result)
-                            :
-                            Actions.UserLoginFailure({ message: 'Failed to log in.' });
+                        return result
                     })
-                    .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
     }
 
