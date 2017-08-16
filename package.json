@@ -84,7 +84,7 @@
     "redux": "^3.7.2",
     "redux-mock-store": "^1.2.3",
     "redux-observable": "^0.14.1",
-    "semantic-release": "^6.3.6",
+    "semantic-release": "^7.0.1",
     "tslint": "^5.5.0",
     "typedoc": "^0.8.0",
     "typedoc-md-theme": "^1.0.1",
