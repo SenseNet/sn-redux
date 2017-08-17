@@ -44,7 +44,7 @@ export module Schemas {
      *
      * It represents an item in the collection Object of the sn-redux store. The items are identified by the attribute 'Id'.
      */
-    export const content = new schema.Entity('collection', {}, { idAttribute: 'Id' });
+    export const content = new schema.Entity('entities', {}, { idAttribute: 'Id' });
     /**
      * Schema of a Collection.
      *

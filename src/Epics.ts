@@ -36,18 +36,39 @@ import { Repository, Content, Collection, ODataApi, Authentication } from 'sn-cl
 
 export module Epics {
     /**
+     * Epic for initialize a sensenet Redux store. It checks the InitSensenetStore Action and calls the necessary ones snycronously. Loads the current content,
+     * checks the login state with CheckLoginState, fetch the children items with RequestContent and loads the current content related actions with
+     * LoadContentActions.
+     */
+    export const initSensenetStoreEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+        return action$.ofType('INIT_SENSENET_STORE')
+            .mergeMap(action => {
+                dependencies.repository.GetCurrentUser().subscribe(user => {
+                    store.dispatch(Actions.UserChanged(user))
+                })
+                store.dispatch(Actions.CheckLoginState())
+                return dependencies.repository.Load(action.path, action.options)
+                    .map((response) => {
+                        store.dispatch(Actions.RequestContent(action.path, action.options))
+                        return Actions.ReceiveLoadedContent(response, action.options)
+                    })
+                    .catch(error => {
+                        return Observable.of(Actions.ReceiveLoadedContentFailure(action.options, error))
+                    })
+            })
+    }
+    /**
      * Epic for fetching content from the Content Repository. It is related to three redux actions, returns the ```RequestContent``` action and sends the JSON response to the
      * ```ReceiveContent``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveContentFailure``` action.
      */
     export const fetchContentEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('FETCH_CONTENT_REQUEST')
             .mergeMap(action => {
-                let params = new ODataApi.ODataParams(action.options || {});
                 let collection = new Collection.Collection([], dependencies.repository, action.contentType);
-                return collection.Read(action.path, params)
-                    .map((response) => Actions.ReceiveContent(response, params))
+                return collection.Read(action.path, action.options)
+                    .map((response) => Actions.ReceiveContent(response, action.options))
                     .catch(error => {
-                        return Observable.of(Actions.ReceiveContentFailure(params, error))
+                        return Observable.of(Actions.ReceiveContentFailure(action.options, error))
                     })
             }
             );
@@ -59,14 +80,28 @@ export module Epics {
     export const loadContentEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('LOAD_CONTENT_REQUEST')
             .mergeMap(action => {
-                let params = new ODataApi.ODataParams(action.options || {});
-                return dependencies.repository.Load(action.id, params)
-                    .map((response) => Actions.ReceiveLoadedContent(response, params))
+                return dependencies.repository.Load(action.id, action.options)
+                    .map((response) => {
+                        store.dispatch(Actions.LoadContentActions(response, action.scenario))
+                        return Actions.ReceiveLoadedContent(response, action.options)
+                    })
                     .catch(error => {
-                        return Observable.of(Actions.ReceiveLoadedContentFailure(params, error))
+                        return Observable.of(Actions.ReceiveLoadedContentFailure(action.options, error))
                     })
             }
             );
+    }
+    /**
+     * Epic for loading Actions of a content from the Content Repository. It is related to three redux actions, returns the ```LoadContentActions``` action and sends the JSON response to the
+     * ```ReceiveContentActions``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```ReceiveContentActionsFailure``` action.
+     */
+    export const loadContentActionsEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+        return action$.ofType('LOAD_CONTENT_ACTIONS')
+            .mergeMap(action => {
+                return action.content.Actions(action.scenario)
+                    .map(Actions.ReceiveContentActions)
+                    .catch(error => Observable.of(Actions.ReceiveContentActionsFailure(error)))
+            })
     }
     /**
      * Epic for reloading content from the Content Repository. It is related to three redux actions, returns the ```ReloadContent``` action and sends the JSON response to the
@@ -277,7 +312,10 @@ export module Epics {
                 return dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
                     .first()
                     .map(result => {
-                        return result
+                        return result === Authentication.LoginState.Authenticated ?
+                        Actions.UserLoginSuccess(result)
+                        :
+                        Actions.UserLoginFailure({ message: 'Failed to log in.' });
                     })
             })
     }
@@ -289,6 +327,7 @@ export module Epics {
     export const userLoginEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
+                console.log(action)
                 return dependencies.repository.Authentication.Login(action.userName, action.password)
                     .map(result => {
                         return result ?
@@ -316,7 +355,10 @@ export module Epics {
      * [OData Actions and Function](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
      */
     export const rootEpic = combineEpics(
+        initSensenetStoreEpic,
         fetchContentEpic,
+        loadContentEpic,
+        loadContentActionsEpic,
         createContentEpic,
         updateContentEpic,
         deleteContentEpic,
@@ -329,8 +371,9 @@ export module Epics {
         undocheckoutContentEpic,
         forceundocheckoutContentEpic,
         restoreversionContentEpic,
-        checkLoginStateEpic,
         userLoginEpic,
-        userLogoutEpic
+        userLogoutEpic,
+        checkLoginStateEpic
     );
 }
+

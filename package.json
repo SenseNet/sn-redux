@@ -61,8 +61,7 @@
     "redux-logger": "^3.0.6",
     "redux-observable": "^0.14.1",
     "rimraf": "^2.6.1",
-    "rxjs": "^5.4.2",
-    "sn-client-js": "^2.1.0"
+    "rxjs": "^5.4.2"
   },
   "devDependencies": {
     "@types/chai": "^4.0.1",
@@ -85,6 +84,7 @@
     "redux-mock-store": "^1.2.3",
     "redux-observable": "^0.14.1",
     "semantic-release": "^6.3.6",
+    "sn-client-js": "^2.3.0-development.2",
     "tslint": "^5.5.0",
     "typedoc": "^0.8.0",
     "typedoc-md-theme": "^1.0.1",

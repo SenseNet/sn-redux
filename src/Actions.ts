@@ -102,9 +102,9 @@ import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
  * import { Root } from './components/Root'
  * import { listByFilter } from './reducers/filtering'
  *
- * const collection = Reducers.collection;
+ * const sensenet = Reducers.collection;
  * const myReducer = combineReducers({
- *   collection,
+ *   sensenet,
  *   listByFilter
  * });
  *
@@ -113,13 +113,23 @@ import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
  */
 export module Actions {
     /**
+     * Action creator for intializing a sensenet store.
+     * @param path {string} Path of the root Content
+     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
+     */
+    export const InitSensenetStore = (path?: string, options: ODataApi.IODataParams<Content> = {}) => ({
+        type: 'INIT_SENSENET_STORE',
+        path: path ? path : '/Root',
+        options: options
+    })
+    /**
      * Action creator for requesting a content from sensenet Content Repository to get its children content.
      * @param path {string} Path of the requested parent item.
      * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
      * @param contentType {ContentType} Content Type of the requested content.
      * @returns {Object} Returns a redux action with the properties type, path, options and contentType.
      */
-    export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
+    export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
         type: 'FETCH_CONTENT_REQUEST',
         path,
         options: options,
@@ -155,7 +165,7 @@ export module Actions {
      * @param contentType {ContentType} Content Type of the requested content.
      * @returns {Object} Returns a redux action with the properties id, options and contentType.
      */
-    export const LoadContent = <T extends Content>(id: number, options: ODataApi.IODataParams = {}, contentType?: { new(...args): T }) => ({
+    export const LoadContent = <T extends Content>(id: number, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
         type: 'LOAD_CONTENT_REQUEST',
         id,
         options: options,
@@ -170,7 +180,7 @@ export module Actions {
     export const ReceiveLoadedContent = (response: Content, params: any) =>
         ({
             type: 'LOAD_CONTENT_SUCCESS',
-            response: normalize(response, Schemas.content),
+            response,
             params
         })
     /**
@@ -184,6 +194,32 @@ export module Actions {
         params,
         message: error.message
     });
+    /**
+     * Action creator for loading Actions of a Content from sensenet Content Repository.
+     * @param id {number} Id of the Content
+     * @param scenario {string} The Actions should be in the given Scenario
+     */
+    export const LoadContentActions = (content: Content, scenario?: string) => ({
+        type: 'LOAD_CONTENT_ACTIONS',
+        content,
+        scenario
+    })
+    /**
+     * Action creator for the step when a Action loading request ends successfully.
+     * @param response {any} JSON response of the ajax request.
+     */
+    export const ReceiveContentActions = (response: any) => ({
+        type: 'LOAD_CONTENT_ACTIONS_SUCCESS',
+        actions: response
+    })
+    /**
+     * Action creator for the step when a loading Actions request failed.
+     * @param error {any} The catched error object.
+     */
+    export const ReceiveContentActionsFailure = (error: any) => ({
+        type: 'LOAD_CONTENT_ACTIONS_FAILURE',
+        error
+    })
     /**
      * Action creator for reloading a content from sensenet Content Repository.
      * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
@@ -201,7 +237,7 @@ export module Actions {
     export const ReceiveReloadedContent = (response: Content) =>
         ({
             type: 'RELOAD_CONTENT_SUCCESS',
-            response: normalize(response, Schemas.content)
+            response
         })
     /**
      * Action creator for the step when a reloading request failed.
@@ -229,7 +265,7 @@ export module Actions {
     export const ReceiveReloadedContentFields = (response: Content) =>
         ({
             type: 'RELOAD_CONTENTFIELDS_SUCCESS',
-            response: normalize(response, Schemas.content)
+            response: response
         })
     /**
      * Action creator for the step when a reloading fields of a content request failed.
@@ -585,6 +621,13 @@ export module Actions {
     export const CheckLoginState = () => ({
         type: 'CHECK_LOGIN_STATE_REQUEST'
     })
+    /**
+     * 
+     */
+    export const UserChanged = (user) => ({
+        type: 'USER_CHANGED',
+        user
+    })
 
     /**
       * Action creator for login a user to a sensenet portal.
@@ -615,7 +658,6 @@ export module Actions {
         type: 'USER_LOGIN_FAILURE',
         message: (error.status === 403) ? 'The username or the password is not valid!' : error.message
     })
-
     /**
       * Action creator for logout a user from a sensenet portal.
       * @returns {Object} Returns a redux action.
