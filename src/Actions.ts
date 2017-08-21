@@ -225,8 +225,9 @@ export module Actions {
      * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
      * @returns {Object} Returns a redux action with the properties type and actionName.
      */
-    export const ReloadContent = <T extends Content>(actionName: 'edit' | 'view') => ({
+    export const ReloadContent = <T extends Content>(content: Content, actionName: 'edit' | 'view') => ({
         type: 'RELOAD_CONTENT_REQUEST',
+        content,
         actionName
     });
     /**
@@ -253,8 +254,9 @@ export module Actions {
      * @param fields {any[]} List of the fields to be loaded
      * @returns {Object} Returns a redux action with the properties type and fields.
      */
-    export const ReloadContentFields = <T extends Content>(...fields: any[]) => ({
+    export const ReloadContentFields = <T extends Content>(content: Content, fields: any[]) => ({
         type: 'RELOAD_CONTENTFIELDS_REQUEST',
+        content,
         fields
     });
     /**
@@ -323,7 +325,7 @@ export module Actions {
     export const UpdateContentSuccess = (response: Content) =>
         ({
             type: 'UPDATE_CONTENT_SUCCESS',
-            response: normalize(response, Schemas.content)
+            response: response
         });
     /**
      * Action creator for the step when Content modification failed on the server.
@@ -340,7 +342,7 @@ export module Actions {
       * @param permanently {boolean} Defines whether the a Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const Delete = (id: number, permanently: boolean = false) => ({ type: 'DELETE_CONTENT_REQUEST', id, permanently });
+    export const Delete = <T extends Content>(content: T, permanently: boolean = false) => ({ type: 'DELETE_CONTENT_REQUEST', content, permanently });
     /**
       * Action creator for the step when Content deleted successfully.
       * @param index {number} Index of the item in the state collection.
@@ -379,9 +381,9 @@ export module Actions {
       * @param indexes {number[]} Array of indexes of the items in the state collection that should be removed.
       * @returns {Object} Returns a redux action with the properties type and index.
     */
-    export const DeleteBatchSuccess = (indexes: number[]) => ({
+    export const DeleteBatchSuccess = (ids: number[]) => ({
         type: 'DELETE_BATCH_SUCCESS',
-        indexes
+        ids
     })
     /**
      * Action creator for the step when deleting multiple Content is failed.
@@ -397,18 +399,18 @@ export module Actions {
       * @param id {number} Id of the content that should be checked out.
       * @returns {Object} Returns a redux action with the properties type and id .
     */
-    export const CheckOut = (id: number) => ({
+    export const CheckOut = <T extends Content>(content: T) => ({
         type: 'CHECKOUT_CONTENT_REQUEST',
-        id
+        content
     })
     /**
       * Action creator for the step when a Content is checked out successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const CheckOutSuccess = (response: any) => ({
+    export const CheckOutSuccess = (response: Content) => ({
         type: 'CHECKOUT_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when checking out a Content is failed.
@@ -424,9 +426,9 @@ export module Actions {
       * @param id {number} Id of the content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type, id and checkinComment.
     */
-    export const CheckIn = (id: number, checkInComment: string = '') => ({
+    export const CheckIn = <T extends Content>(content: T, checkInComment: string = '') => ({
         type: 'CHECKIN_CONTENT_REQUEST',
-        id,
+        content,
         checkInComment
     })
     /**
@@ -434,9 +436,9 @@ export module Actions {
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const CheckInSuccess = (response: any) => ({
+    export const CheckInSuccess = (response: Content) => ({
         type: 'CHECKIN_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when checking out a Content is failed.
@@ -452,18 +454,18 @@ export module Actions {
       * @param id {number} Id of the content that should be published.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const Publish = (id: number) => ({
+    export const Publish = <T extends Content>(content: T) => ({
         type: 'PUBLISH_CONTENT_REQUEST',
-        id
+        content
     })
     /**
       * Action creator for the step when a Content is published successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const PublishSuccess = (response: any) => ({
+    export const PublishSuccess = (response: Content) => ({
         type: 'PUBLISH_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when publishing a Content is failed.
@@ -479,18 +481,18 @@ export module Actions {
       * @param id {number} Id of the content that should be approved.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const Approve = (id: number) => ({
+    export const Approve = <T extends Content>(content: T) => ({
         type: 'APPROVE_CONTENT_REQUEST',
-        id
+        content
     })
     /**
       * Action creator for the step when a Content is approved successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const ApproveSuccess = (response: any) => ({
+    export const ApproveSuccess = (response: Content) => ({
         type: 'APPROVE_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when approving a Content is failed.
@@ -507,9 +509,9 @@ export module Actions {
       * @param rejectReason {string} Reason of rejecting.
       * @returns {Object} Returns a redux action with the properties type, rejectReason and id.
     */
-    export const Reject = (id: number, rejectReason: string = '') => ({
+    export const Reject = <T extends Content>(content: T, rejectReason: string = '') => ({
         type: 'REJECT_CONTENT_REQUEST',
-        id,
+        content,
         rejectReason
     })
     /**
@@ -517,9 +519,9 @@ export module Actions {
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const RejectSuccess = (response: any) => ({
+    export const RejectSuccess = (response: Content) => ({
         type: 'REJECT_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when rejecting a Content is failed.
@@ -535,18 +537,18 @@ export module Actions {
       * @param id {number} Id of the content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const UndoCheckout = (id: number) => ({
+    export const UndoCheckout = <T extends Content>(content: T) => ({
         type: 'UNDOCHECKOUT_CONTENT_REQUEST',
-        id
+        content
     })
     /**
       * Action creator for the step when a Content is checked-in successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const UndoCheckoutSuccess = (response: any) => ({
+    export const UndoCheckoutSuccess = (response: Content) => ({
         type: 'UNDOCHECKOUT_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when undoing checkout on a Content is failed.
@@ -562,18 +564,18 @@ export module Actions {
       * @param id {number} Id of the content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const ForceUndoCheckout = (id: number) => ({
+    export const ForceUndoCheckout = <T extends Content>(content: T) => ({
         type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST',
-        id
+        content
     })
     /**
       * Action creator for the step when a Content is checked-in successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const ForceUndoCheckoutSuccess = (response: any) => ({
+    export const ForceUndoCheckoutSuccess = (response: Content) => ({
         type: 'FORCEUNDOCHECKOUT_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when undoing checkout on a Content is failed.
@@ -590,9 +592,9 @@ export module Actions {
       * @param version {string} Specify which old version to restore
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const RestoreVersion = (id: number, version: string) => ({
+    export const RestoreVersion = <T extends Content>(content: T, version: string) => ({
         type: 'RESTOREVERSION_CONTENT_REQUEST',
-        id,
+        content,
         version
     })
     /**
@@ -600,9 +602,9 @@ export module Actions {
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
-    export const RestoreVersionSuccess = (response: any) => ({
+    export const RestoreVersionSuccess = (response: Content) => ({
         type: 'RESTOREVERSION_CONTENT_SUCCESS',
-        response: normalize(response.response.d, Schemas.content)
+        response: response
     })
     /**
      * Action creator for the step when restoring a previous version of a Content is failed.

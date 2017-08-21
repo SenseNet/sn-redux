@@ -4,20 +4,22 @@ import { Authentication } from 'sn-client-js';
 
 export module Reducers {
 
-    const country = (state = '', action) => {
+    export const country = (state = '', action) => {
         return state
     }
-    const language = (state = navigator.language, action) => {
+    export const language = (state = 'en-US', action) => {
         switch (action.type) {
-            case 'USER_LOGIN_SUCCESS':
-                return Authentication.LoginState.Authenticated
-            case 'USER_LOGOUT_SUCCESS':
-                return Authentication.LoginState.Unauthenticated
+            case 'USER_CHANGED':
+                if (typeof action.user.Language !== 'undefined'
+                    && action.user.Language.length > 0)
+                    return action.user.Language[0]
+                else
+                    return state
             default:
                 return state
         }
     }
-    const loginState = (state = Authentication.LoginState.Pending, action) => {
+    export const loginState = (state = Authentication.LoginState.Pending, action) => {
         switch (action.type) {
             case 'USER_LOGIN_SUCCESS':
                 return Authentication.LoginState.Authenticated
@@ -31,7 +33,7 @@ export module Reducers {
                 return state
         }
     }
-    const loginError = (state = '', action) => {
+    export const loginError = (state = '', action) => {
         switch (action.type) {
             case 'USER_LOGIN_FAILURE':
                 return action.message
@@ -42,7 +44,7 @@ export module Reducers {
         }
     }
 
-    const userName = (state = 'Visitor', action) => {
+    export const userName = (state = 'Visitor', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
                 return action.user.Name
@@ -52,7 +54,7 @@ export module Reducers {
         }
     }
 
-    const fullName = (state = 'Visitor', action) => {
+    export const fullName = (state = 'Visitor', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
                 return action.user.DisplayName
@@ -61,7 +63,7 @@ export module Reducers {
         }
     }
 
-    const userLanguage = (state = navigator.language, action) => {
+    export const userLanguage = (state = 'en-US', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
                 if (typeof action.user.Language !== 'undefined'
@@ -80,7 +82,7 @@ export module Reducers {
         userLanguage
     })
 
-    export const session = combineReducers({
+    const session = combineReducers({
         country,
         language,
         loginState,
@@ -88,7 +90,7 @@ export module Reducers {
         user
     })
 
-    const ids = (state = [], action) => {
+    export const ids = (state = [], action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_SUCCESS':
                 return action.response.result;
@@ -100,7 +102,7 @@ export module Reducers {
                 return state;
         }
     }
-    const entities = (state = {}, action) => {
+    export const entities = (state = {}, action) => {
         if (action.response && (action.type !== 'USER_LOGIN_SUCCESS' && action.type !== 'LOAD_CONTENT_SUCCESS')) {
             return (<any>Object).assign({}, state, action.response.entities.entities);
         }
@@ -113,7 +115,7 @@ export module Reducers {
                 return state;
         }
     }
-    const isFetching = (state = {}, action) => {
+    export const isFetching = (state = false, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 return true;
@@ -124,7 +126,7 @@ export module Reducers {
                 return state;
         }
     }
-    const childrenerror = (state = {}, action) => {
+    export const childrenerror = (state = null, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_FAILURE':
                 return action.message;
@@ -168,64 +170,76 @@ export module Reducers {
                 return state;
         }
     }
-    const childrenactions = (state = {}, action) => {
+    export const childrenactions = (state = {}, action) => {
         return state
     }
-    const top = (state = {}, action) => {
+    export const top = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 if (action.options.top)
                     return action.options.top
+                else
+                    return state
             default:
                 return state
         }
     }
-    const skip = (state = {}, action) => {
+    export const skip = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 if (action.options.skip)
                     return action.options.skip
+                else
+                    return state
             default:
                 return state
         }
     }
-    const query = (state = {}, action) => {
+    export const query = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 if (action.options.query)
                     return action.options.query
+                else
+                    return state
             default:
                 return state
         }
     }
-    const order = (state = {}, action) => {
+    export const order = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 if (action.options.order)
                     return action.options.order
+                else
+                    return state
             default:
                 return state
         }
     }
-    const filter = (state = {}, action) => {
+    export const filter = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 if (action.options.filter)
                     return action.options.filter
+                else
+                    return state
             default:
                 return state
         }
     }
-    const select = (state = {}, action) => {
+    export const select = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
                 if (action.options.select)
                     return action.options.select
+                else
+                    return state
             default:
                 return state
         }
     }
-    export const children = combineReducers({
+    const children = combineReducers({
         ids,
         entities,
         isFetching,
@@ -239,7 +253,7 @@ export module Reducers {
         select
     })
 
-    const isSaved = (state = true, action) => {
+    export const isSaved = (state = true, action) => {
         switch (action.type) {
             case 'CREATE_CONTENT_REQUEST':
             case 'CREATE_CONTENT_FAILURE':
@@ -253,15 +267,15 @@ export module Reducers {
         }
     }
 
-    const isValid = (state = true, action) => {
+    export const isValid = (state = true, action) => {
         return state
     }
 
-    const isDirty = (state = false, action) => {
+    export const isDirty = (state = false, action) => {
         return state
     }
 
-    const isOperationInProgress = (state = false, action) => {
+    export const isOperationInProgress = (state = false, action) => {
         switch (action.type) {
             case 'CREATE_CONTENT_REQUEST':
             case 'UPDATE_CONTENT_REQUEST':
@@ -280,7 +294,7 @@ export module Reducers {
         isOperationInProgress
     })
 
-    const contenterror = (state: any = null, action) => {
+    export const contenterror = (state: any = null, action) => {
         switch (action.type) {
             case 'CREATE_CONTENT_FAILURE':
             case 'UPDATE_CONTENT_FAILURE':
@@ -324,7 +338,7 @@ export module Reducers {
                 return state;
         }
     }
-    const contentactions = (state = {}, action) => {
+    export const contentactions = (state = {}, action) => {
         switch (action.type) {
             case 'LOAD_CONTENT_ACTIONS_SUCCESS':
                 return action.actions
@@ -332,18 +346,17 @@ export module Reducers {
                 return state
         }
     }
-    const fields = (state = {}, action) => {
+    export const fields = (state = {}, action) => {
         switch (action.type) {
             case 'LOAD_CONTENT_SUCCESS':
             case 'RELOAD_CONTENT_SUCCESS':
-
                 return action.response.GetFields()
             default:
                 return state
         }
     }
 
-    const content = (state = {}, action) => {
+    export const content = (state = {}, action) => {
         switch (action.type) {
             case 'LOAD_CONTENT_SUCCESS':
             case 'RELOAD_CONTENT_SUCCESS':
@@ -361,7 +374,7 @@ export module Reducers {
         content
     })
 
-    const selected = (state = [], action) => {
+    export const selected = (state = [], action) => {
         return state;
     }
 
