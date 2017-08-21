@@ -79,8 +79,7 @@ import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
  *           DisplayName: input.value
  *         });
  *         content["Status"] = "active";
- *         const ROOT_URL = 'https://mySite.com/OData.svc/workspaces/Project/budapestprojectworkspace/Tasks';
- *         dispatch(Actions.createContent(ROOT_URL, content))
+ *         dispatch(Actions.createContent(content))
  *         input.value = ''
  *       } }>
  *         <input className="textField" ref={node => {
@@ -102,7 +101,7 @@ import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
  * import { Root } from './components/Root'
  * import { listByFilter } from './reducers/filtering'
  *
- * const sensenet = Reducers.collection;
+ * const sensenet = Reducers.sensenet;
  * const myReducer = combineReducers({
  *   sensenet,
  *   listByFilter
@@ -125,20 +124,20 @@ export module Actions {
     /**
      * Action creator for requesting a content from sensenet Content Repository to get its children content.
      * @param path {string} Path of the requested parent item.
-     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
+     * @param options {OData.IODataParams<T>} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
      * @param contentType {ContentType} Content Type of the requested content.
      * @returns {Object} Returns a redux action with the properties type, path, options and contentType.
      */
     export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
         type: 'FETCH_CONTENT_REQUEST',
         path,
-        options: options,
+        options,
         contentType
     });
     /**
      * Action creator for the step when a fetching request ends successfully.
-     * @param response {any} JSON response of the ajax request.
-     * @param filter {string} String with the url params.
+     * @param response {Content[]} response of the ajax request as a Content array.
+     * @param params {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
     export const ReceiveContent = (response: Content[], params: any) =>
@@ -149,7 +148,7 @@ export module Actions {
         })
     /**
      * Action creator for the step when a fetching request failed.
-     * @param filter {string} String with the url params.
+     * @param params {string} String with the url params.
      * @param error {any} The catched error object.
      * @returns {Object} Returns a redux action with the properties type, params and errormessage.
     */
@@ -161,7 +160,7 @@ export module Actions {
     /**
      * Action creator for loading a content from sensenet Content Repository.
      * @param id {number} Path of the requested item.
-     * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
+     * @param options {OData.IODataParams<T>} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
      * @param contentType {ContentType} Content Type of the requested content.
      * @returns {Object} Returns a redux action with the properties id, options and contentType.
      */
@@ -173,7 +172,7 @@ export module Actions {
     });
     /**
      * Action creator for the step when a loading request ends successfully.
-     * @param response {any} JSON response of the ajax request.
+     * @param response {Content} response of the ajax request as a Content object.
      * @param params {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
@@ -196,7 +195,7 @@ export module Actions {
     });
     /**
      * Action creator for loading Actions of a Content from sensenet Content Repository.
-     * @param id {number} Id of the Content
+     * @param content {Content} The requested Content.
      * @param scenario {string} The Actions should be in the given Scenario
      */
     export const LoadContentActions = (content: Content, scenario?: string) => ({
@@ -222,6 +221,7 @@ export module Actions {
     })
     /**
      * Action creator for reloading a content from sensenet Content Repository.
+     * @param content {Content} The Content that shold be reloaded.
      * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
      * @returns {Object} Returns a redux action with the properties type and actionName.
      */
@@ -232,8 +232,8 @@ export module Actions {
     });
     /**
      * Action creator for the step when a reloading request ends successfully.
-     * @param response {any} JSON response of the ajax request.
-     * @returns {Object} Returns a redux action with the properties type, normalized response.
+     * @param response {Content} Response of the ajax request as Content.
+     * @returns {Object} Returns a redux action with the properties type and the response.
      */
     export const ReceiveReloadedContent = (response: Content) =>
         ({
@@ -251,6 +251,7 @@ export module Actions {
     });
     /**
      * Action creator for reloading fields of a content from sensenet Content Repository.
+     * @param content {Content} The Content which' fields should be reloaded.
      * @param fields {any[]} List of the fields to be loaded
      * @returns {Object} Returns a redux action with the properties type and fields.
      */
@@ -261,7 +262,7 @@ export module Actions {
     });
     /**
      * Action creator for the step when a reloading fields of a content request ends successfully.
-     * @param response {any} JSON response of the ajax request.
+     * @param response {Content} Response of the ajax request as a Content.
      * @returns {Object} Returns a redux action with the properties type and normalized response.
      */
     export const ReceiveReloadedContentFields = (response: Content) =>
@@ -280,7 +281,6 @@ export module Actions {
     });
     /**
      * Action creator for creating a Content in the Content Repository.
-     * @param path {string} Path of the parent item.
      * @param content {Content} Content that have to be created in the Content Respository.
      * @returns {Object} Returns a redux action with the properties type, path of the parent and content.
      */
@@ -290,7 +290,7 @@ export module Actions {
     });
     /**
      * Action creator for the step when Content creation on the server ends successfully.
-     * @param response {any} JSON response of the ajax request.
+     * @param response {Content} JSON response of the ajax request as a Content.
      * @returns {Object} Returns a redux action with the properties type and the normalized response.
      */
     export const CreateContentSuccess = (response: Content) =>
@@ -309,8 +309,7 @@ export module Actions {
     });
     /**
       * Action creator for updating a Content in the Content Repository.
-      * @param content {Object} Object with the field value pairs that have to be modified.
-      * @param contentType {ContentType} Type of the content.
+      * @param content {Object} Content object with the field value pairs that have to be modified.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
     export const UpdateContent = <T extends Content>(content: Partial<T>) => ({
@@ -319,7 +318,7 @@ export module Actions {
     });
     /**
      * Action creator for the step when Content modification on the server ends successfully.
-     * @param response {any} JSON response of the ajax request.
+     * @param response {Content} JSON response of the ajax request as a Content.
      * @returns {Object} Returns a redux action with the properties type and the response.
      */
     export const UpdateContentSuccess = (response: Content) =>
@@ -338,7 +337,7 @@ export module Actions {
     })
     /**
       * Action creator for deleting a Content from the Content Repository.
-      * @param id {number} Id of the Content that has to be deleted.
+      * @param content {content} Content object that has to be deleted.
       * @param permanently {boolean} Defines whether the a Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
@@ -396,7 +395,7 @@ export module Actions {
     })
     /**
       * Action creator for checking out a Content in the Content Repository.
-      * @param id {number} Id of the content that should be checked out.
+      * @param content {number} Content that should be checked out.
       * @returns {Object} Returns a redux action with the properties type and id .
     */
     export const CheckOut = <T extends Content>(content: T) => ({
@@ -405,7 +404,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is checked out successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const CheckOutSuccess = (response: Content) => ({
@@ -423,7 +422,7 @@ export module Actions {
     })
     /**
       * Action creator for checking in a Content in the Content Repository.
-      * @param id {number} Id of the content that should be checked in.
+      * @param content {Content} Content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type, id and checkinComment.
     */
     export const CheckIn = <T extends Content>(content: T, checkInComment: string = '') => ({
@@ -433,7 +432,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is checked in successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const CheckInSuccess = (response: Content) => ({
@@ -451,7 +450,7 @@ export module Actions {
     })
     /**
       * Action creator for publishing a Content in the Content Repository.
-      * @param id {number} Id of the content that should be published.
+      * @param content {Content} Content that should be published.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
     export const Publish = <T extends Content>(content: T) => ({
@@ -460,7 +459,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is published successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const PublishSuccess = (response: Content) => ({
@@ -478,7 +477,7 @@ export module Actions {
     })
     /**
       * Action creator for approving a Content in the Content Repository.
-      * @param id {number} Id of the content that should be approved.
+      * @param content {Content} Content that should be approved.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
     export const Approve = <T extends Content>(content: T) => ({
@@ -487,7 +486,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is approved successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const ApproveSuccess = (response: Content) => ({
@@ -505,7 +504,7 @@ export module Actions {
     })
     /**
       * Action creator for rejecting a Content in the Content Repository.
-      * @param id {number} Id of the content that should be rejected.
+      * @param content {Content} Content that should be rejected.
       * @param rejectReason {string} Reason of rejecting.
       * @returns {Object} Returns a redux action with the properties type, rejectReason and id.
     */
@@ -516,7 +515,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is rejected successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const RejectSuccess = (response: Content) => ({
@@ -534,7 +533,7 @@ export module Actions {
     })
     /**
       * Action creator for undoing checkout on a Content in the Content Repository.
-      * @param id {number} Id of the content that should be checked in.
+      * @param content {Content} Content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
     export const UndoCheckout = <T extends Content>(content: T) => ({
@@ -543,7 +542,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is checked-in successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const UndoCheckoutSuccess = (response: Content) => ({
@@ -561,7 +560,7 @@ export module Actions {
     })
     /**
       * Action creator for undoing checkout on a Content in the Content Repository.
-      * @param id {number} Id of the content that should be checked in.
+      * @param content {Content} Content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
     export const ForceUndoCheckout = <T extends Content>(content: T) => ({
@@ -570,7 +569,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is checked-in successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const ForceUndoCheckoutSuccess = (response: Content) => ({
@@ -588,7 +587,7 @@ export module Actions {
     })
     /**
       * Action creator for restoring the version of a Content in the Content Repository.
-      * @param id {number} Id of the content that should be checked in.
+      * @param content {Content} Content that should be checked in.
       * @param version {string} Specify which old version to restore
       * @returns {Object} Returns a redux action with the properties type and id.
     */
@@ -599,7 +598,7 @@ export module Actions {
     })
     /**
       * Action creator for the step when a Content is restored to a previous version successfully.
-      * @param response {any} JSON response of the ajax request.
+      * @param response {Content} JSON response of the ajax request as a Content object.
       * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
     */
     export const RestoreVersionSuccess = (response: Content) => ({
@@ -617,14 +616,15 @@ export module Actions {
     })
 
     /**
-      * Action creator for check user state in a sense NET portal.
+      * Action creator for check user state in a sensenet ECM application.
       * @returns {Object} Returns a redux action with the properties.
     */
     export const CheckLoginState = () => ({
         type: 'CHECK_LOGIN_STATE_REQUEST'
     })
     /**
-     * 
+     * Action creator for user changes.
+     * @param user {ContentTypes.User} User that should be checked.
      */
     export const UserChanged = (user) => ({
         type: 'USER_CHANGED',

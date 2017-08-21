@@ -2,11 +2,30 @@ import { normalize } from 'normalizr';
 import { combineReducers } from 'redux';
 import { Authentication } from 'sn-client-js';
 
+/**
+ * Module for defining Redux reducers.
+ *
+ * _Actions describe the fact that something happened, but don't specify how the application's state changes in response. This is the job of a reducer._
+ *
+ * Following module contains the reducers of sn-redux, some 'reducer groups' and the root reducer which could be passed to the store creator function. Using a root reduces means
+ * that you define which combination of reducers will be used and eventually defines which type of actions can be called on the store.
+ */
 export module Reducers {
-
+    /**
+       * Reducer to handle Actions on the country property in the session object.
+       * @param {Object} [state=''] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const country = (state = '', action) => {
         return state
     }
+    /**
+       * Reducer to handle Actions on the language property in the session object.
+       * @param {Object} [state='en-US'] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const language = (state = 'en-US', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
@@ -19,6 +38,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the loginState property in the session object.
+       * @param {Object} [state=Authentication.LoginState.Pending] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const loginState = (state = Authentication.LoginState.Pending, action) => {
         switch (action.type) {
             case 'USER_LOGIN_SUCCESS':
@@ -33,6 +58,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the loginError property in the session object.
+       * @param {Object} [state=''] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const loginError = (state = '', action) => {
         switch (action.type) {
             case 'USER_LOGIN_FAILURE':
@@ -43,7 +74,12 @@ export module Reducers {
                 return null
         }
     }
-
+    /**
+       * Reducer to handle Actions on the userName property in the user object.
+       * @param {Object} [state='Visitor'] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const userName = (state = 'Visitor', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
@@ -53,7 +89,12 @@ export module Reducers {
 
         }
     }
-
+    /**
+       * Reducer to handle Actions on the fullName property in the user object.
+       * @param {Object} [state='Visitor'] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const fullName = (state = 'Visitor', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
@@ -62,7 +103,12 @@ export module Reducers {
                 return state
         }
     }
-
+    /**
+       * Reducer to handle Actions on the userLanguage property in the user object.
+       * @param {Object} [state='en-US'] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const userLanguage = (state = 'en-US', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
@@ -75,13 +121,17 @@ export module Reducers {
                 return state
         }
     }
-
+    /**
+   * Reducer combining userName, fullName and userLanguage into a single object, ```user```.
+   */
     const user = combineReducers({
         userName,
         fullName,
         userLanguage
     })
-
+    /**
+   * Reducer combining country, language, loginState, error and user into a single object, ```session```.
+   */
     const session = combineReducers({
         country,
         language,
@@ -89,7 +139,12 @@ export module Reducers {
         error: loginError,
         user
     })
-
+    /**
+       * Reducer to handle Actions on the ids array in the children object.
+       * @param {Object} [state=[]] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const ids = (state = [], action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_SUCCESS':
@@ -102,6 +157,12 @@ export module Reducers {
                 return state;
         }
     }
+    /**
+       * Reducer to handle Actions on the entities object in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const entities = (state = {}, action) => {
         if (action.response && (action.type !== 'USER_LOGIN_SUCCESS' && action.type !== 'LOAD_CONTENT_SUCCESS')) {
             return (<any>Object).assign({}, state, action.response.entities.entities);
@@ -115,6 +176,12 @@ export module Reducers {
                 return state;
         }
     }
+    /**
+       * Reducer to handle Actions on the isFetching property in the children object.
+       * @param {Object} [state=false] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const isFetching = (state = false, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -126,6 +193,12 @@ export module Reducers {
                 return state;
         }
     }
+    /**
+       * Reducer to handle Actions on the childrenerror property in the children object.
+       * @param {Object} [state=null] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const childrenerror = (state = null, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_FAILURE':
@@ -170,9 +243,21 @@ export module Reducers {
                 return state;
         }
     }
+    /**
+       * Reducer to handle Actions on the chidlrenactions object in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const childrenactions = (state = {}, action) => {
         return state
     }
+    /**
+       * Reducer to handle Actions on the top property in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const top = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -184,6 +269,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the skip property in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const skip = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -195,6 +286,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the query property in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const query = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -206,6 +303,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the order property in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const order = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -217,6 +320,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the filter property in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const filter = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -228,6 +337,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the select property in the children object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const select = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
@@ -239,6 +354,9 @@ export module Reducers {
                 return state
         }
     }
+    /**
+   * Reducer combining ids, entities, isFetching, error, top, skip, query, order, filter and select into a single object, ```children```.
+   */
     const children = combineReducers({
         ids,
         entities,
@@ -252,7 +370,12 @@ export module Reducers {
         filter,
         select
     })
-
+    /**
+       * Reducer to handle Actions on the isSaved property in the contentState object.
+       * @param {Object} [state=true] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const isSaved = (state = true, action) => {
         switch (action.type) {
             case 'CREATE_CONTENT_REQUEST':
@@ -266,15 +389,30 @@ export module Reducers {
                 return true;
         }
     }
-
+    /**
+       * Reducer to handle Actions on the isValid property in the contentState object.
+       * @param {Object} [state=true] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const isValid = (state = true, action) => {
         return state
     }
-
+    /**
+       * Reducer to handle Actions on the isDirty property in the contentState object.
+       * @param {Object} [state=false] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const isDirty = (state = false, action) => {
         return state
     }
-
+    /**
+       * Reducer to handle Actions on the isOperationInProgress property in the contentState object.
+       * @param {Object} [state=false] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const isOperationInProgress = (state = false, action) => {
         switch (action.type) {
             case 'CREATE_CONTENT_REQUEST':
@@ -286,14 +424,21 @@ export module Reducers {
         }
 
     }
-
+    /**
+   * Reducer combining isSaved, isValid, isDirty and isOperationInProgress into a single object, ```contentState```.
+   */
     const contentState = combineReducers({
         isSaved,
         isValid,
         isDirty,
         isOperationInProgress
     })
-
+    /**
+       * Reducer to handle Actions on the contenterror property in the currentcontent object.
+       * @param {Object} [state=null] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const contenterror = (state: any = null, action) => {
         switch (action.type) {
             case 'CREATE_CONTENT_FAILURE':
@@ -338,6 +483,12 @@ export module Reducers {
                 return state;
         }
     }
+    /**
+       * Reducer to handle Actions on the contentactions object in the currentcontent object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const contentactions = (state = {}, action) => {
         switch (action.type) {
             case 'LOAD_CONTENT_ACTIONS_SUCCESS':
@@ -346,6 +497,12 @@ export module Reducers {
                 return state
         }
     }
+    /**
+       * Reducer to handle Actions on the fields object in the currentcontent object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const fields = (state = {}, action) => {
         switch (action.type) {
             case 'LOAD_CONTENT_SUCCESS':
@@ -355,7 +512,12 @@ export module Reducers {
                 return state
         }
     }
-
+    /**
+       * Reducer to handle Actions on the content object in the currentcontent object.
+       * @param {Object} [state={}] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const content = (state = {}, action) => {
         switch (action.type) {
             case 'LOAD_CONTENT_SUCCESS':
@@ -365,7 +527,9 @@ export module Reducers {
                 return state
         }
     }
-
+    /**
+   * Reducer combining contentState, error, actions, fields and content into a single object, ```currentcontent```.
+   */
     const currentcontent = combineReducers({
         contentState,
         error: contenterror,
@@ -373,11 +537,18 @@ export module Reducers {
         fields,
         content
     })
-
+    /**
+       * Reducer to handle Actions on the selected array.
+       * @param {Object} [state=[]] Represents the current state.
+       * @param {Object} action Represents an action that is called.
+       * @returns {Object} state. Returns the next state based on the action.
+       */
     export const selected = (state = [], action) => {
         return state;
     }
-
+    /**
+   * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
+   */
     export const sensenet = combineReducers({
         session,
         children,

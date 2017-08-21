@@ -50,7 +50,10 @@ export module Store {
      * import { myRootReducer } from '../myApp/Reducers'
      * import { myRootEpic } from '../myApp/Epics'
      *
-     * const store = Store.configureStore(myRootReducer, myRootEpic, [Authentication]);
+     * const repository = new Repository.SnRepository({
+     *  RepositoryUrl: 'https://sn-services/'
+     * });
+     * const store = Store.configureStore(myRootReducer, myRootEpic, [Authentication], {}, repository);
      *
      * ReactDOM.render(
      * <Root store={store} />,
