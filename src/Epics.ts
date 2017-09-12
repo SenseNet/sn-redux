@@ -50,7 +50,6 @@ export module Epics {
                 store.dispatch(Actions.LoadRepository(dependencies.repository.Config))
                 return dependencies.repository.Load(action.path, action.options)
                     .map((response) => {
-                        store.dispatch(Actions.RequestContent(action.path, action.options))
                         return Actions.ReceiveLoadedContent(response, action.options)
                     })
                     .catch(error => {
