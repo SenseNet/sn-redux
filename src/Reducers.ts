@@ -130,7 +130,7 @@ export module Reducers {
     export const userAvatarPath = (state = '', action) => {
         switch (action.type) {
             case 'USER_CHANGED':
-                return action.user.ImageData ? action.user.ImageData.__mediaresource.media_src : ''
+                return action.user.Avatar ? action.user.Avatar._deferred : ''
             default:
                 return state
         }
