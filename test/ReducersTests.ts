@@ -95,7 +95,7 @@ describe('Reducers', () => {
             expect(Reducers.userAvatarPath(undefined, { type: 'USER_CHANGED', user: { DisplayName: 'Alba Monday' } })).to.be.deep.equal('');
         });
         it('should return the logged-in users avatars path', () => {
-            expect(Reducers.userAvatarPath(undefined, { type: 'USER_CHANGED', user: { ImageData: { __mediaresource: { media_src: 'Alba Monday' } } } })).to.be.deep.equal('Alba Monday');
+            expect(Reducers.userAvatarPath(undefined, { type: 'USER_CHANGED', user: { Avatar: { _deferred: 'Alba Monday' } } })).to.be.deep.equal('Alba Monday');
         });
     })
 
