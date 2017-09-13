@@ -344,7 +344,7 @@ describe('Reducers', () => {
             expect(Reducers.order(undefined, {})).to.be.deep.equal({});
         });
         it('should return "DisplayName desc"', () => {
-            expect(Reducers.order(undefined, { type: 'FETCH_CONTENT_REQUEST', options: { order: 'DisplayName desc' } })).to.be.eq('DisplayName desc');
+            expect(Reducers.order(undefined, { type: 'FETCH_CONTENT_REQUEST', options: { orderby: 'DisplayName desc' } })).to.be.eq('DisplayName desc');
         });
         it('should return initial state', () => {
             expect(Reducers.order(undefined, { type: 'FETCH_CONTENT_REQUEST', options: {} })).to.be.deep.equal({});
@@ -676,7 +676,7 @@ describe('Reducers', () => {
         const state = {
             ids: [5145, 5146],
             isFetching: false,
-            errorMessage: 'error'
+            error: 'error'
         }
         it('should return the value of errorMessage from the current state', () => {
             expect(Reducers.getError(state)).to.be.eq('error');

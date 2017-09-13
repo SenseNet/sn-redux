@@ -135,9 +135,8 @@ export module Reducers {
                 return state
         }
     }
-
     /**
-   * Reducer combining userName, fullName and userLanguage into a single object, ```user```.
+   * Reducer combining userName, fullName, userLanguage, userAvatarPath into a single object, ```user```.
    */
     const user = combineReducers({
         userName,
@@ -234,40 +233,17 @@ export module Reducers {
         switch (action.type) {
             case 'FETCH_CONTENT_FAILURE':
                 return action.message;
-            case 'CREATE_CONTENT_FAILURE':
-            case 'UPDATE_CONTENT_FAILURE':
-            case 'DELETE_CONTENT_FAILURE':
-            case 'CHECKIN_CONTENT_FAILURE':
-            case 'CHECKOUT_CONTENT_FAILURE':
-            case 'PUBLISH_CONTENT_FAILURE':
-            case 'APPROVE_CONTENT_FAILURE':
-            case 'REJECT_CONTENT_FAILURE':
-            case 'UNDOCHECKOUT_CONTENT_FAILURE':
-            case 'FORCEUNDOCHECKOUT_CONTENT_FAILURE':
-            case 'RESTOREVERSION_CONTENT_FAILURE':
-            case 'FETCH_CONTENT_REQUEST':
             case 'FETCH_CONTENT_SUCCESS':
-            case 'CREATE_CONTENT_REQUEST':
             case 'CREATE_CONTENT_SUCCESS':
-            case 'UPDATE_CONTENT_REQUEST':
             case 'UPDATE_CONTENT_SUCCESS':
-            case 'DELETE_CONTENT_REQUEST':
             case 'DELETE_CONTENT_SUCCESS':
-            case 'CHECKIN_CONTENT_REQUEST':
             case 'CHECKIN_CONTENT_SUCCESS':
-            case 'CHECKOUT_CONTENT_REQUEST':
             case 'CHECKOUT_CONTENT_SUCCESS':
-            case 'APPROVE_CONTENT_REQUEST':
             case 'APPROVE_CONTENT_SUCCESS':
-            case 'PUBLISH_CONTENT_REQUEST':
             case 'PUBLISH_CONTENT_SUCCESS':
-            case 'REJECT_CONTENT_REQUEST':
             case 'REJECT_CONTENT_SUCCESS':
-            case 'UNDOCHECKOUT_CONTENT_REQUEST':
             case 'UNDOCHECKOUT_CONTENT_SUCCESS':
-            case 'FORCEUNDOCHECKOUT_CONTENT_REQUEST':
             case 'FORCEUNDOCHECKOUT_CONTENT_SUCCESS':
-            case 'RESTOREVERSION_CONTENT_REQUEST':
             case 'RESTOREVERSION_CONTENT_SUCCESS':
                 return null;
             default:
@@ -343,8 +319,8 @@ export module Reducers {
     export const order = (state = {}, action) => {
         switch (action.type) {
             case 'FETCH_CONTENT_REQUEST':
-                if (action.options.order)
-                    return action.options.order
+                if (action.options.orderby)
+                    return action.options.orderby
                 else
                     return state
             default:
@@ -612,7 +588,7 @@ export module Reducers {
      * @returns {string} Returns the error message.
      */
     export const getError = (state: any) => {
-        return state.errorMessage
+        return state.error
     };
 
     export const getAuthenticationStatus = (state) => {
