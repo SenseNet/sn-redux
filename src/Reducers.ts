@@ -551,7 +551,15 @@ export module Reducers {
        * @returns {Object} state. Returns the next state based on the action.
        */
     export const selected = (state = [], action) => {
-        return state;
+        switch (action.type) {
+            case 'SELECT_CONTENT':
+                return [...state, action.id]
+            case 'DESELECT_CONTENT':
+                const index = state.indexOf(action.id)
+                return [...state.slice(0, index), ...state.slice(index + 1)]
+            default:
+                return state
+        }
     }
     /**
    * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
@@ -601,5 +609,9 @@ export module Reducers {
 
     export const getRepositoryUrl = (state) => {
         return state.session.repository.RepositoryUrl;
+    }
+
+    export const getSelectedContent = (state) => {
+        return state.selected
     }
 }
