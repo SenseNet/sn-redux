@@ -3,7 +3,7 @@ import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
 import { Observable } from '@reactivex/rxjs';
-import { Repository, Content, Collection, ODataApi, Authentication } from 'sn-client-js';
+import { Repository, Content, ContentTypes, Collection, ODataApi, Authentication } from 'sn-client-js';
 
 /**
  * Module for redux-observable Epics of the sensenet built-in OData actions.
@@ -334,6 +334,15 @@ export module Epics {
                     .catch(error => Observable.of(Actions.UserLogoutFailure(error)))
             })
     }
+    export const getContentActions = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+            return action$.ofType('REQUEST_CONTENT_ACTIONS')
+            .mergeMap(action => {
+                let c = dependencies.repository.HandleLoadedContent(action.content, ContentTypes.GenericContent);
+                return c.Actions(action.scenario)
+                    .map(Actions.ReceiveContentActions)
+                    .catch(error => Observable.of(Actions.ReceiveContentActionsFailure(error)))
+            })
+    }
     /**
      * sn-redux root Epic, the main Epic combination that is used on a default sensenet application. Contains Epics related to CRUD operations and thr other built-in sensenet
      * [OData Actions and Function](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
@@ -357,7 +366,8 @@ export module Epics {
         restoreversionContentEpic,
         userLoginEpic,
         userLogoutEpic,
-        checkLoginStateEpic
+        checkLoginStateEpic,
+        getContentActions
     );
 }
 
