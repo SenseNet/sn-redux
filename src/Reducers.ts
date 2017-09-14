@@ -374,7 +374,7 @@ export module Reducers {
      */
     export const isOpened = (state = null, action) => {
         switch (action.type) {
-            case 'REQUEST_CONTENT_ACTIONS_SUCCESS':
+            case 'REQUEST_CONTENT_ACTIONS':
                 return action.id
             default:
                 return state
