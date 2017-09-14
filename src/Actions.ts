@@ -693,4 +693,20 @@ export module Actions {
         type: 'LOAD_REPOSITORY',
         repository: repositoryConfig
     })
+    /**
+     * Action creator for selecting a Content
+     * @param id {number} The id of the selected Content
+     */
+    export const SelectContent = (id) => ({
+        type: 'SELECT_CONTENT',
+        id
+    })
+    /**
+     * Action creator for deselecting a Content
+     * @param id {number} The id of the deselected Content
+     */
+    export const DeSelectContent = (id) => ({
+        type: 'DESELECT_CONTENT',
+        id
+    })
 }
