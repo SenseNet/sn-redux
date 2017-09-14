@@ -367,6 +367,20 @@ export module Reducers {
         }
     }
     /**
+     * Reducer to handle Actions on the isOpened property in the children object.
+     * @param {Object} [state={}] Represents the current state.
+     * @param {Object} action Represents an action that is called.
+     * @returns {Object} state. Returns the next state based on the action.
+     */
+    export const isOpened = (state = null, action) => {
+        switch (action.type) {
+            case 'REQUEST_CONTENT_ACTIONS_SUCCESS':
+                return action.id
+            default:
+                return state
+        }
+    }
+    /**
    * Reducer combining ids, entities, isFetching, error, top, skip, query, order, filter and select into a single object, ```children```.
    */
     const children = combineReducers({
@@ -380,7 +394,8 @@ export module Reducers {
         query,
         order,
         filter,
-        select
+        select,
+        isOpened
     })
     /**
        * Reducer to handle Actions on the isSaved property in the contentState object.
