@@ -775,4 +775,12 @@ describe('Reducers', () => {
             expect(Reducers.getSelectedContent(state)).to.be.deep.equal([1, 2])
         })
     })
+    describe('getOpenedContentId', () => {
+        const state = {
+            isOpened: 1
+        }
+        it('should return 1 as the opened items id', () => {
+            expect(Reducers.getOpenedContent(state)).to.be.eq(1)
+        })
+    })
 });
