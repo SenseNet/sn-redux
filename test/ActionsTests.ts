@@ -566,9 +566,10 @@ describe('Actions', () => {
         it('should return the RequestContentActions action', () => {
             const expectedAction = {
                 type: 'REQUEST_CONTENT_ACTIONS',
+                id: 1,
                 scenario: 'DMSListItem'
             }
-            expect(Actions.RequestContentActions('DMSListItem')).to.deep.equal(expectedAction)
+            expect(Actions.RequestContentActions(1, 'DMSListItem')).to.deep.equal(expectedAction)
         })
         it('should return the RequestContentActionsSuccess action', () => {
             const expectedAction = {
