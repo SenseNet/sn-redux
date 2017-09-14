@@ -634,4 +634,8 @@ export module Reducers {
     export const getSelectedContent = (state) => {
         return state.selected
     }
+
+    export const getOpenedContentId = (state) => {
+        return state.isOpened
+    }
 }
