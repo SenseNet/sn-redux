@@ -303,7 +303,18 @@ describe('Reducers', () => {
     });
     describe('childrenactions reducer', () => {
         it('should return the initial state', () => {
-            expect(Reducers.childrenactions(undefined, {})).to.be.deep.equal({});
+            expect(Reducers.childrenactions(undefined, {})).to.be.deep.equal([]);
+        });
+        it('should handle REQUEST_CONTENT_ACTIONS_SUCCESS', () => {
+            const action = {
+                type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
+                response: [
+                    {
+                        ActionName: 'Rename'
+                    }
+                ]
+            }
+            expect(Reducers.childrenactions(undefined, action)).to.be.deep.equal([{ ActionName: 'Rename' }]);
         });
     });
     describe('top reducer', () => {
