@@ -374,7 +374,7 @@ export module Reducers {
      */
     export const isOpened = (state = null, action) => {
         switch (action.type) {
-            case 'REQUEST_CONTENT_ACTIONS':
+            case 'REQUEST_CONTENT_ACTIONS_SUCCESS':
                 return action.id
             default:
                 return state
@@ -637,5 +637,9 @@ export module Reducers {
 
     export const getOpenedContent = (state) => {
         return state.isOpened
+    }
+
+    export const getChildrenActions = (state) => {
+        return state.actions
     }
 }

@@ -389,7 +389,7 @@ describe('Reducers', () => {
         })
         it('should return 1', () => {
             const action = {
-                type: 'REQUEST_CONTENT_ACTIONS',
+                type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
                 id: 1
             }
             expect(Reducers.isOpened(undefined, action)).to.be.eq(1)
@@ -781,6 +781,18 @@ describe('Reducers', () => {
         }
         it('should return 1 as the opened items id', () => {
             expect(Reducers.getOpenedContent(state)).to.be.eq(1)
+        })
+    })
+    describe('getChildrenActions', () => {
+        const state = {
+            actions: [
+                {
+                    ActionName: 'Rename'
+                }
+            ]
+        }
+        it('should return 1 as the opened items id', () => {
+            expect(Reducers.getChildrenActions(state)).to.be.deep.equal([{ ActionName: 'Rename' }])
         })
     })
 });
