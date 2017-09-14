@@ -713,12 +713,13 @@ export module Actions {
     })
     /**
      * Action creator for a request for get actions of a content by a given scenario.
+     * @param content {Content} The name of the scenario
      * @param scenario {string} The name of the scenario
     * @returns {Object} Returns a redux action.
      */
-    export const RequestContentActions = (id, scenario?: string) => ({
+    export const RequestContentActions = (content, scenario?: string) => ({
         type: 'REQUEST_CONTENT_ACTIONS',
-        id,
+        content,
         scenario
     })
     /**

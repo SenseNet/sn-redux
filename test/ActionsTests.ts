@@ -563,13 +563,15 @@ describe('Actions', () => {
         })
     })
     describe('RequestContentActions', () => {
+        
+        const content = Content.Create({ DisplayName: 'My content', Id: 123 }, ContentTypes.Task, repo)
         it('should return the RequestContentActions action', () => {
             const expectedAction = {
                 type: 'REQUEST_CONTENT_ACTIONS',
-                id: 1,
+                content: content,
                 scenario: 'DMSListItem'
             }
-            expect(Actions.RequestContentActions(1, 'DMSListItem')).to.deep.equal(expectedAction)
+            expect(Actions.RequestContentActions(content, 'DMSListItem')).to.deep.equal(expectedAction)
         })
         it('should return the RequestContentActionsSuccess action', () => {
             const expectedAction = {
