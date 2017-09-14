@@ -614,6 +614,34 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.selected(undefined, {})).to.deep.equal([]);
         });
+        it('should return an array with one item with the id 1', () => {
+            const action = {
+                type: 'SELECT_CONTENT',
+                id: 1
+            }
+            expect(Reducers.selected(undefined, action)).to.deep.equal([1]);
+        })
+        it('should return an array with two items with the id 1 and 2', () => {
+            const action = {
+                type: 'SELECT_CONTENT',
+                id: 2
+            }
+            expect(Reducers.selected([1], action)).to.deep.equal([1, 2]);
+        })
+        it('should return an array with one item with the id 1', () => {
+            const action = {
+                type: 'DESELECT_CONTENT',
+                id: 2
+            }
+            expect(Reducers.selected([1, 2], action)).to.deep.equal([1]);
+        })
+        it('should return an empty array', () => {
+            const action = {
+                type: 'DESELECT_CONTENT',
+                id: 1
+            }
+            expect(Reducers.selected([1], action)).to.deep.equal([]);
+        })
     })
     describe('getContent', () => {
         const state = {
@@ -716,4 +744,12 @@ describe('Reducers', () => {
             expect(Reducers.getRepositoryUrl(state)).to.be.eq('https://dmsservice.demo.sensenet.com');
         });
     });
+    describe('getSelectedContent', () => {
+        const state = {
+            selected: [1, 2]
+        }
+        it('should return the value of the selected reducers current state, an array with two items', () => {
+            expect(Reducers.getSelectedContent(state)).to.be.deep.equal([1, 2])
+        })
+    })
 });
