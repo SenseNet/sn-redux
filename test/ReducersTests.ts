@@ -383,6 +383,18 @@ describe('Reducers', () => {
             expect(Reducers.select(undefined, { type: 'FETCH_CONTENT_REQUEST', options: {} })).to.be.deep.equal({});
         });
     });
+    describe('isOpened reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.isOpened(undefined, {})).to.be.eq(null)
+        })
+        it('should return 1', () => {
+            const action = {
+                type: 'REQUEST_CONTENT_ACTIONS',
+                id: 1
+            }
+            expect(Reducers.isOpened(undefined, action)).to.be.eq(1)
+        })
+    })
     describe('isSaved reducer', () => {
         it('should return the initial state', () => {
             expect(Reducers.isSaved(undefined, {})).to.be.deep.equal(true);
