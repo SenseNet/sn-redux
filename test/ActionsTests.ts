@@ -544,4 +544,22 @@ describe('Actions', () => {
             expect(Actions.LoadRepository(repo)).to.deep.equal(expectedAction)
         });
     });
+    describe('SelectContent', () => {
+        it('should return the select content action', () => {
+            const expectedAction = {
+                type: 'SELECT_CONTENT',
+                id: 1
+            }
+            expect(Actions.SelectContent(1)).to.deep.equal(expectedAction)
+        })
+    })
+    describe('DeSelectContent', () => {
+        it('should return the deselect content action', () => {
+            const expectedAction = {
+                type: 'DESELECT_CONTENT',
+                id: 1
+            }
+            expect(Actions.DeSelectContent(1)).to.deep.equal(expectedAction)
+        })
+    })
 });
