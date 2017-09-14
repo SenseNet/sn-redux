@@ -727,10 +727,12 @@ export module Actions {
      * @param response {any} JSON response of the ajax request.
      * @returns {Object} Returns a redux action with a response.
      */
-    export const RequestContentActionsSuccess = (response: any) => ({
+    export const RequestContentActionsSuccess = (response: any, id: number) => { 
+        return ({
         type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
-        response
-    })
+        response: response,
+        id
+    })}
     /**
      * Action creator for the step when getting the actions of a content is failed
      * @param error {any} JSON response of the ajax request.

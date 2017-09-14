@@ -580,9 +580,10 @@ describe('Actions', () => {
                     {
                         ActionName: 'Rename'
                     }
-                ]
+                ],
+                id: 1
             }
-            expect(Actions.RequestContentActionsSuccess([{ ActionName: 'Rename' }])).to.deep.equal(expectedAction)
+            expect(Actions.RequestContentActionsSuccess([{ ActionName: 'Rename' }], 1)).to.deep.equal(expectedAction)
         })
         it('should return the RequestContentActionsFailure action', () => {
             const expectedAction = {
