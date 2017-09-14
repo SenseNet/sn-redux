@@ -562,4 +562,31 @@ describe('Actions', () => {
             expect(Actions.DeSelectContent(1)).to.deep.equal(expectedAction)
         })
     })
+    describe('RequestContentActions', () => {
+        it('should return the RequestContentActions action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS',
+                scenario: 'DMSListItem'
+            }
+            expect(Actions.RequestContentActions('DMSListItem')).to.deep.equal(expectedAction)
+        })
+        it('should return the RequestContentActionsSuccess action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
+                response: [
+                    {
+                        ActionName: 'Rename'
+                    }
+                ]
+            }
+            expect(Actions.RequestContentActionsSuccess([{ ActionName: 'Rename' }])).to.deep.equal(expectedAction)
+        })
+        it('should return the RequestContentActionsFailure action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.RequestContentActionsFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    })
 });
