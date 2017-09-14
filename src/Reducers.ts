@@ -256,8 +256,13 @@ export module Reducers {
        * @param {Object} action Represents an action that is called.
        * @returns {Object} state. Returns the next state based on the action.
        */
-    export const childrenactions = (state = {}, action) => {
-        return state
+    export const childrenactions = (state = [], action) => {
+        switch (action.type) {
+            case 'REQUEST_CONTENT_ACTIONS_SUCCESS':
+                return action.response
+            default:
+                return state
+        }
     }
     /**
        * Reducer to handle Actions on the top property in the children object.
@@ -369,7 +374,7 @@ export module Reducers {
         entities,
         isFetching,
         error: childrenerror,
-        // actions: childrenactions,
+        actions: childrenactions,
         top,
         skip,
         query,
