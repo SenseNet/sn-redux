@@ -642,4 +642,8 @@ export module Reducers {
     export const getChildrenActions = (state) => {
         return state.actions
     }
+    
+    export const getCurrentContent = (state) => {
+        return state.currentcontent.content
+    }
 }

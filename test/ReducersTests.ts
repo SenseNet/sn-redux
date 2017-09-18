@@ -795,4 +795,16 @@ describe('Reducers', () => {
             expect(Reducers.getChildrenActions(state)).to.be.deep.equal([{ ActionName: 'Rename' }])
         })
     })
+    describe('getCurrentContent', () => {
+        const state = {
+            currentcontent: {
+                content: {
+                    DisplayName: 'my content'
+                }
+            }
+        }
+        it('should return the content', () => {
+            expect(Reducers.getCurrentContent(state)).to.be.deep.equal({ DisplayName: 'my content' })
+        })
+    })
 });
