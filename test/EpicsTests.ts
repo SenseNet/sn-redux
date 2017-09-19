@@ -4,6 +4,7 @@ import { createEpicMiddleware } from 'redux-observable';
 import { Mocks, ContentTypes, HttpProviders, Authentication, ODataApi, Content } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 import { Actions } from '../src/Actions'
+import { Store } from '../src/Store'
 const expect = Chai.expect;
 import 'rxjs';
 
@@ -37,13 +38,7 @@ describe('Epics', () => {
                     path: '/workspaces/Project',
                     options:
                     {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -54,13 +49,7 @@ describe('Epics', () => {
                     type: 'FETCH_CONTENT_FAILURE',
                     params:
                     {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -138,13 +127,7 @@ describe('Epics', () => {
                     path: '/workspaces/Project',
                     options:
                     {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -155,13 +138,7 @@ describe('Epics', () => {
                     type: 'LOAD_CONTENT_FAILURE',
                     params:
                     {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -221,12 +198,14 @@ describe('Epics', () => {
 
         const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
         it('handles the error', () => {
-            store.dispatch({ type: 'RELOAD_CONTENTFIELDS_REQUEST', content, options: {} });
+            const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
+            store.dispatch({ type: 'RELOAD_CONTENTFIELDS_REQUEST', content, options: {}, fields: ['DisplayName'] });
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'RELOAD_CONTENTFIELDS_REQUEST',
                     content,
-                    options: {}
+                    options: {},
+                    fields: ['DisplayName']
                 },
                 {
                     type: 'RELOAD_CONTENTFIELDS_FAILURE',
@@ -239,7 +218,12 @@ describe('Epics', () => {
                 [{
                     type: 'RELOAD_CONTENTFIELDS_REQUEST',
                     content,
-                    options: {}
+                    options: {},
+                    fields: ['DisplayName']
+                },
+                {
+                    type: 'RELOAD_CONTENTFIELDS_FAILURE',
+                    message: 'XMLHttpRequest is not supported by your browser'
                 },
                 { type: 'RELOAD_CONTENTFIELDS_FAILURE', error: 'error' }]);
         })
