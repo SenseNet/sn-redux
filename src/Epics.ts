@@ -98,8 +98,9 @@ export module Epics {
     export const loadContentActionsEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('LOAD_CONTENT_ACTIONS')
             .mergeMap(action => {
-                return action.content.Actions(action.scenario)
-                    .map(Actions.ReceiveContentActions)
+                let c = dependencies.repository.HandleLoadedContent(action.content, ContentTypes.GenericContent);
+                return c.Actions(action.scenario)
+                    .map(result => Actions.ReceiveContentActions(result))
                     .catch(error => Observable.of(Actions.ReceiveContentActionsFailure(error)))
             })
     }
