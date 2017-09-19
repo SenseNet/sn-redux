@@ -4,6 +4,7 @@ import { createEpicMiddleware } from 'redux-observable';
 import { Mocks, ContentTypes, HttpProviders, Authentication, ODataApi, Content } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 import { Actions } from '../src/Actions'
+import { Store } from '../src/Store'
 const expect = Chai.expect;
 import 'rxjs';
 
@@ -37,10 +38,7 @@ describe('Epics', () => {
                     path: '/workspaces/Project',
                     options:
                     {
-                        select: [
-                            ['Id', 'Path', 'Name', 'Type'],
-                            ['DisplayName', 'Description', 'Icon']
-                        ],
+                        select: [ 'Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon' ],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -51,10 +49,7 @@ describe('Epics', () => {
                     type: 'FETCH_CONTENT_FAILURE',
                     params:
                     {
-                        select: [
-                            ['Id', 'Path', 'Name', 'Type'],
-                            ['DisplayName', 'Description', 'Icon']
-                        ],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -132,10 +127,7 @@ describe('Epics', () => {
                     path: '/workspaces/Project',
                     options:
                     {
-                        select: [
-                            ['Id', 'Path', 'Name', 'Type'],
-                            ['DisplayName', 'Description', 'Icon']
-                        ],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -146,10 +138,7 @@ describe('Epics', () => {
                     type: 'LOAD_CONTENT_FAILURE',
                     params:
                     {
-                        select: [
-                            ['Id', 'Path', 'Name', 'Type'],
-                            ['DisplayName', 'Description', 'Icon']
-                        ],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -197,12 +186,13 @@ describe('Epics', () => {
         });
         it('handles the error', () => {
             const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
-            store.dispatch({ type: 'RELOAD_CONTENTFIELDS_REQUEST', content, options: {} });
+            store.dispatch({ type: 'RELOAD_CONTENTFIELDS_REQUEST', content, options: {}, fields: ['DisplayName'] });
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'RELOAD_CONTENTFIELDS_REQUEST',
                     content,
-                    options: {}
+                    options: {},
+                    fields: ['DisplayName']
                 },
                 {
                     type: 'RELOAD_CONTENTFIELDS_FAILURE',
