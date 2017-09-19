@@ -693,4 +693,53 @@ export module Actions {
         type: 'LOAD_REPOSITORY',
         repository: repositoryConfig
     })
+    /**
+     * Action creator for selecting a Content
+     * @param id {number} The id of the selected Content
+    * @returns {Object} Returns a redux action.
+     */
+    export const SelectContent = (id) => ({
+        type: 'SELECT_CONTENT',
+        id
+    })
+    /**
+     * Action creator for deselecting a Content
+     * @param id {number} The id of the deselected Content
+    * @returns {Object} Returns a redux action.
+     */
+    export const DeSelectContent = (id) => ({
+        type: 'DESELECT_CONTENT',
+        id
+    })
+    /**
+     * Action creator for a request for get actions of a content by a given scenario.
+     * @param content {Content} The name of the scenario
+     * @param scenario {string} The name of the scenario
+    * @returns {Object} Returns a redux action.
+     */
+    export const RequestContentActions = (content, scenario?: string) => ({
+        type: 'REQUEST_CONTENT_ACTIONS',
+        content,
+        scenario
+    })
+    /**
+     * Action creator for the step getting the actions of a content successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const RequestContentActionsSuccess = (response: any, id: number) => { 
+        return ({
+        type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
+        response: response,
+        id
+    })}
+    /**
+     * Action creator for the step when getting the actions of a content is failed
+     * @param error {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const RequestContentActionsFailure = (error: any) => ({
+        type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+        message: error.message
+    })
 }

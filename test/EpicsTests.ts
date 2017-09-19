@@ -38,7 +38,7 @@ describe('Epics', () => {
                     path: '/workspaces/Project',
                     options:
                     {
-                        select: [ 'Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon' ],
+                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
                         metadata: 'no',
                         inlinecount: 'allpages',
                         expand: undefined,
@@ -117,7 +117,7 @@ describe('Epics', () => {
         });
 
         after(() => {
-            epicMiddleware.replaceEpic(Epics.fetchContentEpic);
+            epicMiddleware.replaceEpic(Epics.loadContentEpic);
         });
         it('handles the error', () => {
             store.dispatch({ type: 'LOAD_CONTENT_REQUEST', path: '/workspaces/Project', options: {} });
@@ -158,10 +158,11 @@ describe('Epics', () => {
         });
 
         after(() => {
-            epicMiddleware.replaceEpic(Epics.fetchContentEpic);
+            epicMiddleware.replaceEpic(Epics.reloadContentEpic);
         });
+
+        const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
         it('handles the error', () => {
-            const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
             content.Save('/workspaces')
             store.dispatch({ type: 'RELOAD_CONTENT_REQUEST', content, options: {} });
             expect(store.getActions()).to.be.deep.eq([
@@ -170,6 +171,16 @@ describe('Epics', () => {
                     content,
                     options: {}
                 }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'RELOAD_CONTENT_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'RELOAD_CONTENT_REQUEST',
+                    content,
+                    options: {}
+                },
+                { type: 'RELOAD_CONTENT_FAILURE', error: 'error' }]);
         })
     });
     describe('reloadContentFields Epic', () => {
@@ -182,8 +193,10 @@ describe('Epics', () => {
         });
 
         after(() => {
-            epicMiddleware.replaceEpic(Epics.fetchContentEpic);
+            epicMiddleware.replaceEpic(Epics.reloadContentFieldsEpic);
         });
+
+        const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
         it('handles the error', () => {
             const content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
             store.dispatch({ type: 'RELOAD_CONTENTFIELDS_REQUEST', content, options: {}, fields: ['DisplayName'] });
@@ -199,6 +212,21 @@ describe('Epics', () => {
                     message: 'XMLHttpRequest is not supported by your browser'
                 }]);
         })
+        it('handles the error', () => {
+            store.dispatch({ type: 'RELOAD_CONTENTFIELDS_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'RELOAD_CONTENTFIELDS_REQUEST',
+                    content,
+                    options: {},
+                    fields: ['DisplayName']
+                },
+                {
+                    type: 'RELOAD_CONTENTFIELDS_FAILURE',
+                    message: 'XMLHttpRequest is not supported by your browser'
+                },
+                { type: 'RELOAD_CONTENTFIELDS_FAILURE', error: 'error' }]);
+        })
     });
     describe('createContent Epic', () => {
         let store;
@@ -212,8 +240,8 @@ describe('Epics', () => {
         after(() => {
             epicMiddleware.replaceEpic(Epics.createContentEpic);
         });
+        const content = Content.Create({ DisplayName: 'My content', Id: 123, Path: '/workspaces' }, ContentTypes.Task, repo);
         it('handles the error', () => {
-            const content = Content.Create({ DisplayName: 'My content', Id: 123, Path: '/workspaces' }, ContentTypes.Task, repo);
             store.dispatch({ type: 'CREATE_CONTENT_REQUEST', content, contentType: ContentTypes.Task });
             expect(store.getActions()).to.be.deep.eq(
                 [{
@@ -221,6 +249,16 @@ describe('Epics', () => {
                     content: content,
                     contentType: ContentTypes.Task
                 }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'CREATE_CONTENT_FAILURE', error: { message: 'error' } });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'CREATE_CONTENT_REQUEST',
+                    content,
+                    contentType: ContentTypes.Task
+                },
+                { type: 'CREATE_CONTENT_FAILURE', error: { message: 'error' } }]);
         })
     });
     describe('updateContent Epic', () => {
@@ -257,8 +295,8 @@ describe('Epics', () => {
         after(() => {
             epicMiddleware.replaceEpic(Epics.deleteContentEpic);
         });
+        const content = Content.Create({ DisplayName: 'My content', Id: 123, Path: '/workspaces' }, ContentTypes.Task, repo);
         it('handles the error', () => {
-            const content = Content.Create({ DisplayName: 'My content', Id: 123, Path: '/workspaces' }, ContentTypes.Task, repo);
             store.dispatch({ type: 'DELETE_CONTENT_REQUEST', content, permanently: false });
             expect(store.getActions()).to.be.deep.eq(
                 [{
@@ -266,6 +304,16 @@ describe('Epics', () => {
                     content,
                     permanently: false
                 }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'DELETE_CONTENT_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'DELETE_CONTENT_REQUEST',
+                    content,
+                    permanently: false
+                },
+                { type: 'DELETE_CONTENT_FAILURE', error: 'error' }]);
         })
     });
     describe('deleteBatch Epic', () => {
@@ -591,6 +639,89 @@ describe('Epics', () => {
             expect(store.getActions()).to.be.deep.eq([
                 { type: 'CHECK_LOGIN_STATE_REQUEST' },
                 { type: 'USER_LOGIN_FAILURE', message: null }]);
+        })
+    });
+    describe('getContentActions Epic', () => {
+        let store;
+        const epicMiddleware = createEpicMiddleware(Epics.getContentActions, { dependencies: { repository: repo } });
+        const mockStore = configureMockStore([epicMiddleware]);
+
+        before(() => {
+            store = mockStore();
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.getContentActions);
+        });
+        const content = Content.Create({ Name: 'alba', Id: '2' }, ContentTypes.Task, repo)
+        it('handles the success', () => {
+            store.dispatch({ type: 'REQUEST_CONTENT_ACTIONS', content, scenario: 'DMSDemoScenario' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'REQUEST_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                {
+                    type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+                    message: 'XMLHttpRequest is not supported by your browser'
+                }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'REQUEST_CONTENT_ACTIONS_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'REQUEST_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                {
+                    type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+                    message: 'XMLHttpRequest is not supported by your browser'
+                },
+                { type: 'REQUEST_CONTENT_ACTIONS_FAILURE', error: 'error' }]);
+        })
+    });
+    describe('loadContentActionsEpic Epic', () => {
+        let store;
+        const epicMiddleware = createEpicMiddleware(Epics.loadContentActionsEpic, { dependencies: { repository: repo } });
+        const mockStore = configureMockStore([epicMiddleware]);
+
+        before(() => {
+            store = mockStore();
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.loadContentActionsEpic);
+        });
+        const content = Content.Create({ Name: 'alba', Id: '2' }, ContentTypes.Task, repo)
+        it('handles the success', () => {
+            store.dispatch({ type: 'LOAD_CONTENT_ACTIONS', content, scenario: 'DMSDemoScenario' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'LOAD_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                {
+                    type: 'LOAD_CONTENT_ACTIONS_FAILURE',
+                    error: { message: 'XMLHttpRequest is not supported by your browser' }
+                }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'LOAD_CONTENT_ACTIONS_FAILURE', error: 'error' });
+
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'LOAD_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                {
+                    type: 'LOAD_CONTENT_ACTIONS_FAILURE',
+                    error: { message: 'XMLHttpRequest is not supported by your browser' }
+                },
+                { type: 'LOAD_CONTENT_ACTIONS_FAILURE', error: 'error' }]);
         })
     });
 });

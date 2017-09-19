@@ -544,4 +544,53 @@ describe('Actions', () => {
             expect(Actions.LoadRepository(repo)).to.deep.equal(expectedAction)
         });
     });
+    describe('SelectContent', () => {
+        it('should return the select content action', () => {
+            const expectedAction = {
+                type: 'SELECT_CONTENT',
+                id: 1
+            }
+            expect(Actions.SelectContent(1)).to.deep.equal(expectedAction)
+        })
+    })
+    describe('DeSelectContent', () => {
+        it('should return the deselect content action', () => {
+            const expectedAction = {
+                type: 'DESELECT_CONTENT',
+                id: 1
+            }
+            expect(Actions.DeSelectContent(1)).to.deep.equal(expectedAction)
+        })
+    })
+    describe('RequestContentActions', () => {
+        
+        const content = Content.Create({ DisplayName: 'My content', Id: 123 }, ContentTypes.Task, repo)
+        it('should return the RequestContentActions action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS',
+                content: content,
+                scenario: 'DMSListItem'
+            }
+            expect(Actions.RequestContentActions(content, 'DMSListItem')).to.deep.equal(expectedAction)
+        })
+        it('should return the RequestContentActionsSuccess action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
+                response: [
+                    {
+                        ActionName: 'Rename'
+                    }
+                ],
+                id: 1
+            }
+            expect(Actions.RequestContentActionsSuccess([{ ActionName: 'Rename' }], 1)).to.deep.equal(expectedAction)
+        })
+        it('should return the RequestContentActionsFailure action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.RequestContentActionsFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    })
 });
