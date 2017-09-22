@@ -194,7 +194,11 @@ export module Reducers {
        * @returns {Object} state. Returns the next state based on the action.
        */
     export const entities = (state = {}, action) => {
-        if (action.response && (action.type !== 'USER_LOGIN_SUCCESS' && action.type !== 'LOAD_CONTENT_SUCCESS' && action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS')) {
+        if (action.response && (
+            action.type !== 'USER_LOGIN_SUCCESS' && 
+            action.type !== 'USER_LOGIN_BUFFER' && 
+            action.type !== 'LOAD_CONTENT_SUCCESS' &&
+            action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS')) {
             return (<any>Object).assign({}, state, action.response.entities.entities);
         }
         switch (action.type) {

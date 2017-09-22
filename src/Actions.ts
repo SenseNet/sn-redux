@@ -633,8 +633,8 @@ export module Actions {
 
     /**
       * Action creator for login a user to a sensenet portal.
-      * @param userName {string} Login name of the user.
-      * @param password {string} Password of the user.
+      * @param {string} userName Login name of the user.
+      * @param {string} password Password of the user.
       * @returns {Object} Returns a redux action with the properties userName and password.
     */
     export const UserLogin = (userName: string, password: string) => ({
@@ -643,11 +643,20 @@ export module Actions {
         password
     })
     /**
+     * Action creator for handling a user login success response without a loggedin user.
+     * @param {boolean} response Response of the login request
+     * @returns {Object} Returns a redux action with the properties userName and password.
+     */
+    export const UserLoginBuffer = (response: boolean) => ({
+        type: 'USER_LOGIN_BUFFER',
+        response
+    })
+    /**
       * Action creator for the step when a User is logged in successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the user as a response.
     */
-    export const UserLoginSuccess = (response: any) => ({
+    export const UserLoginSuccess = (response: Content) => ({
         type: 'USER_LOGIN_SUCCESS',
         response: response
     })

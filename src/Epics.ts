@@ -43,11 +43,22 @@ export module Epics {
     export const initSensenetStoreEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('INIT_SENSENET_STORE')
             .mergeMap(action => {
-                dependencies.repository.GetCurrentUser().subscribe(user => {
-                    store.dispatch(Actions.UserChanged(user))
-                })
-                store.dispatch(Actions.CheckLoginState())
+
                 store.dispatch(Actions.LoadRepository(dependencies.repository.Config))
+                // dependencies.repository.Authentication.State.skipWhile(state => state === Authentication.LoginState.Pending)
+                //     .first()
+                //     .map(result => {
+
+                dependencies.repository.GetCurrentUser().subscribe(user => {
+                    if (user.Name === 'Visitor'){
+                        store.dispatch(Actions.UserLoginFailure({ message: null }))
+                    }
+                    else{
+                        store.dispatch(Actions.UserChanged(user))
+                        store.dispatch(Actions.UserLoginSuccess(user))
+                    }
+                })
+
                 return dependencies.repository.Load(action.path, action.options)
                     .map((response) => {
                         return Actions.ReceiveLoadedContent(response, action.options)
@@ -82,7 +93,7 @@ export module Epics {
             .mergeMap(action => {
                 return dependencies.repository.Load(action.id, action.options)
                     .map((response) => {
-                        store.dispatch(Actions.LoadContentActions(response, action.scenario))
+                        //store.dispatch(Actions.LoadContentActions(response, action.scenario))
                         return Actions.ReceiveLoadedContent(response, action.options)
                     })
                     .catch(error => {
@@ -299,7 +310,7 @@ export module Epics {
                     .first()
                     .map(result => {
                         return result === Authentication.LoginState.Authenticated ?
-                            Actions.UserLoginSuccess(result)
+                            Actions.UserLoginBuffer(true)
                             :
                             Actions.UserLoginFailure({ message: null });
                     })
@@ -314,14 +325,27 @@ export module Epics {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Authentication.Login(action.userName, action.password)
+                    // .combineLatest(dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor'))
+                    // .skipWhile(u => u instanceof ContentTypes.User)
+                    // .first()
                     .map(result => {
                         return result ?
-                            Actions.UserLoginSuccess(result)
+                            Actions.UserLoginBuffer(result)
                             :
                             Actions.UserLoginFailure({ message: 'Failed to log in.' });
                     })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
+    }
+    export const userLoginBufferEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+        return action$.ofType('USER_LOGIN_BUFFER')
+        .mergeMap(action => {
+            return dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor')
+            .map(result => {
+                Actions.UserLoginSuccess(result)
+            })
+            .catch(error => Observable.of(Actions.UserLoginFailure(error)))
+        })
     }
     /**
          * Epic to logout a user from a sensenet portal. It is related to three redux actions, returns ```LogoutUser``` action and sends the response to the
@@ -336,7 +360,7 @@ export module Epics {
             })
     }
     export const getContentActions = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
-            return action$.ofType('REQUEST_CONTENT_ACTIONS')
+        return action$.ofType('REQUEST_CONTENT_ACTIONS')
             .mergeMap(action => {
                 let c = dependencies.repository.HandleLoadedContent(action.content, ContentTypes.GenericContent);
                 return c.Actions(action.scenario)
