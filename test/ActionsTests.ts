@@ -475,11 +475,12 @@ describe('Actions', () => {
             expect(Actions.UserLogin('alba', 'alba')).to.deep.equal(expectedAction)
         });
         it('should create an action to a user login success', () => {
+            const user = Content.Create({ Name: 'alba' }, ContentTypes.User, repo)
             const expectedAction = {
                 type: 'USER_LOGIN_SUCCESS',
-                response: true
+                response: user
             }
-            expect(Actions.UserLoginSuccess(true)).to.deep.equal(expectedAction)
+            expect(Actions.UserLoginSuccess(user)).to.deep.equal(expectedAction)
         });
         it('should create an action to a user login failure', () => {
             const expectedAction = {
@@ -494,6 +495,15 @@ describe('Actions', () => {
                 message: 'The username or the password is not valid!'
             }
             expect(Actions.UserLoginFailure({ message: 'The username or the password is not valid!', status: 403 })).to.deep.equal(expectedAction)
+        });
+    });
+    describe('UserLoginBuffer', () => {
+        it('should create an action to a user login buffering', () => {
+            const expectedAction = {
+                type: 'USER_LOGIN_BUFFER',
+                response: true
+            }
+            expect(Actions.UserLoginBuffer(true)).to.deep.equal(expectedAction)
         });
     });
     describe('UserLogout', () => {

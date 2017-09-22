@@ -631,7 +631,7 @@ describe('Epics', () => {
                     response: user
                 },
                 { type: 'CHECK_LOGIN_STATE_REQUEST' },
-                { type: 'USER_LOGIN_SUCCESS', response: 2 }]);
+                { type: 'USER_LOGIN_BUFFER', response: true }]);
         })
         it('handles an error', () => {
             (repo.Authentication as Mocks.MockAuthService).stateSubject.next(Authentication.LoginState.Unauthenticated);
@@ -724,4 +724,23 @@ describe('Epics', () => {
                 { type: 'LOAD_CONTENT_ACTIONS_FAILURE', error: 'error' }]);
         })
     });
+    describe('userLoginBufferEpic Epic', () => {
+        let store;
+        const epicMiddleware = createEpicMiddleware(Epics.userLoginBufferEpic, { dependencies: { repository: repo } });
+        const mockStore = configureMockStore([epicMiddleware]);
+
+        before(() => {
+            store = mockStore();
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.userLoginBufferEpic);
+        });
+        it('handles the success', () => {
+            store.dispatch({ type: 'USER_LOGIN_BUFFER', response: true });
+            console.log(store.getActions())
+            expect(store.getActions()).to.be.deep.eq(
+                [ { type: 'USER_LOGIN_BUFFER', response: true } ]);
+        })
+    })
 });
