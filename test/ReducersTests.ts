@@ -171,6 +171,34 @@ describe('Reducers', () => {
             expect(Reducers.entities({}, { response: { entities: { entities: { a: 0, b: 2 } } } }))
                 .to.be.deep.eq({ a: 0, b: 2 });
         });
+        it('should handle UPDATE_CONTENT_SUCCESS', () => {
+            const entities = {
+                5145: {
+                    Id: 5145,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            };
+            expect(Reducers.entities(entities, { type: 'UPDATE_CONTENT_SUCCESS', response: { Id: 5145, DisplayName: 'aaa', Status: ['Active'] } })).to.be.deep.equal(
+                {
+                    5145: {
+                        Id: 5145,
+                        DisplayName: 'aaa',
+                        Status: ['Active']
+                    },
+                    5146: {
+                        Id: 5146,
+                        Displayname: 'Other Article',
+                        Status: ['Completed']
+                    }
+                }
+            );
+        });
     });
 
     describe('isFetching reducer', () => {
