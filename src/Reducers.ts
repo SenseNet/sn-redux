@@ -195,10 +195,11 @@ export module Reducers {
        */
     export const entities = (state = {}, action) => {
         if (action.response && (
-            action.type !== 'USER_LOGIN_SUCCESS' && 
-            action.type !== 'USER_LOGIN_BUFFER' && 
+            action.type !== 'USER_LOGIN_SUCCESS' &&
+            action.type !== 'USER_LOGIN_BUFFER' &&
             action.type !== 'LOAD_CONTENT_SUCCESS' &&
-            action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS')) {
+            action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
+            action.type !== 'UPDATE_CONTENT_SUCCESS')) {
             return (<any>Object).assign({}, state, action.response.entities.entities);
         }
         switch (action.type) {
@@ -206,6 +207,9 @@ export module Reducers {
                 let res = Object.assign({}, state);
                 delete res[action.id];
                 return res;
+            case 'UPDATE_CONTENT_SUCCESS':
+                state[action.response.Id] = action.response
+                return state
             default:
                 return state;
         }
@@ -646,7 +650,7 @@ export module Reducers {
     export const getChildrenActions = (state) => {
         return state.actions
     }
-    
+
     export const getCurrentContent = (state) => {
         return state.currentcontent.content
     }
