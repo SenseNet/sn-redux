@@ -78,7 +78,7 @@
     "gulp": "^3.9.1",
     "gulp-rename": "^1.2.2",
     "gulp-typedoc": "^2.0.3",
-    "mocha": "^3.5.0",
+    "mocha": "^4.0.0",
     "nock": "^9.0.14",
     "normalizr": "^3.2.3",
     "redux": "^3.7.2",
