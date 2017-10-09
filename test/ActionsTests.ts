@@ -572,6 +572,14 @@ describe('Actions', () => {
             expect(Actions.DeSelectContent(1)).to.deep.equal(expectedAction)
         })
     })
+    describe('ClearSelection', () => {
+        it('should return the clear selection action', () => {
+            const expectedAction = {
+                type: 'CLEAR_SELECTION'
+            }
+            expect(Actions.ClearSelection()).to.deep.equal(expectedAction)
+        })
+    })
     describe('RequestContentActions', () => {
         
         const content = Content.Create({ DisplayName: 'My content', Id: 123 }, ContentTypes.Task, repo)

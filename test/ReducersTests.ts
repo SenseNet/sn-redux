@@ -693,6 +693,12 @@ describe('Reducers', () => {
             }
             expect(Reducers.selected([1], action)).to.deep.equal([]);
         })
+        it('should return an empty array', () => {
+            const action = {
+                type: 'CLEAR_SELECTION'
+            }
+            expect(Reducers.selected([1], action)).to.deep.equal([]);
+        })
     })
     describe('getContent', () => {
         const state = {
