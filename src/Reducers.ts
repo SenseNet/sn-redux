@@ -585,6 +585,8 @@ export module Reducers {
             case 'DESELECT_CONTENT':
                 const index = state.indexOf(action.id)
                 return [...state.slice(0, index), ...state.slice(index + 1)]
+            case 'CLEAR_SELECTION':
+                return []
             default:
                 return state
         }
