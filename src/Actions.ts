@@ -719,7 +719,13 @@ export module Actions {
     export const DeSelectContent = (id) => ({
         type: 'DESELECT_CONTENT',
         id
-    })
+    })/**
+    * Action creator for clearing the array of selected content
+   * @returns {Object} Returns a redux action.
+    */
+   export const ClearSelection = () => ({
+       type: 'CLEAR_SELECTION'
+   })
     /**
      * Action creator for a request for get actions of a content by a given scenario.
      * @param content {Content} The name of the scenario
