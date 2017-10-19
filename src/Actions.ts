@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
+import { Content, ODataApi, ODataHelper, Repository, ContentTypes } from 'sn-client-js';
 
 /**
  * Module that contains the action creators.
@@ -723,9 +723,9 @@ export module Actions {
     * Action creator for clearing the array of selected content
    * @returns {Object} Returns a redux action.
     */
-   export const ClearSelection = () => ({
-       type: 'CLEAR_SELECTION'
-   })
+    export const ClearSelection = () => ({
+        type: 'CLEAR_SELECTION'
+    })
     /**
      * Action creator for a request for get actions of a content by a given scenario.
      * @param content {Content} The name of the scenario
@@ -742,12 +742,13 @@ export module Actions {
      * @param response {any} JSON response of the ajax request.
      * @returns {Object} Returns a redux action with a response.
      */
-    export const RequestContentActionsSuccess = (response: any, id: number) => { 
+    export const RequestContentActionsSuccess = (response: any, id: number) => {
         return ({
-        type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
-        response: response,
-        id
-    })}
+            type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
+            response: response,
+            id
+        })
+    }
     /**
      * Action creator for the step when getting the actions of a content is failed
      * @param error {any} JSON response of the ajax request.
@@ -755,6 +756,43 @@ export module Actions {
      */
     export const RequestContentActionsFailure = (error: any) => ({
         type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+        message: error.message
+    })
+    /**
+     * Action creator for uploading a Content into the Content Repository.
+     * @param {Content} content The parent Content
+     * @param file The file that should be uploaded
+     * @param {ContentTypes.ContentType} [contentType=ContentTypes.File] ContentType of the Content that should be created with the binary (default is File)
+     * @param {boolean} [overwrite=true] Determines whether the existing file with a same name should be overwritten or not (default is true)
+     * @param {Object} [body=null] Contains extra stuff to request body 
+     * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
+     * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
+     */
+    export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string) => ({
+        type: 'UPLOAD_CONTENT_REQUEST',
+        content,
+        file,
+        contentType: contentType || ContentTypes.File,
+        overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
+        body: body ? body : null,
+        propertyName: propertyName ? propertyName : 'Binary'
+    })
+    /**
+     * Action creator for the step when a content was uploaded successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const UploadSuccess = (response) => ({
+        type: 'UPLOAD_CONTENT_SUCCESS',
+        response
+    })
+    /**
+     * Action creator for the step when uploading a content is failed
+     * @param error {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const UploadFailure = (error: any) => ({
+        type: 'UPLOAD_CONTENT_FAILURE',
         message: error.message
     })
 }
