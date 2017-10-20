@@ -738,9 +738,27 @@ describe('Epics', () => {
         });
         it('handles the success', () => {
             store.dispatch({ type: 'USER_LOGIN_BUFFER', response: true });
-            console.log(store.getActions())
             expect(store.getActions()).to.be.deep.eq(
                 [ { type: 'USER_LOGIN_BUFFER', response: true } ]);
+        })
+    })
+    
+    describe('uploadContentEpic Epic', () => {
+        let store;
+        const epicMiddleware = createEpicMiddleware(Epics.uploadFileEpic, { dependencies: { repository: repo } });
+        const mockStore = configureMockStore([epicMiddleware]);
+
+        before(() => {
+            store = mockStore();
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.uploadFileEpic);
+        });
+        it('handles the success', () => {
+            store.dispatch({ type: 'UPLOAD_CONTENT_SUCCESS', response: true });
+            expect(store.getActions()).to.be.deep.eq(
+                [ { type: 'UPLOAD_CONTENT_SUCCESS', response: true } ]);
         })
     })
 });
