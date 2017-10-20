@@ -181,6 +181,11 @@ export module Reducers {
                 return action.response.result;
             case 'CREATE_CONTENT_SUCCESS':
                 return [...state, action.response.result];
+            case 'UPLOAD_CONTENT_SUCCESS':
+                if (state.indexOf(action.response.CreatedContent.Id) === -1)
+                    return [...state, action.response.CreatedContent.Id];
+                else
+                    return state
             case 'DELETE_CONTENT_SUCCESS':
                 return [...state.slice(0, action.index), ...state.slice(action.index + 1)]
             default:
@@ -199,7 +204,8 @@ export module Reducers {
             action.type !== 'USER_LOGIN_BUFFER' &&
             action.type !== 'LOAD_CONTENT_SUCCESS' &&
             action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
-            action.type !== 'UPDATE_CONTENT_SUCCESS')) {
+            action.type !== 'UPDATE_CONTENT_SUCCESS' &&
+            action.type !== 'UPLOAD_CONTENT_SUCCESS')) {
             return (<any>Object).assign({}, state, action.response.entities.entities);
         }
         switch (action.type) {
@@ -209,6 +215,10 @@ export module Reducers {
                 return res;
             case 'UPDATE_CONTENT_SUCCESS':
                 state[action.response.Id] = action.response
+                return state
+            case 'UPLOAD_CONTENT_SUCCESS':
+                if (typeof state[action.response.CreatedContent.Id] === 'undefined')
+                    state[action.response.CreatedContent.Id] = action.response.CreatedContent
                 return state
             default:
                 return state;
