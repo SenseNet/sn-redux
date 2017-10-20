@@ -50,10 +50,10 @@ export module Epics {
                 //     .map(result => {
 
                 dependencies.repository.GetCurrentUser().subscribe(user => {
-                    if (user.Name === 'Visitor'){
+                    if (user.Name === 'Visitor') {
                         store.dispatch(Actions.UserLoginFailure({ message: null }))
                     }
-                    else{
+                    else {
                         store.dispatch(Actions.UserChanged(user))
                         store.dispatch(Actions.UserLoginSuccess(user))
                     }
@@ -339,13 +339,13 @@ export module Epics {
     }
     export const userLoginBufferEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('USER_LOGIN_BUFFER')
-        .mergeMap(action => {
-            return dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor')
-            .map(result => {
-                Actions.UserLoginSuccess(result)
+            .mergeMap(action => {
+                return dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor')
+                    .map(result => {
+                        Actions.UserLoginSuccess(result)
+                    })
+                    .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
-            .catch(error => Observable.of(Actions.UserLoginFailure(error)))
-        })
     }
     /**
          * Epic to logout a user from a sensenet portal. It is related to three redux actions, returns ```LogoutUser``` action and sends the response to the
@@ -366,6 +366,26 @@ export module Epics {
                 return c.Actions(action.scenario)
                     .map(result => Actions.RequestContentActionsSuccess(result, action.content.Id))
                     .catch(error => Observable.of(Actions.RequestContentActionsFailure(error)))
+            })
+    }
+    /**
+         * Epic to upload a file to the Content Repository. It is related to three redux actions, returns ```UploadContent``` action and sends the response to the
+         * ```UploadSuccess``` action if the ajax request ended successfully or catches the error if the request failed and sends the error message to the ```UploadFailure``` action.
+         */
+    export const uploadFileEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+        return action$.ofType('UPLOAD_CONTENT_REQUEST')
+            .mergeMap(action => {
+                return action.content.UploadFile({
+                    File: action.file,
+                    ContentType: action.contentType,
+                    OverWrite: action.overwrite,
+                    Body: action.body,
+                    PropertyName: action.propertyName
+                })
+                    .map((response) => {
+                        return Actions.UploadSuccess(response)
+                    })
+                    .catch(error => Observable.of(Actions.UploadFailure(error)))
             })
     }
     /**
@@ -392,7 +412,8 @@ export module Epics {
         userLoginEpic,
         userLogoutEpic,
         checkLoginStateEpic,
-        getContentActions
+        getContentActions,
+        uploadFileEpic
     );
 }
 
