@@ -157,6 +157,32 @@ describe('Reducers', () => {
                 }))
                 .to.be.deep.equal([2, 3]);
         });
+        it('should handle UPDATE_CONTENT_SUCCESS', () => {
+            expect(Reducers.ids(
+                [1, 2, 3],
+                {
+                    type: 'UPLOAD_CONTENT_SUCCESS',
+                    response: {
+                        CreatedContent: {
+                            Id: 4
+                        }
+                    }
+                }))
+                .to.be.deep.equal([1, 2, 3, 4]);
+        });
+        it('should handle UPDATE_CONTENT_SUCCESS with existing id', () => {
+            expect(Reducers.ids(
+                [1, 2, 3],
+                {
+                    type: 'UPLOAD_CONTENT_SUCCESS',
+                    response: {
+                        CreatedContent: {
+                            Id: 3
+                        }
+                    }
+                }))
+                .to.be.deep.equal([1, 2, 3]);
+        });
     });
 
     describe('entities reducer', () => {
@@ -196,6 +222,67 @@ describe('Reducers', () => {
                         Displayname: 'Other Article',
                         Status: ['Completed']
                     }
+                }
+            );
+        });
+        it('should handle UPLOAD_CONTENT_SUCCESS', () => {
+            const entities = {
+                5122: {
+                    Id: 5122,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            };
+            expect(Reducers.entities(entities, { type: 'UPLOAD_CONTENT_SUCCESS', response: { CreatedContent: { Id: 5145, DisplayName: 'aaa', Status: ['Active'] } } })).to.be.deep.equal(
+                {
+                    5122: {
+                        Id: 5122,
+                        DisplayName: 'Some Article',
+                        Status: ['Active']
+                    },
+                    5146: {
+                        Id: 5146,
+                        Displayname: 'Other Article',
+                        Status: ['Completed']
+                    },
+                    5145: {
+                        Id: 5145,
+                        DisplayName: 'aaa',
+                        Status: ['Active']
+                    },
+                }
+            );
+        });
+        it('should handle UPLOAD_CONTENT_SUCCESS with existing content', () => {
+            const entities = {
+                5122: {
+                    Id: 5122,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            };
+            expect(Reducers.entities(entities, { type: 'UPLOAD_CONTENT_SUCCESS', response: { CreatedContent: { Id: 5122, DisplayName: 'Some Article', Status: ['Active'] } } })).to.be.deep.equal(
+                {
+                    5122: {
+                        Id: 5122,
+                        DisplayName: 'Some Article',
+                        Status: ['Active']
+                    },
+                    5146: {
+                        Id: 5146,
+                        Displayname: 'Other Article',
+                        Status: ['Completed']
+                    },
                 }
             );
         });
