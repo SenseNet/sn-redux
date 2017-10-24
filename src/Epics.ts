@@ -4,6 +4,7 @@ import { Reducers } from './Reducers';
 import { ActionsObservable, combineEpics } from 'redux-observable';
 import { Observable } from '@reactivex/rxjs';
 import { Repository, Content, ContentTypes, Collection, ODataApi, Authentication } from 'sn-client-js';
+import 'rxjs/add/operator/mergeMap';
 
 /**
  * Module for redux-observable Epics of the sensenet built-in OData actions.
