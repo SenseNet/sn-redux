@@ -231,7 +231,7 @@ describe('Actions', () => {
         it('should create an action to delete content success', () => {
             const expectedAction = {
                 type: 'DELETE_CONTENT_SUCCESS',
-                index: 0, 
+                index: 0,
                 id: 123
             }
             expect(Actions.DeleteSuccess(0, 123)).to.deep.equal(expectedAction)
@@ -581,7 +581,7 @@ describe('Actions', () => {
         })
     })
     describe('RequestContentActions', () => {
-        
+
         const content = Content.Create({ DisplayName: 'My content', Id: 123 }, ContentTypes.Task, repo)
         it('should return the RequestContentActions action', () => {
             const expectedAction = {
@@ -609,6 +609,89 @@ describe('Actions', () => {
                 message: 'error'
             }
             expect(Actions.RequestContentActionsFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    })
+    describe('UploadContentActions', () => {
+        const content = Content.Create({ DisplayName: 'My content', Id: 123 }, ContentTypes.Task, repo)
+        const file = {
+            lastModified: 1499931166346,
+            name: 'README.md',
+            size: 75,
+            type: ''
+        }
+        it('should return the upload content action set only content and file', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_REQUEST',
+                content,
+                file,
+                overwrite: true,
+                propertyName: 'Binary',
+                contentType: ContentTypes.File,
+                body: null
+            }
+            expect(Actions.UploadRequest(content, file)).to.deep.equal(expectedAction)
+        })
+        it('should return the upload content action set content, file and contentType to Folder', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_REQUEST',
+                content,
+                contentType: ContentTypes.Folder,
+                file,
+                overwrite: true,
+                propertyName: 'Binary',
+                body: null
+            }
+            expect(Actions.UploadRequest(content, file, ContentTypes.Folder)).to.deep.equal(expectedAction)
+        })
+        it('should return the upload content action set content, file and overwrite to false', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_REQUEST',
+                content,
+                contentType: ContentTypes.File,
+                file,
+                overwrite: false,
+                propertyName: 'Binary',
+                body: null
+            }
+            expect(Actions.UploadRequest(content, file, undefined, false)).to.deep.equal(expectedAction)
+        })
+        it('should return the upload content action set content, file and propertyName to Avatar', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_REQUEST',
+                content,
+                contentType: ContentTypes.File,
+                file,
+                overwrite: true,
+                propertyName: 'Avatar',
+                body: null
+            }
+            expect(Actions.UploadRequest(content, file, undefined, undefined, undefined, 'Avatar')).to.deep.equal(expectedAction)
+        })
+        it('should return the upload content action set content, file and body', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_REQUEST',
+                content,
+                contentType: ContentTypes.File,
+                file,
+                overwrite: true,
+                propertyName: 'Binary',
+                body: { vmi: 'aaa' }
+            }
+            expect(Actions.UploadRequest(content, file, undefined, undefined, { vmi: 'aaa' })).to.deep.equal(expectedAction)
+        })
+        it('should create an action to upload content success', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_SUCCESS',
+                response: []
+            }
+            expect(Actions.UploadSuccess([])).to.deep.equal(expectedAction)
+        });
+        it('should create an action to content upload request failure', () => {
+            const expectedAction = {
+                type: 'UPLOAD_CONTENT_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.UploadFailure({ message: 'error' })).to.deep.equal(expectedAction)
         });
     })
 });
