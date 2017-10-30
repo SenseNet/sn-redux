@@ -2,7 +2,7 @@
 import { Reducers } from '../src/Reducers';
 import { Actions } from '../src/Actions';
 import * as Chai from 'chai';
-import { Authentication, Content, ContentTypes, Mocks } from 'sn-client-js';
+import { Authentication, Content, ContentTypes, Mocks, Enums } from 'sn-client-js';
 const expect = Chai.expect;
 describe('Reducers', () => {
     describe('country reducer', () => {
@@ -551,10 +551,10 @@ describe('Reducers', () => {
         it('should return fields of the content', () => {
 
             let repo: Mocks.MockRepository = new Mocks.MockRepository();
-            let content = Content.Create({
+            let content = repo.CreateContent({
                 Path: '/Root/Sites/Default_Site/tasks',
-                Status: 'active' as any
-            }, ContentTypes.Task, repo)
+                Status: Enums.Status.active
+            }, ContentTypes.Task)
             const action = {
                 type: 'LOAD_CONTENT_SUCCESS',
                 response: content
@@ -567,10 +567,10 @@ describe('Reducers', () => {
         it('should return fields of the content', () => {
 
             let repo: Mocks.MockRepository = new Mocks.MockRepository();
-            let content = Content.Create({
+            let content = repo.CreateContent({
                 Path: '/Root/Sites/Default_Site/tasks',
-                Status: 'active' as any
-            }, ContentTypes.Task, repo)
+                Status: Enums.Status.active
+            }, ContentTypes.Task)
             const action = {
                 type: 'RELOAD_CONTENT_SUCCESS',
                 response: content
@@ -587,10 +587,10 @@ describe('Reducers', () => {
         });
         it('should return a content', () => {
             let repo: Mocks.MockRepository = new Mocks.MockRepository();
-            let content = Content.Create({
+            let content = repo.CreateContent({
                 Path: '/Root/Sites/Default_Site/tasks',
-                Status: 'active' as any
-            }, ContentTypes.Task, repo)
+                Status: Enums.Status.active
+            }, ContentTypes.Task)
             const action = {
                 type: 'LOAD_CONTENT_SUCCESS',
                 response: content
@@ -599,10 +599,10 @@ describe('Reducers', () => {
         });
         it('should return a content', () => {
             let repo: Mocks.MockRepository = new Mocks.MockRepository();
-            let content = Content.Create({
+            let content = repo.CreateContent({
                 Path: '/Root/Sites/Default_Site/tasks',
-                Status: 'active' as any
-            }, ContentTypes.Task, repo)
+                Status: Enums.Status.active
+            }, ContentTypes.Task)
             const action = {
                 type: 'RELOAD_CONTENT_SUCCESS',
                 response: content

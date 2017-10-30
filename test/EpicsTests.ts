@@ -7,6 +7,14 @@ import { Actions } from '../src/Actions'
 const expect = Chai.expect;
 import 'rxjs';
 
+let store, repo: Mocks.MockRepository, epicMiddleware, mockStore, content;
+const initBefores = () => {
+    repo = new Mocks.MockRepository();
+    epicMiddleware = createEpicMiddleware(Epics.fetchContentEpic, { dependencies: { repository: repo } })
+    mockStore = configureMockStore([epicMiddleware]);
+    store = mockStore();
+    content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces', Name: 'MyContent' }, ContentTypes.Task)
+}
 describe('Epics', () => {
 
     let repo: Mocks.MockRepository = new Mocks.MockRepository();
@@ -64,6 +72,7 @@ describe('Epics', () => {
                 }]);
         })
     });
+<<<<<<< Updated upstream
     // describe('initSensenetStoreEpic Epic', () => {
     //     let store;
     //     const epicMiddleware = createEpicMiddleware(Epics.initSensenetStoreEpic, { dependencies: { repository: repo } });
@@ -112,6 +121,23 @@ describe('Epics', () => {
     //             }]);
     //     })
     // })
+=======
+    describe('initSensenetStoreEpic Epic', () => {
+        before(() => {
+            initBefores()
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.initSensenetStoreEpic);
+        });
+        it('handles the error', () => {
+            const user = repo.CreateContent({ Name: 'alba', Id: 123 }, ContentTypes.User);
+            store.dispatch({ type: 'INIT_SENSENET_STORE', path: '/workspaces', options: {} });
+            expect(store.getActions()).to.be.deep.equal(
+                [{ type: 'INIT_SENSENET_STORE', path: '/workspaces', options: {} }]);
+        })
+    })
+>>>>>>> Stashed changes
     describe('loadContent Epic', () => {
         let store;
         const epicMiddleware = createEpicMiddleware(Epics.loadContentEpic, { dependencies: { repository: repo } });
@@ -518,7 +544,7 @@ describe('Epics', () => {
                 }]);
         })
         it('handles the loggedin user', () => {
-            const user = Content.Create({ Name: 'alba', Id: 123 }, ContentTypes.User, repo)
+            const user = repo.CreateContent({ Name: 'alba', Id: 123 }, ContentTypes.User);
             store.dispatch({ type: 'USER_LOGIN_REQUEST', username: 'user', password: 'password' });
             (repo.Authentication as Mocks.MockAuthService).stateSubject.next(Authentication.LoginState.Authenticated);
             expect(store.getActions()).to.be.deep.eq(
@@ -571,19 +597,15 @@ describe('Epics', () => {
         })
     });
     describe('checkLoginState Epic', () => {
-        let store;
-        const epicMiddleware = createEpicMiddleware(Epics.checkLoginStateEpic, { dependencies: { repository: repo } });
-        const mockStore = configureMockStore([epicMiddleware]);
-
         beforeEach(() => {
-            store = mockStore();
+            initBefores()
         });
 
         afterEach(() => {
             epicMiddleware.replaceEpic(Epics.userLoginEpic);
         });
-        const user = Content.Create({ Name: 'alba', Id: '2' }, ContentTypes.User, repo)
         it('handles a loggedin user', () => {
+            const user = repo.CreateContent({ Name: 'alba', Id: 2, Path: '/Root' }, ContentTypes.User);            
             store.dispatch(Actions.UserLoginSuccess(user));
             (repo.Authentication as Mocks.MockAuthService).stateSubject.next(Authentication.LoginState.Authenticated);
             store.dispatch({ type: 'CHECK_LOGIN_STATE_REQUEST' });
@@ -592,15 +614,79 @@ describe('Epics', () => {
                     type: 'USER_LOGIN_SUCCESS',
                     response: user
                 },
-                { type: 'CHECK_LOGIN_STATE_REQUEST' },
-                { type: 'USER_LOGIN_SUCCESS', response: 2 }]);
+                { type: 'CHECK_LOGIN_STATE_REQUEST' }
+            ]);
         })
         it('handles an error', () => {
-            (repo.Authentication as Mocks.MockAuthService).stateSubject.next(Authentication.LoginState.Unauthenticated);
+            const user = repo.HandleLoadedContent({ Name: 'alba', Id: 65535, Path: '/Root' }, ContentTypes.User);
+            repo.Authentication.StateSubject.next(Authentication.LoginState.Unauthenticated);
             store.dispatch({ type: 'CHECK_LOGIN_STATE_REQUEST' });
-            expect(store.getActions()).to.be.deep.eq([
-                { type: 'CHECK_LOGIN_STATE_REQUEST' },
-                { type: 'USER_LOGIN_FAILURE', message: null }]);
+            expect(store.getActions()).to.be.deep.eq(
+                [
+                //     {
+                //     type: 'USER_LOGIN_SUCCESS',
+                //     response: user.GetFields()
+                // },
+                // { type: 'CHECK_LOGIN_STATE_REQUEST' },
+                // { type: '@@redux-observable/EPIC_END' },
+                { type: 'CHECK_LOGIN_STATE_REQUEST' }]);
+        })
+    });
+    describe('getContentActions Epic', () => {
+        before(() => {
+            initBefores()
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.getContentActions);
+        });
+        it('handles the success', () => {
+            store.dispatch({ type: 'REQUEST_CONTENT_ACTIONS', content, scenario: 'DMSDemoScenario' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'REQUEST_CONTENT_ACTIONS',
+                    content: content,
+                    scenario: 'DMSDemoScenario'
+                }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'REQUEST_CONTENT_ACTIONS_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'REQUEST_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                { type: 'REQUEST_CONTENT_ACTIONS_FAILURE', error: 'error' }]);
+        })
+    });
+    describe('loadContentActionsEpic Epic', () => {
+        before(() => {
+            initBefores()
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.loadContentActionsEpic);
+        });
+        it('handles the success', () => {
+            store.dispatch({ type: 'LOAD_CONTENT_ACTIONS', content, scenario: 'DMSDemoScenario' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'LOAD_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                ]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'LOAD_CONTENT_ACTIONS_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'LOAD_CONTENT_ACTIONS',
+                    content,
+                    scenario: 'DMSDemoScenario'
+                },
+                { type: 'LOAD_CONTENT_ACTIONS_FAILURE', error: 'error' }]);
         })
     });
 });
