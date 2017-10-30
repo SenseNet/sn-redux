@@ -1,10 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-<<<<<<< Updated upstream
-import { Content, ODataApi, ODataHelper, Repository } from 'sn-client-js';
-=======
 import { Content, IContent, ODataApi, ODataHelper, Repository, ContentTypes } from 'sn-client-js';
->>>>>>> Stashed changes
 
 /**
  * Module that contains the action creators.
@@ -637,8 +633,8 @@ export module Actions {
 
     /**
       * Action creator for login a user to a sensenet portal.
-      * @param userName {string} Login name of the user.
-      * @param password {string} Password of the user.
+      * @param {string} userName Login name of the user.
+      * @param {string} password Password of the user.
       * @returns {Object} Returns a redux action with the properties userName and password.
     */
     export const UserLogin = (userName: string, password: string) => ({
@@ -647,15 +643,21 @@ export module Actions {
         password
     })
     /**
+     * Action creator for handling a user login success response without a loggedin user.
+     * @param {boolean} response Response of the login request
+     * @returns {Object} Returns a redux action with the properties userName and password.
+     */
+    export const UserLoginBuffer = (response: boolean) => ({
+        type: 'USER_LOGIN_BUFFER',
+        response
+    })
+    /**
       * Action creator for the step when a User is logged in successfully.
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the user as a response.
     */
-<<<<<<< Updated upstream
-    export const UserLoginSuccess = (response: any) => ({
-=======
+
     export const UserLoginSuccess = (content: Content<ContentTypes.User>) => ({
->>>>>>> Stashed changes
         type: 'USER_LOGIN_SUCCESS',
         response: content
     })
@@ -700,5 +702,98 @@ export module Actions {
     export const LoadRepository = (repositoryConfig) => ({
         type: 'LOAD_REPOSITORY',
         repository: repositoryConfig
+    })
+    /**
+     * Action creator for selecting a Content
+     * @param id {number} The id of the selected Content
+    * @returns {Object} Returns a redux action.
+     */
+    export const SelectContent = (id) => ({
+        type: 'SELECT_CONTENT',
+        id
+    })
+    /**
+     * Action creator for deselecting a Content
+     * @param id {number} The id of the deselected Content
+    * @returns {Object} Returns a redux action.
+     */
+    export const DeSelectContent = (id) => ({
+        type: 'DESELECT_CONTENT',
+        id
+    })/**
+    * Action creator for clearing the array of selected content
+   * @returns {Object} Returns a redux action.
+    */
+    export const ClearSelection = () => ({
+        type: 'CLEAR_SELECTION'
+    })
+    /**
+     * Action creator for a request for get actions of a content by a given scenario.
+     * @param content {Content} The name of the scenario
+     * @param scenario {string} The name of the scenario
+    * @returns {Object} Returns a redux action.
+     */
+    export const RequestContentActions = (content, scenario?: string) => ({
+        type: 'REQUEST_CONTENT_ACTIONS',
+        content,
+        scenario
+    })
+    /**
+     * Action creator for the step getting the actions of a content successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const RequestContentActionsSuccess = (response: any, id: number) => {
+        return ({
+            type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
+            response: response,
+            id
+        })
+    }
+    /**
+     * Action creator for the step when getting the actions of a content is failed
+     * @param error {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const RequestContentActionsFailure = (error: any) => ({
+        type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
+        message: error.message
+    })
+    /**
+     * Action creator for uploading a Content into the Content Repository.
+     * @param {Content} content The parent Content
+     * @param file The file that should be uploaded
+     * @param {ContentTypes.ContentType} [contentType=ContentTypes.File] ContentType of the Content that should be created with the binary (default is File)
+     * @param {boolean} [overwrite=true] Determines whether the existing file with a same name should be overwritten or not (default is true)
+     * @param {Object} [body=null] Contains extra stuff to request body 
+     * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
+     * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
+     */
+    export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string) => ({
+        type: 'UPLOAD_CONTENT_REQUEST',
+        content,
+        file,
+        contentType: contentType || ContentTypes.File,
+        overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
+        body: body ? body : null,
+        propertyName: propertyName ? propertyName : 'Binary'
+    })
+    /**
+     * Action creator for the step when a content was uploaded successfully.
+     * @param response {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const UploadSuccess = (response) => ({
+        type: 'UPLOAD_CONTENT_SUCCESS',
+        response
+    })
+    /**
+     * Action creator for the step when uploading a content is failed
+     * @param error {any} JSON response of the ajax request.
+     * @returns {Object} Returns a redux action with a response.
+     */
+    export const UploadFailure = (error: any) => ({
+        type: 'UPLOAD_CONTENT_FAILURE',
+        message: error.message
     })
 }

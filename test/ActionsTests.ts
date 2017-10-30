@@ -231,7 +231,7 @@ describe('Actions', () => {
         it('should create an action to delete content success', () => {
             const expectedAction = {
                 type: 'DELETE_CONTENT_SUCCESS',
-                index: 0, 
+                index: 0,
                 id: 123
             }
             expect(Actions.DeleteSuccess(0, 123)).to.deep.equal(expectedAction)
@@ -478,9 +478,9 @@ describe('Actions', () => {
             const user = repo.CreateContent({ Name: 'alba' }, ContentTypes.User)
             const expectedAction = {
                 type: 'USER_LOGIN_SUCCESS',
-                response: true
+                response: user
             }
-            expect(Actions.UserLoginSuccess(true)).to.deep.equal(expectedAction)
+            expect(Actions.UserLoginSuccess(user)).to.deep.equal(expectedAction)
         });
         it('should create an action to a user login failure', () => {
             const expectedAction = {
@@ -495,6 +495,15 @@ describe('Actions', () => {
                 message: 'The username or the password is not valid!'
             }
             expect(Actions.UserLoginFailure({ message: 'The username or the password is not valid!', status: 403 })).to.deep.equal(expectedAction)
+        });
+    });
+    describe('UserLoginBuffer', () => {
+        it('should create an action to a user login buffering', () => {
+            const expectedAction = {
+                type: 'USER_LOGIN_BUFFER',
+                response: true
+            }
+            expect(Actions.UserLoginBuffer(true)).to.deep.equal(expectedAction)
         });
     });
     describe('UserLogout', () => {
@@ -572,8 +581,8 @@ describe('Actions', () => {
         })
     })
     describe('RequestContentActions', () => {
-
         const content = repo.CreateContent({ DisplayName: 'My content', Id: 123 }, ContentTypes.Task)
+
         it('should return the RequestContentActions action', () => {
             const expectedAction = {
                 type: 'REQUEST_CONTENT_ACTIONS',
