@@ -397,9 +397,10 @@ export module Actions {
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const CopyBatch = (ids: number[], permanently: boolean = false) => ({
+    export const CopyBatch = (ids: number[], path) => ({
         type: 'COPY_BATCH_REQUEST',
-        ids
+        ids,
+        path
     })
     /**
       * Action creator for the step when multiple Content was copied successfully.
@@ -425,9 +426,10 @@ export module Actions {
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const MoveBatch = (ids: number[], permanently: boolean = false) => ({
+    export const MoveBatch = (ids: number[], path) => ({
         type: 'MOVE_BATCH_REQUEST',
-        ids
+        ids,
+        path
     })
     /**
       * Action creator for the step when multiple Content was moved successfully.
