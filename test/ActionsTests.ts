@@ -251,14 +251,6 @@ describe('Actions', () => {
                 ids: [1, 2, 3],
                 permanently: false
             }
-            expect(Actions.DeleteBatch([1, 2, 3], false)).to.deep.equal(expectedAction)
-        });
-        it('should create an action to a delete content request', () => {
-            const expectedAction = {
-                type: 'DELETE_BATCH_REQUEST',
-                ids: [1, 2, 3],
-                permanently: false
-            }
             expect(Actions.DeleteBatch([1, 2, 3])).to.deep.equal(expectedAction)
         });
         it('should create an action to delete content success', () => {
@@ -275,6 +267,56 @@ describe('Actions', () => {
                 message: 'error'
             }
             expect(Actions.DeleteBatchFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    });
+    describe('CopyBatchContent', () => {
+        it('should create an action to a copy multiple content request', () => {
+            const expectedAction = {
+                type: 'COPY_BATCH_REQUEST',
+                ids: [1, 2, 3],
+                path: '/workspaces'
+            }
+            expect(Actions.CopyBatch([1, 2, 3], '/workspaces')).to.deep.equal(expectedAction)
+        });
+        it('should create an action to copy multiple content success', () => {
+            const response = new ODataApi.ODataBatchResponse()
+            const expectedAction = {
+                type: 'COPY_BATCH_SUCCESS',
+                response: response
+            }
+            expect(Actions.CopyBatchSuccess(response)).to.deep.equal(expectedAction)
+        });
+        it('should create an action to copy multiple content failure', () => {
+            const expectedAction = {
+                type: 'COPY_BATCH_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.CopyBatchFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        });
+    });
+    describe('MoveBatchContent', () => {
+        it('should create an action to a move multiple content request', () => {
+            const expectedAction = {
+                type: 'MOVE_BATCH_REQUEST',
+                ids: [1, 2, 3],
+                path: '/workspaces'
+            }
+            expect(Actions.MoveBatch([1, 2, 3], '/workspaces')).to.deep.equal(expectedAction)
+        });
+        it('should create an action to move multiple content success', () => {
+            const response = new ODataApi.ODataBatchResponse()
+            const expectedAction = {
+                type: 'MOVE_BATCH_SUCCESS',
+                response: response
+            }
+            expect(Actions.MoveBatchSuccess(response)).to.deep.equal(expectedAction)
+        });
+        it('should create an action to move multiple content failure', () => {
+            const expectedAction = {
+                type: 'MOVE_BATCH_FAILURE',
+                message: 'error'
+            }
+            expect(Actions.MoveBatchFailure({ message: 'error' })).to.deep.equal(expectedAction)
         });
     });
     describe('CheckoutContent', () => {
