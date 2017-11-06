@@ -248,8 +248,7 @@ describe('Actions', () => {
         it('should create an action to a delete content request', () => {
             const expectedAction = {
                 type: 'DELETE_BATCH_REQUEST',
-                path: path,
-                ids: ['1', '2', '3'],
+                ids: [1, 2, 3],
                 permanently: false
             }
             expect(Actions.DeleteBatch([1, 2, 3], false)).to.deep.equal(expectedAction)
@@ -257,8 +256,7 @@ describe('Actions', () => {
         it('should create an action to a delete content request', () => {
             const expectedAction = {
                 type: 'DELETE_BATCH_REQUEST',
-                path: path,
-                ids: ['1', '2', '3'],
+                ids: [1, 2, 3],
                 permanently: false
             }
             expect(Actions.DeleteBatch([1, 2, 3])).to.deep.equal(expectedAction)
