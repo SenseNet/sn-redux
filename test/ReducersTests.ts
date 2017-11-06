@@ -787,6 +787,84 @@ describe('Reducers', () => {
             expect(Reducers.selected([1], action)).to.deep.equal([]);
         })
     })
+    describe('batchResponseError reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.batchResponseError(undefined, {})).to.deep.equal('');
+        });
+        it('should return an error message', () => {
+            const action = {
+                type: 'DELETE_BATCH_FAILURE',
+                message: 'error'
+            }
+            expect(Reducers.batchResponseError(undefined, action)).to.deep.equal('error');
+        })
+        it('should return an error message', () => {
+            const action = {
+                type: 'COPY_BATCH_FAILURE',
+                message: 'error'
+            }
+            expect(Reducers.batchResponseError(undefined, action)).to.deep.equal('error');
+        })
+        it('should return an error message', () => {
+            const action = {
+                type: 'MOVE_BATCH_FAILURE',
+                message: 'error'
+            }
+            expect(Reducers.batchResponseError(undefined, action)).to.deep.equal('error');
+        })
+        it('should return an empty string', () => {
+            const action = {
+                type: 'MOVE_BATCH_SUCCESS',
+                response: {}
+            }
+            expect(Reducers.batchResponseError(undefined, action)).to.deep.equal('');
+        })
+    })
+    describe('OdataBatchResponse reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.OdataBatchResponse(undefined, {})).to.deep.equal({});
+        });
+        it('should return a response object', () => {
+            const action = {
+                type: 'DELETE_BATCH_SUCCESS',
+                response: {
+                    vmi: '1'
+                }
+            }
+            expect(Reducers.OdataBatchResponse(undefined, action)).to.deep.equal({
+                vmi: '1'
+            });
+        })
+        it('should return an error message', () => {
+            const action = {
+                type: 'COPY_BATCH_SUCCESS',
+                response: {
+                    vmi: '1'
+                }
+            }
+            expect(Reducers.OdataBatchResponse(undefined, action)).to.deep.equal({
+                vmi: '1'
+            });
+        })
+        it('should return an error message', () => {
+            const action = {
+                type: 'MOVE_BATCH_SUCCESS',
+                response: {
+                    vmi: '1'
+                }
+            }
+            expect(Reducers.OdataBatchResponse(undefined, action)).to.deep.equal({
+                vmi: '1'
+            });
+        })
+        it('should return an empty string', () => {
+            const action = {
+                type: 'MOVE_BATCH_FAILURE',
+                message: 'error'
+            }
+            expect(Reducers.OdataBatchResponse(undefined, action)).to.deep.equal({});
+        })
+    })
     describe('getContent', () => {
         const state = {
             entities: {

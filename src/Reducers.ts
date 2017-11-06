@@ -612,7 +612,7 @@ export module Reducers {
             case 'DELETE_BATCH_SUCCESS':
             case 'COPY_BATCH_SUCCESS':
             case 'MOVE_BATCH_SUCCESS':
-                return action.reponse
+                return action.response
             default:
                 return {}
         }
