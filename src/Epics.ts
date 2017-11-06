@@ -2,9 +2,10 @@ import { Actions } from './Actions';
 import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
-import { Observable } from 'rxjs/Observable';
 import { Repository, Content, ContentTypes, Collection, ODataApi, Authentication } from 'sn-client-js';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/catch'
 
 /**
  * Module for redux-observable Epics of the sensenet built-in OData actions.
@@ -194,11 +195,9 @@ export module Epics {
         return action$.ofType('DELETE_BATCH_REQUEST')
             .mergeMap(action => {
                 let collection = new Collection.Collection([], dependencies.repository, action.contentType);
-                return collection.Remove(action.ids, false)
+                return collection.Remove(action.ids, action.permanently)
                     .map((response) => {
-                        const state = store.getState();
-                        const ids = Reducers.getIds(state.collection);
-                        return Actions.DeleteBatchSuccess(ids);
+                        return Actions.DeleteBatchSuccess(response);
                     })
                     .catch(error => Observable.of(Actions.DeleteBatchFailure(error)))
             })
