@@ -2,7 +2,7 @@ import { Actions } from './Actions';
 import { Reducers } from './Reducers';
 
 import { ActionsObservable, combineEpics } from 'redux-observable';
-import { Observable } from '@reactivex/rxjs';
+import { Observable } from 'rxjs/Observable';
 import { Repository, Content, ContentTypes, Collection, ODataApi, Authentication } from 'sn-client-js';
 import 'rxjs/add/operator/mergeMap';
 

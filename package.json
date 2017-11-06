@@ -54,14 +54,13 @@
   },
   "homepage": "https://sensenet.com",
   "dependencies": {
-    "@reactivex/rxjs": "^5.4.3",
     "normalizr": "^3.2.3",
     "nyc": "^11.1.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-observable": "^0.16.0",
     "rimraf": "^2.6.1",
-    "rxjs": "^5.4.3",
+    "rxjs": "^5.5.2",
     "sensenet-kfi-cz-conventional-changelog": "^1.0.0"
   },
   "devDependencies": {
@@ -85,7 +84,7 @@
     "redux-mock-store": "^1.2.3",
     "redux-observable": "^0.16.0",
     "semantic-release": "^8.0.0",
-    "sn-client-js": "^2.5.0",
+    "sn-client-js": "^3.0.0-development.2",
     "tslint": "^5.6.0",
     "typedoc": "^0.9.0",
     "typedoc-md-theme": "^1.0.1",
