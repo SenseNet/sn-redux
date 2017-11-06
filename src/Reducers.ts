@@ -601,7 +601,7 @@ export module Reducers {
                 return state
         }
     }
-    export const batchResponses = (state = Object, action) => {
+    export const OdataBatchResponse = (state = Object, action) => {
         switch (action.type) {
             case 'DELETE_BATCH_SUCCESS':
             case 'COPY_BATCH_SUCCESS':
@@ -611,6 +611,20 @@ export module Reducers {
                 return {}
         }
     }
+    export const batchResponseError = (state = '', action) => {
+        switch (action.type) {
+            case 'DELETE_BATCH_FAILURE':
+            case 'COPY_BATCH_FAILURE':
+            case 'MOVE_BATCH_FAILURE':
+                return action.message
+            default:
+                return ''
+        }
+    }
+    export const batchResponses = combineReducers({
+        response: OdataBatchResponse,
+        error: batchResponseError
+    })
     /**
    * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
    */
