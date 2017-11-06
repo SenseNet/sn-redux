@@ -601,6 +601,16 @@ export module Reducers {
                 return state
         }
     }
+    export const batchResponses = (state = Object, action) => {
+        switch (action.type) {
+            case 'DELETE_BATCH_SUCCESS':
+            case 'COPY_BATCH_SUCCESS':
+            case 'MOVE_BATCH_SUCCESS':
+                return action.reponse
+            default:
+                return {}
+        }
+    }
     /**
    * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
    */
@@ -608,7 +618,8 @@ export module Reducers {
         session,
         children,
         currentcontent,
-        selected
+        selected,
+        batchResponses
     })
 
     /**
