@@ -1,7 +1,7 @@
 ///<reference path="../node_modules/@types/mocha/index.d.ts"/>
 import { Actions } from '../src/Actions'
 import * as Chai from 'chai';
-import { Mocks, ContentTypes, Repository } from 'sn-client-js';
+import { Mocks, ContentTypes, Repository, ODataApi } from 'sn-client-js';
 const expect = Chai.expect;
 
 describe('Actions', () => {
@@ -252,7 +252,7 @@ describe('Actions', () => {
                 ids: ['1', '2', '3'],
                 permanently: false
             }
-            expect(Actions.DeleteBatch(path, ['1', '2', '3'], false)).to.deep.equal(expectedAction)
+            expect(Actions.DeleteBatch([1, 2, 3], false)).to.deep.equal(expectedAction)
         });
         it('should create an action to a delete content request', () => {
             const expectedAction = {
@@ -261,14 +261,15 @@ describe('Actions', () => {
                 ids: ['1', '2', '3'],
                 permanently: false
             }
-            expect(Actions.DeleteBatch(path, ['1', '2', '3'])).to.deep.equal(expectedAction)
+            expect(Actions.DeleteBatch([1, 2, 3])).to.deep.equal(expectedAction)
         });
         it('should create an action to delete content success', () => {
+            const response = new ODataApi.ODataBatchResponse()
             const expectedAction = {
                 type: 'DELETE_BATCH_SUCCESS',
-                ids: [0, 1, 2]
+                response: response
             }
-            expect(Actions.DeleteBatchSuccess([0, 1, 2])).to.deep.equal(expectedAction)
+            expect(Actions.DeleteBatchSuccess(response)).to.deep.equal(expectedAction)
         });
         it('should create an action to delete content failure', () => {
             const expectedAction = {
