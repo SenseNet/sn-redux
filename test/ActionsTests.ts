@@ -291,10 +291,23 @@ describe('Actions', () => {
         it('should create an action to a copy multiple content request', () => {
             const expectedAction = {
                 type: 'COPY_BATCH_REQUEST',
-                ids: [1, 2, 3],
+                contentItems:
+                {
+                    '1': { DisplaName: 'aaa', Id: 1 },
+                    '2': { DisplaName: 'bbb', Id: 2 }
+                },
                 path: '/workspaces'
             }
-            expect(Actions.CopyBatch([1, 2, 3], '/workspaces')).to.deep.equal(expectedAction)
+            expect(Actions.CopyBatch({
+                1: {
+                    DisplaName: 'aaa',
+                    Id: 1
+                },
+                2: {
+                    DisplaName: 'bbb',
+                    Id: 2
+                }
+            }, '/workspaces')).to.deep.equal(expectedAction)
         });
         it('should create an action to copy multiple content success', () => {
             const response = new ODataApi.ODataBatchResponse()
@@ -316,10 +329,28 @@ describe('Actions', () => {
         it('should create an action to a move multiple content request', () => {
             const expectedAction = {
                 type: 'MOVE_BATCH_REQUEST',
-                ids: [1, 2, 3],
+                contentItems: {
+                    1: {
+                        DisplaName: 'aaa',
+                        Id: 1
+                    },
+                    2: {
+                        DisplaName: 'bbb',
+                        Id: 2
+                    }
+                },
                 path: '/workspaces'
             }
-            expect(Actions.MoveBatch([1, 2, 3], '/workspaces')).to.deep.equal(expectedAction)
+            expect(Actions.MoveBatch({
+                1: {
+                    DisplaName: 'aaa',
+                    Id: 1
+                },
+                2: {
+                    DisplaName: 'bbb',
+                    Id: 2
+                }
+            }, '/workspaces')).to.deep.equal(expectedAction)
         });
         it('should create an action to move multiple content success', () => {
             const response = new ODataApi.ODataBatchResponse()
