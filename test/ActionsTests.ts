@@ -248,10 +248,28 @@ describe('Actions', () => {
         it('should create an action to a delete content request', () => {
             const expectedAction = {
                 type: 'DELETE_BATCH_REQUEST',
-                ids: [1, 2, 3],
+                contentItems: {
+                    1: {
+                        DisplaName: 'aaa',
+                        Id: 1
+                    },
+                    2: {
+                        DisplaName: 'bbb',
+                        Id: 2
+                    }
+                },
                 permanently: false
             }
-            expect(Actions.DeleteBatch([1, 2, 3])).to.deep.equal(expectedAction)
+            expect(Actions.DeleteBatch({
+                1: {
+                    DisplaName: 'aaa',
+                    Id: 1
+                },
+                2: {
+                    DisplaName: 'bbb',
+                    Id: 2
+                }
+            })).to.deep.equal(expectedAction)
         });
         it('should create an action to delete content success', () => {
             const response = new ODataApi.ODataBatchResponse()
