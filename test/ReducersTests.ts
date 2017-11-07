@@ -1099,12 +1099,53 @@ describe('Reducers', () => {
             expect(Reducers.getRepositoryUrl(state)).to.be.eq('https://dmsservice.demo.sensenet.com');
         });
     });
-    describe('getSelectedContent', () => {
+    describe('getSelectedContentIds', () => {
         const state = {
-            selected: [1, 2]
+            selected: {
+                ids: [1, 2],
+                entities: {
+                    1: {
+                        DisplaName: 'aaa',
+                        Id: 1
+                    },
+                    2: {
+                        DisplaName: 'bbb',
+                        Id: 2
+                    }
+                }
+            }
         }
         it('should return the value of the selected reducers current state, an array with two items', () => {
-            expect(Reducers.getSelectedContent(state)).to.be.deep.equal([1, 2])
+            expect(Reducers.getSelectedContentIds(state)).to.be.deep.equal([1, 2])
+        })
+    })
+    describe('getSelectedContentItems', () => {
+        const state = {
+            selected: {
+                ids: [1, 2],
+                entities: {
+                    1: {
+                        DisplaName: 'aaa',
+                        Id: 1
+                    },
+                    2: {
+                        DisplaName: 'bbb',
+                        Id: 2
+                    }
+                }
+            }
+        }
+        it('should return the value of the selected reducers current state, an array with two items', () => {
+            expect(Reducers.getSelectedContentItems(state)).to.be.deep.equal({
+                1: {
+                    DisplaName: 'aaa',
+                    Id: 1
+                },
+                2: {
+                    DisplaName: 'bbb',
+                    Id: 2
+                }
+            })
         })
     })
     describe('getOpenedContentId', () => {
