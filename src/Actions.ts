@@ -762,20 +762,20 @@ export module Actions {
     /**
      * Action creator for selecting a Content
      * @param id {number} The id of the selected Content
-    * @returns {Object} Returns a redux action.
+     * @returns {Object} Returns a redux action.
      */
-    export const SelectContent = (id) => ({
+    export const SelectContent = (content) => ({
         type: 'SELECT_CONTENT',
-        id
+        content
     })
     /**
      * Action creator for deselecting a Content
      * @param id {number} The id of the deselected Content
     * @returns {Object} Returns a redux action.
      */
-    export const DeSelectContent = (id) => ({
+    export const DeSelectContent = (content) => ({
         type: 'DESELECT_CONTENT',
-        id
+        content
     })/**
     * Action creator for clearing the array of selected content
    * @returns {Object} Returns a redux action.
