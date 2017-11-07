@@ -1,4 +1,3 @@
-import { normalize } from 'normalizr';
 import { combineReducers } from 'redux';
 import { Authentication } from 'sn-client-js';
 
@@ -205,7 +204,10 @@ export module Reducers {
             action.type !== 'LOAD_CONTENT_SUCCESS' &&
             action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
             action.type !== 'UPDATE_CONTENT_SUCCESS' &&
-            action.type !== 'UPLOAD_CONTENT_SUCCESS')) {
+            action.type !== 'UPLOAD_CONTENT_SUCCESS' &&
+            action.type !== 'DELETE_BATCH_SUCCESS' &&
+            action.type !== 'COPY_BATCH_SUCCESS' &&
+            action.type !== 'MOVE_BATCH_SUCCESS')) {
             return (<any>Object).assign({}, state, action.response.entities.entities);
         }
         switch (action.type) {
@@ -591,14 +593,26 @@ export module Reducers {
     export const selected = (state = [], action) => {
         switch (action.type) {
             case 'SELECT_CONTENT':
-                return [...state, action.id]
+                return [...state, action.content.Id]
             case 'DESELECT_CONTENT':
-                const index = state.indexOf(action.id)
+                const index = state.indexOf(action.content.Id)
                 return [...state.slice(0, index), ...state.slice(index + 1)]
             case 'CLEAR_SELECTION':
                 return []
             default:
                 return state
+        }
+    }
+    export const selectedContent = (state = Object, action) => {
+        switch (action.type) {
+            case 'DESELECT_CONTENT':
+                let res = Object.assign({}, state);
+                delete res[action.content];
+                return res;
+            case 'SELECT_CONTENT':
+                return (<any>Object).assign({}, state, action.content);
+            default:
+                return state;
         }
     }
     /**
