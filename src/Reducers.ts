@@ -713,8 +713,12 @@ export module Reducers {
         return state.session.repository.RepositoryUrl;
     }
 
-    export const getSelectedContent = (state) => {
-        return state.selected
+    export const getSelectedContentIds = (state) => {
+        return state.selected.ids
+    }
+
+    export const getSelectedContentItems = (state) => {
+        return state.selected.entities
     }
 
     export const getOpenedContent = (state) => {
