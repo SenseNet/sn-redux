@@ -749,34 +749,56 @@ describe('Reducers', () => {
         });
     })
     describe('selected reducer', () => {
+        let repo: Mocks.MockRepository = new Mocks.MockRepository();
+        
         it('should return the initial state', () => {
             expect(Reducers.selected(undefined, {})).to.deep.equal([]);
         });
         it('should return an array with one item with the id 1', () => {
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 1
+            }, ContentTypes.Task)
             const action = {
                 type: 'SELECT_CONTENT',
-                id: 1
+                content: content
             }
             expect(Reducers.selected(undefined, action)).to.deep.equal([1]);
         })
         it('should return an array with two items with the id 1 and 2', () => {
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 2
+            }, ContentTypes.Task)
             const action = {
                 type: 'SELECT_CONTENT',
-                id: 2
+                content: content
             }
             expect(Reducers.selected([1], action)).to.deep.equal([1, 2]);
         })
         it('should return an array with one item with the id 1', () => {
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 2
+            }, ContentTypes.Task)
             const action = {
                 type: 'DESELECT_CONTENT',
-                id: 2
+                content: content
             }
             expect(Reducers.selected([1, 2], action)).to.deep.equal([1]);
         })
         it('should return an empty array', () => {
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 1
+            }, ContentTypes.Task)
             const action = {
                 type: 'DESELECT_CONTENT',
-                id: 1
+                content: content
             }
             expect(Reducers.selected([1], action)).to.deep.equal([]);
         })
