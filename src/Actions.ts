@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-import { Content, SavedContent, IContent, ODataApi, ContentTypes} from 'sn-client-js';
+import { Content, SavedContent, IContent, ODataApi, ContentTypes } from 'sn-client-js';
 
 /**
  * Module that contains the action creators.
@@ -397,9 +397,9 @@ export module Actions {
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const CopyBatch = (ids: number[], path) => ({
+    export const CopyBatch = (contentItems: Object, path: string) => ({
         type: 'COPY_BATCH_REQUEST',
-        ids,
+        contentItems,
         path
     })
     /**
@@ -426,9 +426,9 @@ export module Actions {
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const MoveBatch = (ids: number[], path) => ({
+    export const MoveBatch = (contentItems = {}, path: string) => ({
         type: 'MOVE_BATCH_REQUEST',
-        ids,
+        contentItems,
         path
     })
     /**
@@ -722,7 +722,7 @@ export module Actions {
      * @param error {any} The catched error object.
      * @returns {Object} Returns a redux action with the properties type and the error message.
     */
-    export const UserLoginFailure = (error: {status?: number, message: string}) => ({
+    export const UserLoginFailure = (error: { status?: number, message: string }) => ({
         type: 'USER_LOGIN_FAILURE',
         message: (error.status === 403) ? 'The username or the password is not valid!' : error.message
     })
