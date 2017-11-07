@@ -596,21 +596,23 @@ describe('Actions', () => {
         });
     });
     describe('SelectContent', () => {
+        const content = repo.CreateContent({ DisplayName: 'My content', Id: 1 }, ContentTypes.Task);
         it('should return the select content action', () => {
             const expectedAction = {
                 type: 'SELECT_CONTENT',
-                id: 1
+                content: content
             }
-            expect(Actions.SelectContent(1)).to.deep.equal(expectedAction)
+            expect(Actions.SelectContent(content)).to.deep.equal(expectedAction)
         })
     })
     describe('DeSelectContent', () => {
+        const content = repo.CreateContent({ DisplayName: 'My content', Id: 1 }, ContentTypes.Task);
         it('should return the deselect content action', () => {
             const expectedAction = {
                 type: 'DESELECT_CONTENT',
-                id: 1
+                content: content
             }
-            expect(Actions.DeSelectContent(1)).to.deep.equal(expectedAction)
+            expect(Actions.DeSelectContent(content)).to.deep.equal(expectedAction)
         })
     })
     describe('ClearSelection', () => {
