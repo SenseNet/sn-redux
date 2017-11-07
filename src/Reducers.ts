@@ -188,6 +188,7 @@ export module Reducers {
             case 'DELETE_CONTENT_SUCCESS':
                 return [...state.slice(0, action.index), ...state.slice(action.index + 1)]
             case 'DELETE_BATCH_SUCCESS':
+            case 'MOVE_BATCH_SUCCESS':
                 if (action.response.d.results.length > 0) {
                     let newIds = []
                     let deletedIds = action.response.d.results.map(result => result.Id)
@@ -227,6 +228,7 @@ export module Reducers {
                 delete res[action.id];
                 return res;
             case 'DELETE_BATCH_SUCCESS':
+            case 'MOVE_BATCH_SUCCESS':
                 let resource = Object.assign({}, state);
                 action.response.d.results.map(result => delete resource[result.Id])
                 return resource;
