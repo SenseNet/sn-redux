@@ -590,7 +590,7 @@ export module Reducers {
        * @param {Object} action Represents an action that is called.
        * @returns {Object} state. Returns the next state based on the action.
        */
-    export const selected = (state = [], action) => {
+    export const selectedIds = (state = [], action) => {
         switch (action.type) {
             case 'SELECT_CONTENT':
                 return [...state, action.content.Id]
@@ -603,18 +603,26 @@ export module Reducers {
                 return state
         }
     }
-    export const selectedContent = (state = Object, action) => {
+    export const selectedContentItems = (state = {}, action) => {
         switch (action.type) {
             case 'DESELECT_CONTENT':
                 let res = Object.assign({}, state);
-                delete res[action.content];
+                delete res[action.content.Id];
                 return res;
             case 'SELECT_CONTENT':
-                return (<any>Object).assign({}, state, action.content);
+                let obj = {}
+                obj[action.content.Id] = action.content
+                return (<any>Object).assign({}, state, obj);
+            case 'CLEAR_SELECTION':
+                return {}
             default:
                 return state;
         }
     }
+    export const selected = combineReducers({
+        ids: selectedIds,
+        entities: selectedContentItems
+    })
     /**
      * Reducer to handle Actions on the OdataBatchResponse Object.
      * @param {Array} state Represents the current state.

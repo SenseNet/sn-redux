@@ -750,9 +750,9 @@ describe('Reducers', () => {
     })
     describe('selected reducer', () => {
         let repo: Mocks.MockRepository = new Mocks.MockRepository();
-        
+
         it('should return the initial state', () => {
-            expect(Reducers.selected(undefined, {})).to.deep.equal([]);
+            expect(Reducers.selectedIds(undefined, {})).to.deep.equal([]);
         });
         it('should return an array with one item with the id 1', () => {
             let content = repo.CreateContent({
@@ -764,7 +764,7 @@ describe('Reducers', () => {
                 type: 'SELECT_CONTENT',
                 content: content
             }
-            expect(Reducers.selected(undefined, action)).to.deep.equal([1]);
+            expect(Reducers.selectedIds(undefined, action)).to.deep.equal([1]);
         })
         it('should return an array with two items with the id 1 and 2', () => {
             let content = repo.CreateContent({
@@ -776,7 +776,7 @@ describe('Reducers', () => {
                 type: 'SELECT_CONTENT',
                 content: content
             }
-            expect(Reducers.selected([1], action)).to.deep.equal([1, 2]);
+            expect(Reducers.selectedIds([1], action)).to.deep.equal([1, 2]);
         })
         it('should return an array with one item with the id 1', () => {
             let content = repo.CreateContent({
@@ -788,7 +788,7 @@ describe('Reducers', () => {
                 type: 'DESELECT_CONTENT',
                 content: content
             }
-            expect(Reducers.selected([1, 2], action)).to.deep.equal([1]);
+            expect(Reducers.selectedIds([1, 2], action)).to.deep.equal([1]);
         })
         it('should return an empty array', () => {
             let content = repo.CreateContent({
@@ -800,13 +800,124 @@ describe('Reducers', () => {
                 type: 'DESELECT_CONTENT',
                 content: content
             }
-            expect(Reducers.selected([1], action)).to.deep.equal([]);
+            expect(Reducers.selectedIds([1], action)).to.deep.equal([]);
         })
         it('should return an empty array', () => {
             const action = {
                 type: 'CLEAR_SELECTION'
             }
-            expect(Reducers.selected([1], action)).to.deep.equal([]);
+            expect(Reducers.selectedIds([1], action)).to.deep.equal([]);
+        })
+    })
+    describe('selectedContent reducer', () => {
+        let repo: Mocks.MockRepository = new Mocks.MockRepository();
+
+        it('should return the initial state', () => {
+            expect(Reducers.selectedContentItems(undefined, {})).to.deep.equal({});
+        });
+        it('should return an object with one children item with the id 1', () => {
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 1
+            }, ContentTypes.Task)
+            const action = {
+                type: 'SELECT_CONTENT',
+                content: content
+            }
+            expect(Reducers.selectedContentItems(undefined, action)).to.deep.equal({ 1: content });
+        })
+        it('should return an object with two items with the id 1 and 2', () => {
+            const entities = {
+                1: {
+                    Id: 1,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                }
+            };
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 2
+            }, ContentTypes.Task)
+            const action = {
+                type: 'SELECT_CONTENT',
+                content: content
+            }
+            expect(Reducers.selectedContentItems(entities, action)).to.deep.equal(
+                {
+                    1: {
+                        Id: 1,
+                        DisplayName: 'Some Article',
+                        Status: ['Active']
+                    },
+                    2: content
+                }
+            );
+        })
+        it('should return an object with one item with the id 1', () => {
+            const entities = {
+                1: {
+                    Id: 1,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                2: {
+                    Id: 2,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                }
+            };
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 2
+            }, ContentTypes.Task)
+            const action = {
+                type: 'DESELECT_CONTENT',
+                content: content
+            }
+            expect(Reducers.selectedContentItems(entities, action)).to.deep.equal(
+                {
+                    1: {
+                        Id: 1,
+                        DisplayName: 'Some Article',
+                        Status: ['Active']
+                    }
+                }
+            );
+        })
+        it('should return an empty object', () => {
+            const entities = {
+                1: {
+                    Id: 1,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                }
+            };
+            let content = repo.CreateContent({
+                Path: '/Root/Sites/Default_Site/tasks',
+                Status: Enums.Status.active,
+                Id: 1
+            }, ContentTypes.Task)
+            const action = {
+                type: 'DESELECT_CONTENT',
+                content: content
+            }
+            expect(Reducers.selectedContentItems(entities, action)).to.deep.equal({});
+        })
+        it('should return an empty object', () => {
+            const entities = {
+                1: {
+                    Id: 1,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                }
+            };
+            const action = {
+                type: 'CLEAR_SELECTION'
+            }
+            expect(Reducers.selectedContentItems(entities, action)).to.deep.equal({});
         })
     })
     describe('batchResponseError reducer', () => {
