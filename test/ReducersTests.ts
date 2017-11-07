@@ -183,6 +183,31 @@ describe('Reducers', () => {
                 }))
                 .to.be.deep.equal([1, 2, 3]);
         });
+        it('should handle DELETE_BATCH_SUCCESS', () => {
+            expect(Reducers.ids([1, 2, 3], {
+                type: 'DELETE_BATCH_SUCCESS',
+                response: {
+                    'd': {
+                        'results': [
+                            { 'Id': 1 },
+                            { 'Id': 2 }
+                        ],
+                        'errors': []
+                    }
+                }
+            })).to.be.deep.equal([3]);
+        });
+        it('should handle DELETE_BATCH_SUCCESS', () => {
+            expect(Reducers.ids([1, 2, 3], {
+                type: 'DELETE_BATCH_SUCCESS',
+                response: {
+                    'd': {
+                        'results': [],
+                        'errors': []
+                    }
+                }
+            })).to.be.deep.equal([1, 2, 3]);
+        });
     });
 
     describe('entities reducer', () => {
@@ -285,6 +310,37 @@ describe('Reducers', () => {
                     },
                 }
             );
+        });
+        it('should handle DELETE_BATCH_SUCCESS', () => {
+            const entities = {
+                5122: {
+                    Id: 5122,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            };
+            expect(Reducers.entities(entities, {
+                type: 'DELETE_BATCH_SUCCESS',
+                response: {
+                    'd': {
+                        'results': [
+                            { 'Id': 5122 }
+                        ],
+                        'errors': []
+                    }
+                }
+            })).to.be.deep.equal({
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            });
         });
     });
 

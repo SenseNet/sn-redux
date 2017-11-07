@@ -190,8 +190,9 @@ export module Reducers {
             case 'DELETE_BATCH_SUCCESS':
                 if (action.response.d.results.length > 0) {
                     let newIds = []
+                    let deletedIds = action.response.d.results.map(result => result.Id)
                     for (let i = 0; i < state.length; i++) {
-                        if (action.response.d.results.indexOf(state[i]) === -1) {
+                        if (deletedIds.indexOf(state[i]) === -1) {
                             newIds.push(state[i])
                         }
                     }
