@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-import { Content, IContent, ODataApi, ContentTypes} from 'sn-client-js';
+import { Content, SavedContent, IContent, ODataApi, ContentTypes} from 'sn-client-js';
 
 /**
  * Module that contains the action creators.
@@ -368,9 +368,9 @@ export module Actions {
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const DeleteBatch = (ids: number[], permanently: boolean = false) => ({
+    export const DeleteBatch = (contentItems: Object, permanently: boolean = false) => ({
         type: 'DELETE_BATCH_REQUEST',
-        ids,
+        contentItems,
         permanently
     })
     /**
