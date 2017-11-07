@@ -187,6 +187,16 @@ export module Reducers {
                     return state
             case 'DELETE_CONTENT_SUCCESS':
                 return [...state.slice(0, action.index), ...state.slice(action.index + 1)]
+            case 'DELETE_BATCH_SUCCESS':
+                if (action.response.d.results.length > 0) {
+                    let newIds = []
+                    for (let i = 0; i < state.length; i++) {
+                        if (action.response.d.results.indexOf(state[i]) === -1) {
+                            newIds.push(state[i])
+                        }
+                    }
+                    return newIds
+                }
             default:
                 return state;
         }
@@ -215,6 +225,10 @@ export module Reducers {
                 let res = Object.assign({}, state);
                 delete res[action.id];
                 return res;
+            case 'DELETE_BATCH_SUCCESS':
+                let resource = Object.assign({}, state);
+                action.response.d.results.map(result => delete resource[result.Id])
+                return resource;
             case 'UPDATE_CONTENT_SUCCESS':
                 state[action.response.Id] = action.response
                 return state

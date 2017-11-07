@@ -194,8 +194,10 @@ export module Epics {
     export const deleteBatchEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('DELETE_BATCH_REQUEST')
             .mergeMap(action => {
-                let collection = new Collection.Collection([], dependencies.repository, action.contentType);
-                return collection.Remove(action.ids, action.permanently)
+                let contentItems = Object.keys(action.contentItems).map(id => { 
+                    return dependencies.repository.HandleLoadedContent(action.contentItems[id], action.contentItems.__contentType); 
+                });
+                return dependencies.repository.DeleteBatch(contentItems, action.permanently)
                     .map((response) => {
                         return Actions.DeleteBatchSuccess(response);
                     })
