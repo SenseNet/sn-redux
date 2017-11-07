@@ -208,6 +208,31 @@ describe('Reducers', () => {
                 }
             })).to.be.deep.equal([1, 2, 3]);
         });
+        it('should handle MOVE_BATCH_SUCCESS', () => {
+            expect(Reducers.ids([1, 2, 3], {
+                type: 'MOVE_BATCH_SUCCESS',
+                response: {
+                    'd': {
+                        'results': [
+                            { 'Id': 1 },
+                            { 'Id': 2 }
+                        ],
+                        'errors': []
+                    }
+                }
+            })).to.be.deep.equal([3]);
+        });
+        it('should handle MOVE_BATCH_SUCCESS', () => {
+            expect(Reducers.ids([1, 2, 3], {
+                type: 'MOVE_BATCH_SUCCESS',
+                response: {
+                    'd': {
+                        'results': [],
+                        'errors': []
+                    }
+                }
+            })).to.be.deep.equal([1, 2, 3]);
+        });
     });
 
     describe('entities reducer', () => {
