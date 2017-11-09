@@ -679,9 +679,19 @@ describe('Actions', () => {
             const expectedAction = {
                 type: 'REQUEST_CONTENT_ACTIONS',
                 content: content,
-                scenario: 'DMSListItem'
+                scenario: 'DMSListItem',
+                customItems: []
             }
             expect(Actions.RequestContentActions(content, 'DMSListItem')).to.deep.equal(expectedAction)
+        })
+        it('should return the RequestContentActions action', () => {
+            const expectedAction = {
+                type: 'REQUEST_CONTENT_ACTIONS',
+                content: content,
+                scenario: 'DMSListItem',
+                customItems: [{ DisplayName: 'aaa', Name: 'bbb', Icon: 'ccc' }]
+            }
+            expect(Actions.RequestContentActions(content, 'DMSListItem', [{ DisplayName: 'aaa', Name: 'bbb', Icon: 'ccc' }])).to.deep.equal(expectedAction)
         })
         it('should return the RequestContentActionsSuccess action', () => {
             const expectedAction = {
