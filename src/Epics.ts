@@ -400,7 +400,7 @@ export module Epics {
             .mergeMap(action => {
                 let c = dependencies.repository.HandleLoadedContent(action.content, ContentTypes.GenericContent);
                 return c.Actions(action.scenario)
-                    .map(result => Actions.RequestContentActionsSuccess(result, action.content.Id))
+                    .map(result => Actions.RequestContentActionsSuccess([...result, ...action.customItems], action.content.Id))
                     .catch(error => Observable.of(Actions.RequestContentActionsFailure(error)))
             })
     }
