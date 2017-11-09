@@ -789,10 +789,11 @@ export module Actions {
      * @param scenario {string} The name of the scenario
     * @returns {Object} Returns a redux action.
      */
-    export const RequestContentActions = (content, scenario?: string) => ({
+    export const RequestContentActions = (content, scenario?: string, customItems?: Object[]) => ({
         type: 'REQUEST_CONTENT_ACTIONS',
         content,
-        scenario
+        scenario,
+        customItems: customItems || []
     })
     /**
      * Action creator for the step getting the actions of a content successfully.
