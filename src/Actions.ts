@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-import { Content, SavedContent, IContent, ODataApi, ContentTypes } from 'sn-client-js';
+import { Content, IContent, ODataApi, ContentTypes } from 'sn-client-js';
 
 /**
  * Module that contains the action creators.

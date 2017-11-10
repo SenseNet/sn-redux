@@ -1,8 +1,7 @@
 ///<reference path="../node_modules/@types/mocha/index.d.ts"/>
 import { Reducers } from '../src/Reducers';
-import { Actions } from '../src/Actions';
 import * as Chai from 'chai';
-import { Authentication, Content, ContentTypes, Mocks, Enums } from 'sn-client-js';
+import { Authentication, ContentTypes, Mocks, Enums } from 'sn-client-js';
 const expect = Chai.expect;
 describe('Reducers', () => {
     describe('country reducer', () => {
