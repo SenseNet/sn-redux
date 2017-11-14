@@ -766,19 +766,4 @@ describe('Epics', () => {
                 [{ type: 'USER_LOGIN_BUFFER', response: true }]);
         })
     })
-
-    describe('uploadContentEpic Epic', () => {
-        before(() => {
-            initBefores(Epics.uploadFileEpic)
-        });
-
-        after(() => {
-            epicMiddleware.replaceEpic(Epics.uploadFileEpic);
-        });
-        it('handles the success', () => {
-            store.dispatch({ type: 'UPLOAD_CONTENT_SUCCESS', response: true });
-            expect(store.getActions()).to.be.deep.eq(
-                [{ type: 'UPLOAD_CONTENT_SUCCESS', response: true }]);
-        })
-    })
 });

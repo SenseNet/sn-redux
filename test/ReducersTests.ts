@@ -1260,4 +1260,34 @@ describe('Reducers', () => {
             expect(Reducers.getCurrentContent(state)).to.be.deep.equal({ DisplayName: 'my content' })
         })
     })
+    describe('getChildren', () => {
+        const state = {
+            entities: {
+                5145: {
+                    Id: 5145,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            }
+        }
+        it('should return the children object', () => {
+            expect(Reducers.getChildren(state)).to.be.deep.equal({
+                5145: {
+                    Id: 5145,
+                    DisplayName: 'Some Article',
+                    Status: ['Active']
+                },
+                5146: {
+                    Id: 5146,
+                    Displayname: 'Other Article',
+                    Status: ['Completed']
+                }
+            })
+        })
+    })
 });
