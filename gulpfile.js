@@ -60,7 +60,7 @@ gulp.task("typedoc:md:generate", function () {
 gulp.task('typedoc:md', ['typedoc:md:generate'], ()=>{
     gulp.src('./documentation/markdown/**/*.*')
     .pipe(rename((path)=>{
-        path.extname= path.extname == '.html' ? '.md' : path.extname
+        path.extname = path.extname === '.html' ? '.md' : path.extname
     }))
     .pipe(gulp.dest('documentation/markdown_renamed'))
 });
