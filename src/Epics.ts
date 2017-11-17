@@ -427,7 +427,10 @@ export module Epics {
                     ContentType: action.contentType,
                     OverWrite: action.overwrite,
                     Body: action.body,
-                    PropertyName: action.propertyName
+                    PropertyName: action.propertyName,
+                    OdataOptions: {
+                        Scenario: action.scenario
+                    }
                 })
                     .map((response) => {
                         return Actions.UploadSuccess(response)
