@@ -833,14 +833,15 @@ export module Actions {
      * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
      * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
      */
-    export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string) => ({
+    export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string, scenario?: string) => ({
         type: 'UPLOAD_CONTENT_REQUEST',
         content,
         file,
         contentType: contentType || ContentTypes.File,
         overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
         body: body ? body : null,
-        propertyName: propertyName ? propertyName : 'Binary'
+        propertyName: propertyName ? propertyName : 'Binary',
+        scenario: scenario || 'ListItems'
     })
     /**
      * Action creator for the step when a content was uploaded successfully.
