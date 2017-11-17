@@ -712,7 +712,6 @@ export module Actions {
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the user as a response.
     */
-
     export const UserLoginSuccess = (content: Content<ContentTypes.User>) => ({
         type: 'USER_LOGIN_SUCCESS',
         response: content

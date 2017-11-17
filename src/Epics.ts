@@ -361,11 +361,24 @@ export module Epics {
         return action$.ofType('USER_LOGIN_REQUEST')
             .mergeMap(action => {
                 return dependencies.repository.Authentication.Login(action.userName, action.password)
+                    // .combineLatest(dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor'))
+                    // .skipWhile(u => u instanceof ContentTypes.User)
+                    // .first()
                     .map(result => {
                         return result ?
                             Actions.UserLoginBuffer(result)
                             :
                             Actions.UserLoginFailure({ message: 'Failed to log in.' });
+                    })
+                    .catch(error => Observable.of(Actions.UserLoginFailure(error)))
+            })
+    }
+    export const userLoginBufferEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
+        return action$.ofType('USER_LOGIN_BUFFER')
+            .mergeMap(action => {
+                return dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor')
+                    .map(result => {
+                        Actions.UserLoginSuccess(result)
                     })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
