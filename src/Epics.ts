@@ -178,11 +178,11 @@ export module Epics {
     export const deleteContentEpic = (action$, store) => {
         return action$.ofType('DELETE_CONTENT_REQUEST')
             .mergeMap(action => {
-                return action.content.Delete(action.id, action.permanently)
+                return action.content.Delete(action.content, action.permanently)
                     .map((response) => {
                         const state = store.getState();
-                        const ids = Reducers.getIds(state.collection);
-                        return Actions.DeleteSuccess(ids.indexOf(action.id), action.id);
+                        const ids = Reducers.getIds(state.sensenet.children);
+                        return Actions.DeleteSuccess(ids.indexOf(action.content.Id), action.content.Id);
                     })
                     .catch(error => Observable.of(Actions.DeleteFailure(error)))
             })
@@ -369,16 +369,6 @@ export module Epics {
                             Actions.UserLoginBuffer(result)
                             :
                             Actions.UserLoginFailure({ message: 'Failed to log in.' });
-                    })
-                    .catch(error => Observable.of(Actions.UserLoginFailure(error)))
-            })
-    }
-    export const userLoginBufferEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
-        return action$.ofType('USER_LOGIN_BUFFER')
-            .mergeMap(action => {
-                return dependencies.repository.GetCurrentUser().skipWhile(u => u.Name === 'Visitor')
-                    .map(result => {
-                        Actions.UserLoginSuccess(result)
                     })
                     .catch(error => Observable.of(Actions.UserLoginFailure(error)))
             })
