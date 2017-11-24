@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr';
 import { Schemas } from './Schema';
-import { Content, ODataApi, ODataHelper, Repository, ContentTypes } from 'sn-client-js';
+import { Content, IContent, ODataApi, ContentTypes } from 'sn-client-js';
 
 /**
  * Module that contains the action creators.
@@ -116,7 +116,7 @@ export module Actions {
      * @param path {string} Path of the root Content
      * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
      */
-    export const InitSensenetStore = (path?: string, options: ODataApi.IODataParams<Content> = {}) => ({
+    export const InitSensenetStore = (path?: string, options: ODataApi.IODataParams<IContent> = {}) => ({
         type: 'INIT_SENSENET_STORE',
         path: path ? path : '/Root',
         options: options
@@ -128,7 +128,7 @@ export module Actions {
      * @param contentType {ContentType} Content Type of the requested content.
      * @returns {Object} Returns a redux action with the properties type, path, options and contentType.
      */
-    export const RequestContent = <T extends Content>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
+    export const RequestContent = <T extends IContent = IContent>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
         type: 'FETCH_CONTENT_REQUEST',
         path,
         options,
@@ -140,7 +140,7 @@ export module Actions {
      * @param params {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
-    export const ReceiveContent = (response: Content[], params: any) =>
+    export const ReceiveContent = (response: IContent[], params: any) =>
         ({
             type: 'FETCH_CONTENT_SUCCESS',
             response: normalize(response, Schemas.arrayOfContent),
@@ -164,7 +164,7 @@ export module Actions {
      * @param contentType {ContentType} Content Type of the requested content.
      * @returns {Object} Returns a redux action with the properties id, options and contentType.
      */
-    export const LoadContent = <T extends Content>(id: number, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
+    export const LoadContent = <T extends IContent = IContent>(id: number, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
         type: 'LOAD_CONTENT_REQUEST',
         id,
         options: options,
@@ -176,7 +176,7 @@ export module Actions {
      * @param params {string} String with the url params.
      * @returns {Object} Returns a redux action with the properties type, normalized response and params.
      */
-    export const ReceiveLoadedContent = (response: Content, params: any) =>
+    export const ReceiveLoadedContent = <T extends IContent = IContent>(response: Content<T>, params: any) =>
         ({
             type: 'LOAD_CONTENT_SUCCESS',
             response,
@@ -198,7 +198,7 @@ export module Actions {
      * @param content {Content} The requested Content.
      * @param scenario {string} The Actions should be in the given Scenario
      */
-    export const LoadContentActions = (content: Content, scenario?: string) => ({
+    export const LoadContentActions = (content: IContent, scenario?: string) => ({
         type: 'LOAD_CONTENT_ACTIONS',
         content,
         scenario
@@ -225,7 +225,7 @@ export module Actions {
      * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
      * @returns {Object} Returns a redux action with the properties type and actionName.
      */
-    export const ReloadContent = <T extends Content>(content: Content, actionName: 'edit' | 'view') => ({
+    export const ReloadContent = <T extends IContent = IContent>(content: Content<T>, actionName: 'edit' | 'view') => ({
         type: 'RELOAD_CONTENT_REQUEST',
         content,
         actionName
@@ -255,7 +255,7 @@ export module Actions {
      * @param fields {any[]} List of the fields to be loaded
      * @returns {Object} Returns a redux action with the properties type and fields.
      */
-    export const ReloadContentFields = <T extends Content>(content: Content, fields: any[]) => ({
+    export const ReloadContentFields = (content: Content, fields: any[]) => ({
         type: 'RELOAD_CONTENTFIELDS_REQUEST',
         content,
         fields
@@ -284,7 +284,7 @@ export module Actions {
      * @param content {Content} Content that have to be created in the Content Respository.
      * @returns {Object} Returns a redux action with the properties type, path of the parent and content.
      */
-    export const CreateContent = <T extends Content>(content: T) => ({
+    export const CreateContent = <T extends IContent = IContent>(content: T) => ({
         type: 'CREATE_CONTENT_REQUEST',
         content
     });
@@ -312,7 +312,7 @@ export module Actions {
       * @param content {Object} Content object with the field value pairs that have to be modified.
       * @returns {Object} Returns a redux action with the properties type, id and fields.
      */
-    export const UpdateContent = <T extends Content>(content: Partial<T>) => ({
+    export const UpdateContent = <T extends IContent = IContent>(content: Partial<T>) => ({
         type: 'UPDATE_CONTENT_REQUEST',
         content
     });
@@ -341,7 +341,7 @@ export module Actions {
       * @param permanently {boolean} Defines whether the a Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const Delete = <T extends Content>(content: T, permanently: boolean = false) => ({ type: 'DELETE_CONTENT_REQUEST', content, permanently });
+    export const Delete = <T extends IContent = IContent>(content: T, permanently: boolean = false) => ({ type: 'DELETE_CONTENT_REQUEST', content, permanently });
     /**
       * Action creator for the step when Content deleted successfully.
       * @param index {number} Index of the item in the state collection.
@@ -364,25 +364,23 @@ export module Actions {
     })
     /**
       * Action creator for deleting multiple Content from the Content Repository.
-      * @param path {string} Path of parent the Content.
-      * @param ids {string[]} Array of ids of the Content that should be deleted.
+      * @param ids {number[]} Array of ids of the Content that should be deleted.
       * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
       * @returns {Object} Returns a redux action with the properties type, id and permanently.
     */
-    export const DeleteBatch = (path: string, ids: string[], permanently: boolean = false) => ({
+    export const DeleteBatch = (contentItems: Object, permanently: boolean = false) => ({
         type: 'DELETE_BATCH_REQUEST',
-        path,
-        ids,
+        contentItems,
         permanently
     })
     /**
-      * Action creator for the step when multiple Content deleted successfully.
-      * @param indexes {number[]} Array of indexes of the items in the state collection that should be removed.
+      * Action creator for the step when multiple Content was deleted successfully.
+      * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
       * @returns {Object} Returns a redux action with the properties type and index.
     */
-    export const DeleteBatchSuccess = (ids: number[]) => ({
+    export const DeleteBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
         type: 'DELETE_BATCH_SUCCESS',
-        ids
+        response
     })
     /**
      * Action creator for the step when deleting multiple Content is failed.
@@ -394,11 +392,69 @@ export module Actions {
         message: error.message
     })
     /**
+      * Action creator for copying multiple Content in the Content Repository.
+      * @param ids {number[]} Array of ids of the Content that should be deleted.
+      * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
+      * @returns {Object} Returns a redux action with the properties type, id and permanently.
+    */
+    export const CopyBatch = (contentItems: Object, path: string) => ({
+        type: 'COPY_BATCH_REQUEST',
+        contentItems,
+        path
+    })
+    /**
+      * Action creator for the step when multiple Content was copied successfully.
+      * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
+      * @returns {Object} Returns a redux action with the properties type and index.
+    */
+    export const CopyBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+        type: 'COPY_BATCH_SUCCESS',
+        response
+    })
+    /**
+     * Action creator for the step when copying multiple Content is failed.
+     * @param error {any} The catched error object.
+     * @returns {Object} Returns a redux action with the properties type and the error message.
+    */
+    export const CopyBatchFailure = (error: any) => ({
+        type: 'COPY_BATCH_FAILURE',
+        message: error.message
+    })
+    /**
+      * Action creator for moving multiple Content in the Content Repository.
+      * @param ids {number[]} Array of ids of the Content that should be deleted.
+      * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
+      * @returns {Object} Returns a redux action with the properties type, id and permanently.
+    */
+    export const MoveBatch = (contentItems = {}, path: string) => ({
+        type: 'MOVE_BATCH_REQUEST',
+        contentItems,
+        path
+    })
+    /**
+      * Action creator for the step when multiple Content was moved successfully.
+      * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
+      * @returns {Object} Returns a redux action with the properties type and index.
+    */
+    export const MoveBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+        type: 'MOVE_BATCH_SUCCESS',
+        response
+    })
+    /**
+     * Action creator for the step when moving multiple Content is failed.
+     * @param error {any} The catched error object.
+     * @returns {Object} Returns a redux action with the properties type and the error message.
+    */
+    export const MoveBatchFailure = (error: any) => ({
+        type: 'MOVE_BATCH_FAILURE',
+        message: error.message
+    })
+    /**
       * Action creator for checking out a Content in the Content Repository.
       * @param content {number} Content that should be checked out.
       * @returns {Object} Returns a redux action with the properties type and id .
     */
-    export const CheckOut = <T extends Content>(content: T) => ({
+    export const CheckOut = <T extends IContent = IContent>(content: T) => ({
         type: 'CHECKOUT_CONTENT_REQUEST',
         content
     })
@@ -425,7 +481,7 @@ export module Actions {
       * @param content {Content} Content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type, id and checkinComment.
     */
-    export const CheckIn = <T extends Content>(content: T, checkInComment: string = '') => ({
+    export const CheckIn = <T extends IContent = IContent>(content: T, checkInComment: string = '') => ({
         type: 'CHECKIN_CONTENT_REQUEST',
         content,
         checkInComment
@@ -453,7 +509,7 @@ export module Actions {
       * @param content {Content} Content that should be published.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const Publish = <T extends Content>(content: T) => ({
+    export const Publish = <T extends IContent = IContent>(content: T) => ({
         type: 'PUBLISH_CONTENT_REQUEST',
         content
     })
@@ -480,7 +536,7 @@ export module Actions {
       * @param content {Content} Content that should be approved.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const Approve = <T extends Content>(content: T) => ({
+    export const Approve = <T extends IContent = IContent>(content: T) => ({
         type: 'APPROVE_CONTENT_REQUEST',
         content
     })
@@ -508,7 +564,7 @@ export module Actions {
       * @param rejectReason {string} Reason of rejecting.
       * @returns {Object} Returns a redux action with the properties type, rejectReason and id.
     */
-    export const Reject = <T extends Content>(content: T, rejectReason: string = '') => ({
+    export const Reject = <T extends IContent = IContent>(content: T, rejectReason: string = '') => ({
         type: 'REJECT_CONTENT_REQUEST',
         content,
         rejectReason
@@ -536,7 +592,7 @@ export module Actions {
       * @param content {Content} Content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const UndoCheckout = <T extends Content>(content: T) => ({
+    export const UndoCheckout = <T extends IContent = IContent>(content: T) => ({
         type: 'UNDOCHECKOUT_CONTENT_REQUEST',
         content
     })
@@ -563,7 +619,7 @@ export module Actions {
       * @param content {Content} Content that should be checked in.
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const ForceUndoCheckout = <T extends Content>(content: T) => ({
+    export const ForceUndoCheckout = <T extends IContent = IContent>(content: T) => ({
         type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST',
         content
     })
@@ -591,7 +647,7 @@ export module Actions {
       * @param version {string} Specify which old version to restore
       * @returns {Object} Returns a redux action with the properties type and id.
     */
-    export const RestoreVersion = <T extends Content>(content: T, version: string) => ({
+    export const RestoreVersion = <T extends IContent = IContent>(content: T, version: string) => ({
         type: 'RESTOREVERSION_CONTENT_REQUEST',
         content,
         version
@@ -656,18 +712,25 @@ export module Actions {
       * @param response {any} JSON response of the ajax request.
       * @returns {Object} Returns a redux action with the user as a response.
     */
-    export const UserLoginSuccess = (response: Content) => ({
+    export const UserLoginSuccess = (content: Content<ContentTypes.User>) => ({
         type: 'USER_LOGIN_SUCCESS',
-        response: response
+        response: content
     })
     /**
      * Action creator for the step when login of a user is failed.
      * @param error {any} The catched error object.
      * @returns {Object} Returns a redux action with the properties type and the error message.
     */
-    export const UserLoginFailure = (error: any) => ({
+    export const UserLoginFailure = (error: { status?: number, message: string }) => ({
         type: 'USER_LOGIN_FAILURE',
         message: (error.status === 403) ? 'The username or the password is not valid!' : error.message
+    })
+    /**
+      * Action creator for login a user to a sensenet portal with her google account.
+      * @returns {Object} Returns a redux action.
+    */
+    export const UserLoginGoogle = () => ({
+        type: 'USER_LOGIN_GOOGLE'
     })
     /**
       * Action creator for logout a user from a sensenet portal.
@@ -705,20 +768,20 @@ export module Actions {
     /**
      * Action creator for selecting a Content
      * @param id {number} The id of the selected Content
-    * @returns {Object} Returns a redux action.
+     * @returns {Object} Returns a redux action.
      */
-    export const SelectContent = (id) => ({
+    export const SelectContent = (content) => ({
         type: 'SELECT_CONTENT',
-        id
+        content
     })
     /**
      * Action creator for deselecting a Content
      * @param id {number} The id of the deselected Content
     * @returns {Object} Returns a redux action.
      */
-    export const DeSelectContent = (id) => ({
+    export const DeSelectContent = (content) => ({
         type: 'DESELECT_CONTENT',
-        id
+        content
     })/**
     * Action creator for clearing the array of selected content
    * @returns {Object} Returns a redux action.
@@ -732,10 +795,11 @@ export module Actions {
      * @param scenario {string} The name of the scenario
     * @returns {Object} Returns a redux action.
      */
-    export const RequestContentActions = (content, scenario?: string) => ({
+    export const RequestContentActions = (content, scenario?: string, customItems?: Object[]) => ({
         type: 'REQUEST_CONTENT_ACTIONS',
         content,
-        scenario
+        scenario,
+        customItems: customItems || []
     })
     /**
      * Action creator for the step getting the actions of a content successfully.
@@ -768,14 +832,15 @@ export module Actions {
      * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
      * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
      */
-    export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string) => ({
+    export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string, scenario?: string) => ({
         type: 'UPLOAD_CONTENT_REQUEST',
         content,
         file,
         contentType: contentType || ContentTypes.File,
         overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
         body: body ? body : null,
-        propertyName: propertyName ? propertyName : 'Binary'
+        propertyName: propertyName ? propertyName : 'Binary',
+        scenario: scenario || 'ListItems'
     })
     /**
      * Action creator for the step when a content was uploaded successfully.

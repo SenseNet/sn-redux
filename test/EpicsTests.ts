@@ -1,21 +1,21 @@
 import * as Chai from 'chai';
 import configureMockStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
-import { Mocks, ContentTypes, HttpProviders, Authentication, ODataApi, Content } from 'sn-client-js';
+import { Mocks, ContentTypes, Authentication } from 'sn-client-js';
 import { Epics } from '../src/Epics'
 import { Actions } from '../src/Actions'
-import { Store } from '../src/Store'
 const expect = Chai.expect;
 import 'rxjs';
 
 let store, repo: Mocks.MockRepository, epicMiddleware, mockStore, content;
-const initBefores = () => {
+const initBefores = (epic) => {
     repo = new Mocks.MockRepository();
-    epicMiddleware = createEpicMiddleware(Epics.fetchContentEpic, { dependencies: { repository: repo } })
+    epicMiddleware = createEpicMiddleware(epic, { dependencies: { repository: repo } })
     mockStore = configureMockStore([epicMiddleware]);
     store = mockStore();
-    content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces' }, ContentTypes.Task)
+    content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces', Name: 'MyContent' }, ContentTypes.Task)
 }
+
 
 describe('Epics', () => {
 
@@ -25,7 +25,7 @@ describe('Epics', () => {
     describe('fetchContent Epic', () => {
 
         before(() => {
-            initBefores()
+            initBefores(Epics.fetchContentEpic)
         });
 
         after(() => {
@@ -50,23 +50,45 @@ describe('Epics', () => {
     });
     describe('initSensenetStoreEpic Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.initSensenetStoreEpic)
         });
 
         after(() => {
             epicMiddleware.replaceEpic(Epics.initSensenetStoreEpic);
         });
         it('handles the error', () => {
-            const user = Content.Create({ Name: 'alba', Id: 123 }, ContentTypes.User, repo)
             store.dispatch({ type: 'INIT_SENSENET_STORE', path: '/workspaces', options: {} });
-            expect(store.getActions()).to.be.deep.equal(
-                [{ type: 'INIT_SENSENET_STORE', path: '/workspaces', options: {} }]);
+            expect(store.getActions()).to.be.deep.equal([
+                {
+                    type: 'INIT_SENSENET_STORE',
+                    path: '/workspaces',
+                    options:
+                    {
+                        select: ['Id',
+                            'Path',
+                            'Name',
+                            'Type',
+                            'DisplayName',
+                            'Description',
+                            'Icon'],
+                        metadata: 'no',
+                        inlinecount: 'allpages',
+                        expand: undefined,
+                        top: 1000
+                    }
+                },
+                {
+                    type: 'LOAD_REPOSITORY',
+                    repository: repo.Config
+                },
+                { type: 'USER_LOGIN_FAILURE', message: null }]);
         })
     })
+
     describe('loadContent Epic', () => {
 
         before(() => {
-            initBefores()
+            initBefores(Epics.loadContentEpic)
         });
 
         after(() => {
@@ -78,14 +100,27 @@ describe('Epics', () => {
                 [{
                     type: 'LOAD_CONTENT_REQUEST',
                     path: '/workspaces/Project',
-                    options: {}
+                    options:
+                    {
+                        select: ['Id',
+                            'Path',
+                            'Name',
+                            'Type',
+                            'DisplayName',
+                            'Description',
+                            'Icon'],
+                        metadata: 'no',
+                        inlinecount: 'allpages',
+                        expand: undefined,
+                        top: 1000
+                    }
                 }]);
         })
     });
     describe('reloadContent Epic', () => {
 
         before(() => {
-            initBefores()
+            initBefores(Epics.reloadContentEpic)
         });
 
         after(() => {
@@ -115,7 +150,7 @@ describe('Epics', () => {
     });
     describe('reloadContentFields Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.reloadContentFieldsEpic)
         });
 
         after(() => {
@@ -146,7 +181,7 @@ describe('Epics', () => {
     });
     describe('createContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.createContentEpic)
         });
 
         after(() => {
@@ -158,6 +193,10 @@ describe('Epics', () => {
                 [{
                     type: 'CREATE_CONTENT_REQUEST',
                     content: content
+                },
+                {
+                    type: 'CREATE_CONTENT_SUCCESS',
+                    response: { entities: { entities: { '123': content } }, result: 123 }
                 }]);
         })
         it('handles the error', () => {
@@ -167,12 +206,16 @@ describe('Epics', () => {
                     type: 'CREATE_CONTENT_REQUEST',
                     content: content
                 },
+                {
+                    type: 'CREATE_CONTENT_SUCCESS',
+                    response: { entities: { entities: { '123': content } }, result: 123 }
+                },
                 { type: 'CREATE_CONTENT_FAILURE', error: { message: 'error' } }]);
         })
     });
     describe('updateContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.updateContentEpic)
         });
 
         after(() => {
@@ -184,6 +227,10 @@ describe('Epics', () => {
                 [{
                     type: 'UPDATE_CONTENT_REQUEST',
                     content
+                },
+                {
+                    type: 'UPDATE_CONTENT_SUCCESS',
+                    response: content
                 }]);
         })
         it('handles the error', () => {
@@ -193,12 +240,16 @@ describe('Epics', () => {
                     type: 'UPDATE_CONTENT_REQUEST',
                     content: content
                 },
+                {
+                    type: 'UPDATE_CONTENT_SUCCESS',
+                    response: content
+                },
                 { type: 'UPDATE_CONTENT_FAILURE', error: { message: 'error' } }]);
         })
     });
     describe('deleteContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.deleteContentEpic)
         });
 
         after(() => {
@@ -226,18 +277,38 @@ describe('Epics', () => {
     });
     describe('deleteBatch Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.deleteBatchEpic)
         });
 
         after(() => {
             epicMiddleware.replaceEpic(Epics.deleteBatchEpic);
         });
         it('handles the error', () => {
-            store.dispatch({ type: 'DELETE_BATCH_REQUEST', ids: ['1', '2'], permanently: false });
+            store.dispatch({
+                type: 'DELETE_BATCH_REQUEST', contentItems: {
+                    1: {
+                        DisplaName: 'aaa',
+                        Id: 1
+                    },
+                    2: {
+                        DisplaName: 'bbb',
+                        Id: 2
+                    }
+                }, permanently: false
+            });
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'DELETE_BATCH_REQUEST',
-                    ids: ['1', '2'],
+                    contentItems: {
+                        1: {
+                            DisplaName: 'aaa',
+                            Id: 1
+                        },
+                        2: {
+                            DisplaName: 'bbb',
+                            Id: 2
+                        }
+                    },
                     permanently: false
                 }]);
         })
@@ -246,15 +317,54 @@ describe('Epics', () => {
             expect(store.getActions()).to.be.deep.eq(
                 [{
                     type: 'DELETE_BATCH_REQUEST',
-                    ids: ['1', '2'],
+                    contentItems: {
+                        1: {
+                            DisplaName: 'aaa',
+                            Id: 1
+                        },
+                        2: {
+                            DisplaName: 'bbb',
+                            Id: 2
+                        }
+                    },
                     permanently: false
                 },
                 { type: 'DELETE_BATCH_FAILURE', error: 'error' }]);
         })
     });
+    describe('copyBatch Epic', () => {
+        before(() => {
+            initBefores(Epics.copyBatchEpic)
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.copyBatchEpic);
+        });
+
+        it('handles the error', () => {
+            store.dispatch({ type: 'COPY_BATCH_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{ type: 'COPY_BATCH_FAILURE', error: 'error' }]);
+        })
+    });
+    describe('moveBatch Epic', () => {
+        before(() => {
+            initBefores(Epics.moveBatchEpic)
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.moveBatchEpic);
+        });
+
+        it('handles the error', () => {
+            store.dispatch({ type: 'MOVE_BATCH_FAILURE', error: 'error' });
+            expect(store.getActions()).to.be.deep.eq(
+                [{ type: 'MOVE_BATCH_FAILURE', error: 'error' }]);
+        })
+    });
     describe('checkoutContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.checkoutContentEpic)
         });
         after(() => {
             epicMiddleware.replaceEpic(Epics.checkoutContentEpic);
@@ -280,7 +390,7 @@ describe('Epics', () => {
     });
     describe('checkinContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.checkinContentEpic)
         });
 
         after(() => {
@@ -312,7 +422,7 @@ describe('Epics', () => {
     });
     describe('publishContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.publishContentEpic)
         });
 
         after(() => {
@@ -341,7 +451,7 @@ describe('Epics', () => {
     });
     describe('approveContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.approveContentEpic)
         });
 
         after(() => {
@@ -369,7 +479,7 @@ describe('Epics', () => {
     });
     describe('rejectContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.rejectContentEpic)
         });
 
         afterEach(() => {
@@ -400,7 +510,7 @@ describe('Epics', () => {
     });
     describe('undocheckoutContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.undocheckoutContentEpic)
         });
 
         after(() => {
@@ -428,7 +538,7 @@ describe('Epics', () => {
     });
     describe('forceundocheckoutContent Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.forceundocheckoutContentEpic)
         });
 
         after(() => {
@@ -456,7 +566,7 @@ describe('Epics', () => {
     });
     describe('restoreVersion Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.restoreversionContentEpic)
         });
         after(() => {
             epicMiddleware.replaceEpic(Epics.restoreversionContentEpic);
@@ -485,7 +595,7 @@ describe('Epics', () => {
     });
     describe('login Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.userLoginEpic)
         });
 
         afterEach(() => {
@@ -499,10 +609,10 @@ describe('Epics', () => {
                     type: 'USER_LOGIN_REQUEST',
                     username: 'alba',
                     password: 'alba'
-                }]);
+                },
+                { type: 'USER_LOGIN_FAILURE', message: 'Failed to log in.' }]);
         })
         it('handles the loggedin user', () => {
-            const user = Content.Create({ Name: 'alba', Id: 123 }, ContentTypes.User, repo)
             store.dispatch({ type: 'USER_LOGIN_REQUEST', username: 'user', password: 'password' });
             (repo.Authentication as Mocks.MockAuthService).StateSubject.next(Authentication.LoginState.Authenticated);
             expect(store.getActions()).to.be.deep.eq(
@@ -511,6 +621,7 @@ describe('Epics', () => {
                     username: 'alba',
                     password: 'alba'
                 },
+                { type: 'USER_LOGIN_FAILURE', message: 'Failed to log in.' },
                 { type: '@@redux-observable/EPIC_END' },
                 {
                     type: 'USER_LOGIN_REQUEST',
@@ -522,7 +633,7 @@ describe('Epics', () => {
     });
     describe('logout Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.userLogoutEpic)
         });
 
         after(() => {
@@ -537,7 +648,8 @@ describe('Epics', () => {
                     id: 111,
                     username: 'alba',
                     password: 'alba'
-                }]);
+                },
+                { type: 'USER_LOGOUT_SUCCESS' }]);
         })
         it('handles the error', () => {
             (repo.Authentication as Mocks.MockAuthService).StateSubject.next(Authentication.LoginState.Authenticated);
@@ -549,19 +661,20 @@ describe('Epics', () => {
                     username: 'alba',
                     password: 'alba'
                 },
+                { type: 'USER_LOGOUT_SUCCESS' },
                 { type: 'USER_LOGOUT_FAILURE', error: 'error' }]);
         })
     });
     describe('checkLoginState Epic', () => {
-        before(() => {
-            initBefores()
+        beforeEach(() => {
+            initBefores(Epics.checkLoginStateEpic)
         });
 
         afterEach(() => {
             epicMiddleware.replaceEpic(Epics.userLoginEpic);
         });
-        const user = Content.Create({ Name: 'alba', Id: '2' }, ContentTypes.User, repo)
         it('handles a loggedin user', () => {
+            const user = repo.CreateContent({ Name: 'alba', Id: 2, Path: '/Root' }, ContentTypes.User);
             store.dispatch(Actions.UserLoginSuccess(user));
             (repo.Authentication as Mocks.MockAuthService).StateSubject.next(Authentication.LoginState.Authenticated);
             store.dispatch({ type: 'CHECK_LOGIN_STATE_REQUEST' });
@@ -570,30 +683,26 @@ describe('Epics', () => {
                     type: 'USER_LOGIN_SUCCESS',
                     response: user
                 },
-                { type: 'CHECK_LOGIN_STATE_REQUEST' }]);
+                { type: 'CHECK_LOGIN_STATE_REQUEST' },
+                { type: 'USER_LOGIN_BUFFER', response: true }
+                ]);
         })
         it('handles an error', () => {
-            (repo.Authentication as Mocks.MockAuthService).StateSubject.next(Authentication.LoginState.Unauthenticated);
+            repo.Authentication.StateSubject.next(Authentication.LoginState.Unauthenticated);
             store.dispatch({ type: 'CHECK_LOGIN_STATE_REQUEST' });
             expect(store.getActions()).to.be.deep.eq(
-                [{
-                    type: 'USER_LOGIN_SUCCESS',
-                    response: user
-                },
-                { type: 'CHECK_LOGIN_STATE_REQUEST' },
-                { type: '@@redux-observable/EPIC_END' },
-                { type: 'CHECK_LOGIN_STATE_REQUEST' }]);
+                [{ type: 'CHECK_LOGIN_STATE_REQUEST' },
+                { type: 'USER_LOGIN_FAILURE', message: null }]);
         })
     });
     describe('getContentActions Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.getContentActions)
         });
 
         after(() => {
             epicMiddleware.replaceEpic(Epics.getContentActions);
         });
-        const content = Content.Create({ Name: 'alba', Id: '2' }, ContentTypes.Task, repo)
         it('handles the success', () => {
             store.dispatch({ type: 'REQUEST_CONTENT_ACTIONS', content, scenario: 'DMSDemoScenario' });
             expect(store.getActions()).to.be.deep.eq(
@@ -616,13 +725,12 @@ describe('Epics', () => {
     });
     describe('loadContentActionsEpic Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.loadContentActionsEpic)
         });
 
         after(() => {
             epicMiddleware.replaceEpic(Epics.loadContentActionsEpic);
         });
-        const content = Content.Create({ Name: 'alba', Id: '2' }, ContentTypes.Task, repo)
         it('handles the success', () => {
             store.dispatch({ type: 'LOAD_CONTENT_ACTIONS', content, scenario: 'DMSDemoScenario' });
             expect(store.getActions()).to.be.deep.eq(
@@ -646,7 +754,7 @@ describe('Epics', () => {
     });
     describe('userLoginBufferEpic Epic', () => {
         before(() => {
-            initBefores()
+            initBefores(Epics.userLoginBufferEpic)
         });
 
         after(() => {
@@ -656,21 +764,6 @@ describe('Epics', () => {
             store.dispatch({ type: 'USER_LOGIN_BUFFER', response: true });
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'USER_LOGIN_BUFFER', response: true }]);
-        })
-    })
-
-    describe('uploadContentEpic Epic', () => {
-        before(() => {
-            initBefores()
-        });
-
-        after(() => {
-            epicMiddleware.replaceEpic(Epics.uploadFileEpic);
-        });
-        it('handles the success', () => {
-            store.dispatch({ type: 'UPLOAD_CONTENT_SUCCESS', response: true });
-            expect(store.getActions()).to.be.deep.eq(
-                [{ type: 'UPLOAD_CONTENT_SUCCESS', response: true }]);
         })
     })
 });
