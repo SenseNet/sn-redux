@@ -170,8 +170,14 @@ export module Epics {
     export const updateContentEpic = (action$, store, dependencies?: { repository: Repository.BaseRepository }) => {
         return action$.ofType('UPDATE_CONTENT_REQUEST')
             .mergeMap(action => {
-                let c = dependencies.repository.HandleLoadedContent(action.content, ContentTypes.GenericContent);
-                return c.Save()
+                let c = dependencies.repository.HandleLoadedContent({Id: action.content.Id, Name: action.content.Name, Path: action.content.Path});                
+                let fields = c.GetFields()
+                for (let field in fields) {
+                    if (fields[field] !== action.content[field]) {
+                        c[field] = action.content[field];
+                    }
+                }
+                return c.Save().share()
                     .map(Actions.UpdateContentSuccess)
                     .catch(error => Observable.of(Actions.UpdateContentFailure(error)))
             })
