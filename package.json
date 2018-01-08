@@ -54,7 +54,7 @@
   },
   "homepage": "https://sensenet.com",
   "dependencies": {
-    "@types/mocha": "^2.2.42",
+    "@types/mocha": "^2.2.46",
     "normalizr": "^3.2.3",
     "nyc": "^11.1.0",
     "redux": "^3.7.2",
@@ -65,7 +65,7 @@
     "sensenet-kfi-cz-conventional-changelog": "^1.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.4",
+    "@types/chai": "^4.1.0",
     "@types/nock": "^9.1.0",
     "@types/orchestrator": "^0.3.0",
     "@types/redux-logger": "^3.0.5",
@@ -83,7 +83,7 @@
     "normalizr": "^3.2.3",
     "redux": "^3.7.2",
     "redux-mock-store": "^1.2.3",
-    "redux-observable": "^0.16.0",
+    "redux-observable": "^0.17.0",
     "semantic-release": "^11.0.2",
     "sn-client-auth-google": "^1.0.0",
     "sn-client-js": "^3.0.1",
