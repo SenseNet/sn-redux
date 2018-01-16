@@ -84,7 +84,7 @@
     "redux": "^3.7.2",
     "redux-mock-store": "^1.2.3",
     "redux-observable": "^0.17.0",
-    "semantic-release": "^11.0.2",
+    "semantic-release": "^12.2.2",
     "sn-client-auth-google": "^1.0.0",
     "sn-client-js": "^3.0.1",
     "tslint": "^5.6.0",
