@@ -1,5 +1,5 @@
 import * as Chai from 'chai';
-import configureMockStore from 'redux-mock-store';
+import * as configureStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
 import { Mocks, ContentTypes, Authentication } from 'sn-client-js';
 import { Epics } from '../src/Epics'
@@ -11,8 +11,8 @@ let store, repo: Mocks.MockRepository, epicMiddleware, mockStore, content;
 const initBefores = (epic) => {
     repo = new Mocks.MockRepository();
     epicMiddleware = createEpicMiddleware(epic, { dependencies: { repository: repo } })
-    mockStore = configureMockStore([epicMiddleware]);
-    store = mockStore();
+    mockStore = configureStore([epicMiddleware]);
+    store = mockStore({});
     content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces', Name: 'MyContent' }, ContentTypes.Task)
 }
 
