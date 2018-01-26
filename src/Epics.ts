@@ -95,7 +95,6 @@ export module Epics {
             .mergeMap(action => {
                 return dependencies.repository.Load(action.id, action.options)
                     .map((response) => {
-                        //store.dispatch(Actions.LoadContentActions(response, action.scenario))
                         return Actions.ReceiveLoadedContent(response, action.options)
                     })
                     .catch(error => {
