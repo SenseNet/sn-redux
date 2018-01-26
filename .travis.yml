@@ -12,8 +12,7 @@ notifications:
     on_start: never     # options: [always|never|change] default: always
 node_js:
   - '8'  
-  - '7'
-  - '6'
+  - '9'
 before_script:
   - npm install -g gulp
 script: 
