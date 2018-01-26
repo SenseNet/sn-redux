@@ -38,13 +38,13 @@ describe('Epics', () => {
                     type: 'FETCH_CONTENT_REQUEST',
                     path: '/workspaces/Project',
                     options:
-                    {
-                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
-                        metadata: 'no',
-                        inlinecount: 'allpages',
-                        expand: undefined,
-                        top: 1000
-                    }
+                        {
+                            select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
                 }]);
         })
     });
@@ -63,19 +63,19 @@ describe('Epics', () => {
                     type: 'INIT_SENSENET_STORE',
                     path: '/workspaces',
                     options:
-                    {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
-                        metadata: 'no',
-                        inlinecount: 'allpages',
-                        expand: undefined,
-                        top: 1000
-                    }
+                        {
+                            select: ['Id',
+                                'Path',
+                                'Name',
+                                'Type',
+                                'DisplayName',
+                                'Description',
+                                'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
                 },
                 {
                     type: 'LOAD_REPOSITORY',
@@ -101,19 +101,19 @@ describe('Epics', () => {
                     type: 'LOAD_CONTENT_REQUEST',
                     path: '/workspaces/Project',
                     options:
-                    {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
-                        metadata: 'no',
-                        inlinecount: 'allpages',
-                        expand: undefined,
-                        top: 1000
-                    }
+                        {
+                            select: ['Id',
+                                'Path',
+                                'Name',
+                                'Type',
+                                'DisplayName',
+                                'Description',
+                                'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
                 }]);
         })
     });
@@ -346,6 +346,19 @@ describe('Epics', () => {
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'COPY_BATCH_FAILURE', error: 'error' }]);
         })
+        it('handles the error', () => {
+            store.dispatch({
+                type: 'COPY_BATCH_REQUEST', contentItems: {},
+                path: '/workspaces'
+            });
+            expect(store.getActions()).to.be.deep.eq(
+                [{ type: 'COPY_BATCH_FAILURE', error: 'error' },
+                {
+                    type: 'COPY_BATCH_REQUEST',
+                    contentItems: {},
+                    path: '/workspaces'
+                }]);
+        })
     });
     describe('moveBatch Epic', () => {
         before(() => {
@@ -360,6 +373,19 @@ describe('Epics', () => {
             store.dispatch({ type: 'MOVE_BATCH_FAILURE', error: 'error' });
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'MOVE_BATCH_FAILURE', error: 'error' }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({
+                type: 'MOVE_BATCH_REQUEST', contentItems: {},
+                path: '/workspaces'
+            });
+            expect(store.getActions()).to.be.deep.eq(
+                [{ type: 'MOVE_BATCH_FAILURE', error: 'error' },
+                {
+                    type: 'MOVE_BATCH_REQUEST',
+                    contentItems: {},
+                    path: '/workspaces'
+                }]);
         })
     });
     describe('checkoutContent Epic', () => {
