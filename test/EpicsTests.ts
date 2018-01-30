@@ -47,6 +47,23 @@ describe('Epics', () => {
                         }
                 }]);
         })
+        it('handles the error', () => {
+            store.dispatch({ type: 'FETCH_CONTENT_SUCCESS', response: {} });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'FETCH_CONTENT_REQUEST',
+                    path: '/workspaces/Project',
+                    options:
+                        {
+                            select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
+                },
+                { type: 'FETCH_CONTENT_SUCCESS', response: {} }]);
+        })
     });
     describe('initSensenetStoreEpic Epic', () => {
         before(() => {
@@ -790,6 +807,20 @@ describe('Epics', () => {
             store.dispatch({ type: 'USER_LOGIN_BUFFER', response: true });
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'USER_LOGIN_BUFFER', response: true }]);
+        })
+    })
+    describe('uploadFileEpic Epic', () => {
+        before(() => {
+            initBefores(Epics.uploadFileEpic)
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.uploadFileEpic);
+        });
+        it('handles the success', () => {
+            store.dispatch({ type: 'UPLOAD_CONTENT_SUCCESS', response: {} });
+            expect(store.getActions()).to.be.deep.eq(
+                [ { type: 'UPLOAD_CONTENT_SUCCESS', response: {} } ]);
         })
     })
 });
