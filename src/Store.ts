@@ -32,7 +32,7 @@ import { Repository } from 'sn-client-js';
  * );
  * ```
  */
-export module Store {
+export namespace Store {
 
     /**
      * Method to create a Redux store that holds the application state.

@@ -110,7 +110,7 @@ import { Content, IContent, ODataApi, ContentTypes } from 'sn-client-js';
  * const store = Store.configureStore(myReducer);
  * ```
  */
-export module Actions {
+export namespace Actions {
     /**
      * Action creator for intializing a sensenet store.
      * @param path {string} Path of the root Content

@@ -36,7 +36,7 @@ import 'rxjs/add/operator/catch'
  * ```
  */
 
-export module Epics {
+export namespace Epics {
     /**
      * Epic for initialize a sensenet Redux store. It checks the InitSensenetStore Action and calls the necessary ones snycronously. Loads the current content,
      * checks the login state with CheckLoginState, fetch the children items with RequestContent and loads the current content related actions with
