@@ -220,7 +220,9 @@ export module Reducers {
             action.type !== 'DELETE_BATCH_SUCCESS' &&
             action.type !== 'COPY_BATCH_SUCCESS' &&
             action.type !== 'MOVE_BATCH_SUCCESS')) {
-            return (<any>Object).assign({}, state, action.response.entities.entities);
+            if (action.response.entities !== undefined && action.response.entities.entities !== undefined) {
+                return (<any>Object).assign({}, state, action.response.entities.entities);
+            }
         }
         switch (action.type) {
             case 'DELETE_CONTENT_SUCCESS':

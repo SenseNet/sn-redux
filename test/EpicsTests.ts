@@ -1,5 +1,5 @@
 import * as Chai from 'chai';
-import configureMockStore from 'redux-mock-store';
+import * as configureStore from 'redux-mock-store';
 import { createEpicMiddleware } from 'redux-observable';
 import { Mocks, ContentTypes, Authentication } from 'sn-client-js';
 import { Epics } from '../src/Epics'
@@ -11,8 +11,8 @@ let store, repo: Mocks.MockRepository, epicMiddleware, mockStore, content;
 const initBefores = (epic) => {
     repo = new Mocks.MockRepository();
     epicMiddleware = createEpicMiddleware(epic, { dependencies: { repository: repo } })
-    mockStore = configureMockStore([epicMiddleware]);
-    store = mockStore();
+    mockStore = configureStore([epicMiddleware]);
+    store = mockStore({});
     content = repo.HandleLoadedContent({ DisplayName: 'My Content', Id: 123, Path: '/workspaces', Name: 'MyContent' }, ContentTypes.Task)
 }
 
@@ -38,14 +38,31 @@ describe('Epics', () => {
                     type: 'FETCH_CONTENT_REQUEST',
                     path: '/workspaces/Project',
                     options:
-                    {
-                        select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
-                        metadata: 'no',
-                        inlinecount: 'allpages',
-                        expand: undefined,
-                        top: 1000
-                    }
+                        {
+                            select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
                 }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({ type: 'FETCH_CONTENT_SUCCESS', response: {} });
+            expect(store.getActions()).to.be.deep.eq(
+                [{
+                    type: 'FETCH_CONTENT_REQUEST',
+                    path: '/workspaces/Project',
+                    options:
+                        {
+                            select: ['Id', 'Path', 'Name', 'Type', 'DisplayName', 'Description', 'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
+                },
+                { type: 'FETCH_CONTENT_SUCCESS', response: {} }]);
         })
     });
     describe('initSensenetStoreEpic Epic', () => {
@@ -63,19 +80,19 @@ describe('Epics', () => {
                     type: 'INIT_SENSENET_STORE',
                     path: '/workspaces',
                     options:
-                    {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
-                        metadata: 'no',
-                        inlinecount: 'allpages',
-                        expand: undefined,
-                        top: 1000
-                    }
+                        {
+                            select: ['Id',
+                                'Path',
+                                'Name',
+                                'Type',
+                                'DisplayName',
+                                'Description',
+                                'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
                 },
                 {
                     type: 'LOAD_REPOSITORY',
@@ -101,19 +118,19 @@ describe('Epics', () => {
                     type: 'LOAD_CONTENT_REQUEST',
                     path: '/workspaces/Project',
                     options:
-                    {
-                        select: ['Id',
-                            'Path',
-                            'Name',
-                            'Type',
-                            'DisplayName',
-                            'Description',
-                            'Icon'],
-                        metadata: 'no',
-                        inlinecount: 'allpages',
-                        expand: undefined,
-                        top: 1000
-                    }
+                        {
+                            select: ['Id',
+                                'Path',
+                                'Name',
+                                'Type',
+                                'DisplayName',
+                                'Description',
+                                'Icon'],
+                            metadata: 'no',
+                            inlinecount: 'allpages',
+                            expand: undefined,
+                            top: 1000
+                        }
                 }]);
         })
     });
@@ -346,6 +363,19 @@ describe('Epics', () => {
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'COPY_BATCH_FAILURE', error: 'error' }]);
         })
+        it('handles the error', () => {
+            store.dispatch({
+                type: 'COPY_BATCH_REQUEST', contentItems: {},
+                path: '/workspaces'
+            });
+            expect(store.getActions()).to.be.deep.eq(
+                [{ type: 'COPY_BATCH_FAILURE', error: 'error' },
+                {
+                    type: 'COPY_BATCH_REQUEST',
+                    contentItems: {},
+                    path: '/workspaces'
+                }]);
+        })
     });
     describe('moveBatch Epic', () => {
         before(() => {
@@ -360,6 +390,19 @@ describe('Epics', () => {
             store.dispatch({ type: 'MOVE_BATCH_FAILURE', error: 'error' });
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'MOVE_BATCH_FAILURE', error: 'error' }]);
+        })
+        it('handles the error', () => {
+            store.dispatch({
+                type: 'MOVE_BATCH_REQUEST', contentItems: {},
+                path: '/workspaces'
+            });
+            expect(store.getActions()).to.be.deep.eq(
+                [{ type: 'MOVE_BATCH_FAILURE', error: 'error' },
+                {
+                    type: 'MOVE_BATCH_REQUEST',
+                    contentItems: {},
+                    path: '/workspaces'
+                }]);
         })
     });
     describe('checkoutContent Epic', () => {
@@ -764,6 +807,20 @@ describe('Epics', () => {
             store.dispatch({ type: 'USER_LOGIN_BUFFER', response: true });
             expect(store.getActions()).to.be.deep.eq(
                 [{ type: 'USER_LOGIN_BUFFER', response: true }]);
+        })
+    })
+    describe('uploadFileEpic Epic', () => {
+        before(() => {
+            initBefores(Epics.uploadFileEpic)
+        });
+
+        after(() => {
+            epicMiddleware.replaceEpic(Epics.uploadFileEpic);
+        });
+        it('handles the success', () => {
+            store.dispatch({ type: 'UPLOAD_CONTENT_SUCCESS', response: {} });
+            expect(store.getActions()).to.be.deep.eq(
+                [ { type: 'UPLOAD_CONTENT_SUCCESS', response: {} } ]);
         })
     })
 });

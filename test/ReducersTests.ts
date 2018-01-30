@@ -366,6 +366,19 @@ describe('Reducers', () => {
                 }
             });
         });
+        it('should handle a custom Action', () => {
+            expect(Reducers.entities(undefined, {
+                type: 'AAAA',
+                response: {
+                    'd': {
+                        'results': [
+                            { 'Id': 5122 }
+                        ],
+                        'errors': []
+                    }
+                }
+            })).to.be.deep.equal({});
+        });
     });
 
     describe('isFetching reducer', () => {
