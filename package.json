@@ -1,5 +1,5 @@
 {
-  "name": "sn-redux",
+  "name": "@sensenet/redux",
   "version": "3.4.3",
   "description": "A set of redux actions, reducers and redux-ovbservable epics for Sense/Net ECM",
   "main": "dist/src/sn-redux.js",
@@ -36,6 +36,9 @@
     "redux",
     "crud"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Sense/Net <snteam@sensenet.com> (http://sensenet.com/)",
   "license": "GPL-2.0",
   "bugs": {
