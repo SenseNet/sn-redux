@@ -11,7 +11,8 @@
     "report-coverage": "cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
     "prebuild": "tslint --project tsconfig.json",
     "build": "npm run build && npm t && npm run typedoc && npm publish --tag development",
-    "publish:development": "typedoc --mode file --out documentation src --tsconfig tsconfig.typedoc.json"
+    "publish:development": "typedoc --mode file --out documentation src --tsconfig tsconfig.typedoc.json",
+    "typedoc": "typedoc --mode modules --out documentation src --tsconfig tsconfig.json --theme c:/Users/%USERNAME%/AppData/Roaming/npm/node_modules/@sensenet/typedoc-theme/sn-theme"
   },
   "files": [
     "dist",

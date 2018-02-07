@@ -11,7 +11,7 @@
         "strictNullChecks": false,
         "alwaysStrict": false,
         "suppressImplicitAnyIndexErrors": true,
-        "declaration": false,
+        "declaration": true,
         "noUnusedLocals": true,
         "strict": true,
         "removeComments": true,

@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger'
 import { createEpicMiddleware } from 'redux-observable';
-import { Epics } from './Epics';
-import { Reducers } from './Reducers';
+import * as Epics from './Epics';
+import * as Reducers from './Reducers';
 import { Repository } from 'sn-client-js';
 
 /**
@@ -32,69 +32,67 @@ import { Repository } from 'sn-client-js';
  * );
  * ```
  */
-export namespace Store {
 
-    /**
-     * Method to create a Redux store that holds the application state.
-     * @param {any} [rootReducer=Reducers.sensenet] Root reducer of your application.
-     * @param {Repository.BaseRepository<any,any>} The sensenet Repository
-     * @param {any} [rootEpic=Epics.rootEpic] Root epic of your application.
-     * @param {Array<any>=} middlewares Array of middlewares.
-     * @param {Object=} persistedState Persisted state.
-     * @returns {Store} Returns a Redux store, an object that holds the application state.
-     * ```
-     * import * as React from "react";
-     * import * as ReactDOM from "react-dom";
-     * import Authentication from 'redux-authentication'
-     * import { myRootReducer } from '../myApp/Reducers'
-     * import { myRootEpic } from '../myApp/Epics'
-     *
-     * const repository = new Repository.SnRepository({
-     *  RepositoryUrl: 'https://sn-services/'
-     * });
-     * const store = Store.configureStore(myRootReducer, myRootEpic, [Authentication], {}, repository);
-     *
-     * ReactDOM.render(
-     * <Root store={store} />,
-     * document.getElementById("root")
-     * );
-     * ```
-     */
-    export const configureStore = (rootReducer: any = Reducers.sensenet, rootEpic?: any, middlewares?: Array<any>, persistedState?: Object, repository?: Repository.BaseRepository<any, any>) => {
-        let epicMiddleware;
+/**
+ * Method to create a Redux store that holds the application state.
+ * @param {any} [rootReducer=Reducers.sensenet] Root reducer of your application.
+ * @param {Repository.BaseRepository<any,any>} The sensenet Repository
+ * @param {any} [rootEpic=Epics.rootEpic] Root epic of your application.
+ * @param {Array<any>=} middlewares Array of middlewares.
+ * @param {Object=} persistedState Persisted state.
+ * @returns {Store} Returns a Redux store, an object that holds the application state.
+ * ```
+ * import * as React from "react";
+ * import * as ReactDOM from "react-dom";
+ * import Authentication from 'redux-authentication'
+ * import { myRootReducer } from '../myApp/Reducers'
+ * import { myRootEpic } from '../myApp/Epics'
+ *
+ * const repository = new Repository.SnRepository({
+ *  RepositoryUrl: 'https://sn-services/'
+ * });
+ * const store = Store.configureStore(myRootReducer, myRootEpic, [Authentication], {}, repository);
+ *
+ * ReactDOM.render(
+ * <Root store={store} />,
+ * document.getElementById("root")
+ * );
+ * ```
+ */
+export const configureStore = (rootReducer: any = Reducers.sensenet, rootEpic?: any, middlewares?: Array<any>, persistedState?: Object, repository?: Repository.BaseRepository<any, any>) => {
+    let epicMiddleware;
 
-        if (!repository) {
-            repository = new Repository.SnRepository();
-        }
+    if (!repository) {
+        repository = new Repository.SnRepository();
+    }
 
-        if (typeof rootEpic === 'undefined' || rootEpic === null) {
-            epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } });
-        }
-        else {
-            epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } });
-        }
-        let middlewareArray = [];
-        if (typeof middlewares === 'undefined' || middlewares === null) {
-            middlewareArray.push(epicMiddleware);
-        }
-        else {
-            middlewareArray = [...middlewares, epicMiddleware];
-        }
-        const loggerMiddleware = createLogger();
-        middlewareArray.push(loggerMiddleware);
+    if (typeof rootEpic === 'undefined' || rootEpic === null) {
+        epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } });
+    }
+    else {
+        epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } });
+    }
+    let middlewareArray = [];
+    if (typeof middlewares === 'undefined' || middlewares === null) {
+        middlewareArray.push(epicMiddleware);
+    }
+    else {
+        middlewareArray = [...middlewares, epicMiddleware];
+    }
+    const loggerMiddleware = createLogger();
+    middlewareArray.push(loggerMiddleware);
 
-        if (persistedState && typeof persistedState !== 'undefined') {
-            return createStore(
-                rootReducer,
-                persistedState,
-                applyMiddleware(...middlewareArray)
-            );
-        }
-        else {
-            return createStore(
-                rootReducer,
-                applyMiddleware(...middlewareArray)
-            );
-        }
-    };
-}
+    if (persistedState && typeof persistedState !== 'undefined') {
+        return createStore(
+            rootReducer,
+            persistedState,
+            applyMiddleware(...middlewareArray)
+        );
+    }
+    else {
+        return createStore(
+            rootReducer,
+            applyMiddleware(...middlewareArray)
+        );
+    }
+};

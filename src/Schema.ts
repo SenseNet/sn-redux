@@ -38,17 +38,15 @@ import { schema } from 'normalizr';
  *
  * ![Normalized content](http://download.sensenet.com/aniko/sn7/jsapidocs/img/normalized-content.png)
 */
-export namespace Schemas {
-    /**
-     * Schema of a Content.
-     *
-     * It represents an item in the entities Object of the sn-redux store. The items are identified by the attribute 'Id'.
-     */
-    export const content = new schema.Entity('entities', {}, { idAttribute: 'Id' });
-    /**
-     * Schema of a Collection.
-     *
-     * It represents the ```children``` object of the sn-redux store. It's a parent element of the Content items so it is defined as array of items with the schema content.
-     */
-    export const arrayOfContent = new schema.Array(content);
-}
+/**
+ * Schema of a Content.
+ *
+ * It represents an item in the entities Object of the sn-redux store. The items are identified by the attribute 'Id'.
+ */
+export const contentItem = new schema.Entity('entities', {}, { idAttribute: 'Id' });
+/**
+ * Schema of a Collection.
+ *
+ * It represents the ```children``` object of the sn-redux store. It's a parent element of the Content items so it is defined as array of items with the schema content.
+ */
+export const arrayOfContent = new schema.Array(contentItem);
