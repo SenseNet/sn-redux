@@ -9,6 +9,7 @@
         "noImplicitThis": true,
         "noImplicitAny": false,
         "strictNullChecks": false,
+        "alwaysStrict": false,
         "suppressImplicitAnyIndexErrors": true,
         "declaration": false,
         "noUnusedLocals": true,
@@ -26,7 +27,6 @@
     ],
     "compileOnSave": false,
     "files": [
-        "src/sn-redux.ts",
-        "test/index.ts"
+        "src/index.ts"
     ]
 }

@@ -2,23 +2,16 @@
   "name": "@sensenet/redux",
   "version": "3.4.3",
   "description": "A set of redux actions, reducers and redux-ovbservable epics for Sense/Net ECM",
-  "main": "dist/src/sn-redux.js",
+  "main": "dist/index.js",
   "scripts": {
-    "lint": "node tslint --project ./tsconfig.json",
-    "clean": "rimraf dist",
-    "precommit": "npm run lint",
     "commit": "git-cz",
-    "gulp": "gulp",
-    "pretest": "npm run build",
-    "test": "nyc mocha dist/test/index.js",
+    "pretest": "tslint --project tsconfig.test.json && rimraf temp && tsc -p tsconfig.test.json",
+    "test": "rimraf coverage && nyc mocha -p tsconfig.test.json ./temp/test/index.js",
     "check-coverage": "istanbul check-coverage ",
-    "report-coverage": "cat ./coverage/lcov.info | codecov",
-    "prebuild": "npm run lint && npm run clean",
-    "build": "tsc",
-    "typedoc:md": "gulp typedoc:md",
-    "typedoc:html": "gulp typedoc",
-    "semantic-release": "semantic-release pre && semantic-release post",
-    "publish:development": "npm publish --tag development"
+    "report-coverage": "cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
+    "prebuild": "tslint --project tsconfig.json",
+    "build": "npm run build && npm t && npm run typedoc && npm publish --tag development",
+    "publish:development": "typedoc --mode file --out documentation src --tsconfig tsconfig.typedoc.json"
   },
   "files": [
     "dist",
@@ -46,8 +39,8 @@
   },
   "nyc": {
     "cache": true,
-    "include": "dist/src/**/*.*",
-    "exclude": "dist/src/**/sn-redux.js",
+    "include": "temp/src/**/*.*",
+    "exclude": "temp/test/**/*.*",
     "all": true,
     "reporter": [
       "lcov",
@@ -85,5 +78,5 @@
   "czConfig": {
     "path": "node_modules/sensenet-kfi-cz-conventional-changelog"
   },
-  "typings": "./src/sn-redux.d.ts"
+  "typings": "./dist/index.d.ts"
 }
