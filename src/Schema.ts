@@ -1,13 +1,13 @@
-import { schema } from 'normalizr';
+import { schema } from 'normalizr'
 
 /**
  * This module is for defining Content and Collection schemas to normalize nested JSON response data in redux state store.
  *
  * Normalizr takes JSON and a schema and replaces nested entities with their IDs, gathering all entities in dictionaries.
- ** Entities can be nested inside other entities, objects and arrays;
- ** Combine entity schemas to express any kind of API response;
- ** Entities with same IDs are automatically merged (with a warning if they differ);
- ** Allows using a custom ID attribute (e.g. slug).
+ * * Entities can be nested inside other entities, objects and arrays;
+ * * Combine entity schemas to express any kind of API response;
+ * * Entities with same IDs are automatically merged (with a warning if they differ);
+ * * Allows using a custom ID attribute (e.g. slug).
  *
  * Read more about normalizr [here](https://github.com/paularmstrong/normalizr)
  *
@@ -37,16 +37,16 @@ import { schema } from 'normalizr';
  * ```
  *
  * ![Normalized content](http://download.sensenet.com/aniko/sn7/jsapidocs/img/normalized-content.png)
-*/
+ */
 /**
  * Schema of a Content.
  *
  * It represents an item in the entities Object of the sn-redux store. The items are identified by the attribute 'Id'.
  */
-export const contentItem = new schema.Entity('entities', {}, { idAttribute: 'Id' });
+export const contentItem = new schema.Entity('entities', {}, { idAttribute: 'Id' })
 /**
  * Schema of a Collection.
  *
  * It represents the ```children``` object of the sn-redux store. It's a parent element of the Content items so it is defined as array of items with the schema content.
  */
-export const arrayOfContent = new schema.Array(contentItem);
+export const arrayOfContent = new schema.Array(contentItem)

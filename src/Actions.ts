@@ -1,6 +1,6 @@
-import { normalize } from 'normalizr';
-import * as Schemas from './Schema';
-import { Content, IContent, ODataApi, ContentTypes } from 'sn-client-js';
+import { normalize } from 'normalizr'
+import { Content, ContentTypes, IContent, ODataApi } from 'sn-client-js'
+import * as Schemas from './Schema'
 
 /**
  * Module that contains the action creators.
@@ -115,10 +115,10 @@ import { Content, IContent, ODataApi, ContentTypes } from 'sn-client-js';
  * @param path {string} Path of the root Content
  * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
  */
-export const InitSensenetStore = (path?: string, options: ODataApi.IODataParams<IContent> = {}) => ({
+export const initSensenetStore = (path?: string, options: ODataApi.IODataParams<IContent> = {}) => ({
     type: 'INIT_SENSENET_STORE',
     path: path ? path : '/Root',
-    options: options
+    options,
 })
 /**
  * Action creator for requesting a content from sensenet Content Repository to get its children content.
@@ -127,35 +127,35 @@ export const InitSensenetStore = (path?: string, options: ODataApi.IODataParams<
  * @param contentType {ContentType} Content Type of the requested content.
  * @returns {Object} Returns a redux action with the properties type, path, options and contentType.
  */
-export const RequestContent = <T extends IContent = IContent>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
+export const requestContent = <T extends IContent = IContent>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
     type: 'FETCH_CONTENT_REQUEST',
     path,
     options,
-    contentType
-});
+    contentType,
+})
 /**
  * Action creator for the step when a fetching request ends successfully.
  * @param response {Content[]} response of the ajax request as a Content array.
  * @param params {string} String with the url params.
  * @returns {Object} Returns a redux action with the properties type, normalized response and params.
  */
-export const ReceiveContent = (response: IContent[], params: any) =>
+export const receiveContent = (response: IContent[], params: any) =>
     ({
         type: 'FETCH_CONTENT_SUCCESS',
         response: normalize(response, Schemas.arrayOfContent),
-        params
+        params,
     })
 /**
  * Action creator for the step when a fetching request failed.
  * @param params {string} String with the url params.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type, params and errormessage.
-*/
-export const ReceiveContentFailure = (params: any, error: any) => ({
+ */
+export const receiveContentFailure = (params: any, error: any) => ({
     type: 'FETCH_CONTENT_FAILURE',
     params,
-    message: error.message
-});
+    message: error.message,
+})
 /**
  * Action creator for loading a content from sensenet Content Repository.
  * @param id {number} Path of the requested item.
@@ -163,60 +163,60 @@ export const ReceiveContentFailure = (params: any, error: any) => ({
  * @param contentType {ContentType} Content Type of the requested content.
  * @returns {Object} Returns a redux action with the properties id, options and contentType.
  */
-export const LoadContent = <T extends IContent = IContent>(id: number, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
+export const loadContent = <T extends IContent = IContent>(id: number, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
     type: 'LOAD_CONTENT_REQUEST',
     id,
-    options: options,
-    contentType
-});
+    options,
+    contentType,
+})
 /**
  * Action creator for the step when a loading request ends successfully.
  * @param response {Content} response of the ajax request as a Content object.
  * @param params {string} String with the url params.
  * @returns {Object} Returns a redux action with the properties type, normalized response and params.
  */
-export const ReceiveLoadedContent = <T extends IContent = IContent>(response: Content<T>, params: any) =>
+export const receiveLoadedContent = <T extends IContent = IContent>(response: Content<T>, params: any) =>
     ({
         type: 'LOAD_CONTENT_SUCCESS',
         response,
-        params
+        params,
     })
 /**
  * Action creator for the step when a loading request failed.
  * @param params {string} String with the url params.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type, params and errormessage.
-*/
-export const ReceiveLoadedContentFailure = (params: any, error: any) => ({
+ */
+export const receiveLoadedContentFailure = (params: any, error: any) => ({
     type: 'LOAD_CONTENT_FAILURE',
     params,
-    message: error.message
-});
+    message: error.message,
+})
 /**
  * Action creator for loading Actions of a Content from sensenet Content Repository.
  * @param content {Content} The requested Content.
  * @param scenario {string} The Actions should be in the given Scenario
  */
-export const LoadContentActions = (content: IContent, scenario?: string) => ({
+export const loadContentActions = (content: IContent, scenario?: string) => ({
     type: 'LOAD_CONTENT_ACTIONS',
     content,
-    scenario
+    scenario,
 })
 /**
  * Action creator for the step when a Action loading request ends successfully.
  * @param response {any} JSON response of the ajax request.
  */
-export const ReceiveContentActions = (response: any) => ({
+export const receiveContentActions = (response: any) => ({
     type: 'LOAD_CONTENT_ACTIONS_SUCCESS',
-    actions: response
+    actions: response,
 })
 /**
  * Action creator for the step when a loading Actions request failed.
  * @param error {any} The catched error object.
  */
-export const ReceiveContentActionsFailure = (error: any) => ({
+export const receiveContentActionsFailure = (error: any) => ({
     type: 'LOAD_CONTENT_ACTIONS_FAILURE',
-    error
+    error,
 })
 /**
  * Action creator for reloading a content from sensenet Content Repository.
@@ -224,592 +224,593 @@ export const ReceiveContentActionsFailure = (error: any) => ({
  * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
  * @returns {Object} Returns a redux action with the properties type and actionName.
  */
-export const ReloadContent = <T extends IContent = IContent>(content: Content<T>, actionName: 'edit' | 'view') => ({
+export const reloadContent = <T extends IContent = IContent>(content: Content<T>, actionName: 'edit' | 'view') => ({
     type: 'RELOAD_CONTENT_REQUEST',
     content,
-    actionName
-});
+    actionName,
+})
 /**
  * Action creator for the step when a reloading request ends successfully.
  * @param response {Content} Response of the ajax request as Content.
  * @returns {Object} Returns a redux action with the properties type and the response.
  */
-export const ReceiveReloadedContent = (response: Content) =>
+export const receiveReloadedContent = (response: Content) =>
     ({
         type: 'RELOAD_CONTENT_SUCCESS',
-        response
+        response,
     })
 /**
  * Action creator for the step when a reloading request failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and errormessage.
-*/
-export const ReceiveReloadedContentFailure = (error: any) => ({
+ */
+export const receiveReloadedContentFailure = (error: any) => ({
     type: 'RELOAD_CONTENT_FAILURE',
-    message: error.message
-});
+    message: error.message,
+})
 /**
  * Action creator for reloading fields of a content from sensenet Content Repository.
  * @param content {Content} The Content which' fields should be reloaded.
  * @param fields {any[]} List of the fields to be loaded
  * @returns {Object} Returns a redux action with the properties type and fields.
  */
-export const ReloadContentFields = (content: Content, fields: any[]) => ({
+export const reloadContentFields = (content: Content, fields: any[]) => ({
     type: 'RELOAD_CONTENTFIELDS_REQUEST',
     content,
-    fields
-});
+    fields,
+})
 /**
  * Action creator for the step when a reloading fields of a content request ends successfully.
  * @param response {Content} Response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and normalized response.
  */
-export const ReceiveReloadedContentFields = (response: Content) =>
+export const receiveReloadedContentFields = (response: Content) =>
     ({
         type: 'RELOAD_CONTENTFIELDS_SUCCESS',
-        response: response
+        response,
     })
 /**
  * Action creator for the step when a reloading fields of a content request failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and errormessage.
-*/
-export const ReceiveReloadedContentFieldsFailure = (error: any) => ({
+ */
+export const receiveReloadedContentFieldsFailure = (error: any) => ({
     type: 'RELOAD_CONTENTFIELDS_FAILURE',
-    message: error.message
-});
+    message: error.message,
+})
 /**
  * Action creator for creating a Content in the Content Repository.
  * @param content {Content} Content that have to be created in the Content Respository.
  * @returns {Object} Returns a redux action with the properties type, path of the parent and content.
  */
-export const CreateContent = <T extends IContent = IContent>(content: T) => ({
+export const createContent = <T extends IContent = IContent>(content: T) => ({
     type: 'CREATE_CONTENT_REQUEST',
-    content
-});
+    content,
+})
 /**
  * Action creator for the step when Content creation on the server ends successfully.
  * @param response {Content} JSON response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and the normalized response.
  */
-export const CreateContentSuccess = (response: Content) =>
+export const createContentSuccess = (response: Content) =>
     ({
         type: 'CREATE_CONTENT_SUCCESS',
-        response: normalize(response, Schemas.contentItem)
-    });
+        response: normalize(response, Schemas.contentItem),
+    })
 /**
  * Action creator for the step when Content creation failed on the server.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const CreateContentFailure = (error: any) => ({
-    type: 'CREATE_CONTENT_FAILURE',
-    message: error.message
-});
-/**
-  * Action creator for updating a Content in the Content Repository.
-  * @param content {Object} Content object with the field value pairs that have to be modified.
-  * @returns {Object} Returns a redux action with the properties type, id and fields.
  */
-export const UpdateContent = <T extends IContent = IContent>(content: Partial<T>) => ({
+export const createContentFailure = (error: any) => ({
+    type: 'CREATE_CONTENT_FAILURE',
+    message: error.message,
+})
+/**
+ * Action creator for updating a Content in the Content Repository.
+ * @param content {Object} Content object with the field value pairs that have to be modified.
+ * @returns {Object} Returns a redux action with the properties type, id and fields.
+ */
+export const updateContent = <T extends IContent = IContent>(content: Partial<T>) => ({
     type: 'UPDATE_CONTENT_REQUEST',
-    content
-});
+    content,
+})
 /**
  * Action creator for the step when Content modification on the server ends successfully.
  * @param response {Content} JSON response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and the response.
  */
-export const UpdateContentSuccess = (response: Content) =>
+export const updateContentSuccess = (response: Content) =>
     ({
         type: 'UPDATE_CONTENT_SUCCESS',
-        response: response
-    });
+        response,
+    })
 /**
  * Action creator for the step when Content modification failed on the server.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const UpdateContentFailure = (error: any) => ({
+ */
+export const updateContentFailure = (error: any) => ({
     type: 'UPDATE_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for deleting a Content from the Content Repository.
-  * @param content {content} Content object that has to be deleted.
-  * @param permanently {boolean} Defines whether the a Content must be moved to the Trash or deleted permanently.
-  * @returns {Object} Returns a redux action with the properties type, id and permanently.
-*/
-export const Delete = <T extends IContent = IContent>(content: T, permanently: boolean = false) => ({ type: 'DELETE_CONTENT_REQUEST', content, permanently });
+ * Action creator for deleting a Content from the Content Repository.
+ * @param content {content} Content object that has to be deleted.
+ * @param permanently {boolean} Defines whether the a Content must be moved to the Trash or deleted permanently.
+ * @returns {Object} Returns a redux action with the properties type, id and permanently.
+ */
+export const deleteRequest = <T extends IContent = IContent>(content: T, permanently: boolean = false) => ({ type: 'DELETE_CONTENT_REQUEST', content, permanently })
 /**
-  * Action creator for the step when Content deleted successfully.
-  * @param index {number} Index of the item in the state collection.
-  * @param id {number} Id of the item in the state collection.
-  * @returns {Object} Returns a redux action with the properties type and index.
-*/
-export const DeleteSuccess = (index: number, id: number) => ({
+ * Action creator for the step when Content deleted successfully.
+ * @param index {number} Index of the item in the state collection.
+ * @param id {number} Id of the item in the state collection.
+ * @returns {Object} Returns a redux action with the properties type and index.
+ */
+export const deleteSuccess = (index: number, id: number) => ({
     type: 'DELETE_CONTENT_SUCCESS',
     index,
-    id
+    id,
 })
 /**
  * Action creator for the step when deleting a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const DeleteFailure = (error: any) => ({
+ */
+export const deleteFailure = (error: any) => ({
     type: 'DELETE_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for deleting multiple Content from the Content Repository.
-  * @param ids {number[]} Array of ids of the Content that should be deleted.
-  * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
-  * @returns {Object} Returns a redux action with the properties type, id and permanently.
-*/
-export const DeleteBatch = (contentItems: Object, permanently: boolean = false) => ({
+ * Action creator for deleting multiple Content from the Content Repository.
+ * @param ids {number[]} Array of ids of the Content that should be deleted.
+ * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
+ * @returns {Object} Returns a redux action with the properties type, id and permanently.
+ */
+export const deleteBatch = (contentItems: object, permanently: boolean = false) => ({
     type: 'DELETE_BATCH_REQUEST',
     contentItems,
-    permanently
+    permanently,
 })
 /**
-  * Action creator for the step when multiple Content was deleted successfully.
-  * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
-  * @returns {Object} Returns a redux action with the properties type and index.
-*/
-export const DeleteBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+ * Action creator for the step when multiple Content was deleted successfully.
+ * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
+ * @returns {Object} Returns a redux action with the properties type and index.
+ */
+export const deleteBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
     type: 'DELETE_BATCH_SUCCESS',
-    response
+    response,
 })
 /**
  * Action creator for the step when deleting multiple Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const DeleteBatchFailure = (error: any) => ({
+ */
+export const deleteBatchFailure = (error: any) => ({
     type: 'DELETE_BATCH_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for copying multiple Content in the Content Repository.
-  * @param ids {number[]} Array of ids of the Content that should be deleted.
-  * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
-  * @returns {Object} Returns a redux action with the properties type, id and permanently.
-*/
-export const CopyBatch = (contentItems: Object, path: string) => ({
+ * Action creator for copying multiple Content in the Content Repository.
+ * @param ids {number[]} Array of ids of the Content that should be deleted.
+ * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
+ * @returns {Object} Returns a redux action with the properties type, id and permanently.
+ */
+export const copyBatch = (contentItems: object, path: string) => ({
     type: 'COPY_BATCH_REQUEST',
     contentItems,
-    path
+    path,
 })
 /**
-  * Action creator for the step when multiple Content was copied successfully.
-  * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
-  * @returns {Object} Returns a redux action with the properties type and index.
-*/
-export const CopyBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+ * Action creator for the step when multiple Content was copied successfully.
+ * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
+ * @returns {Object} Returns a redux action with the properties type and index.
+ */
+export const copyBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
     type: 'COPY_BATCH_SUCCESS',
-    response
+    response,
 })
 /**
  * Action creator for the step when copying multiple Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const CopyBatchFailure = (error: any) => ({
+ */
+export const copyBatchFailure = (error: any) => ({
     type: 'COPY_BATCH_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for moving multiple Content in the Content Repository.
-  * @param ids {number[]} Array of ids of the Content that should be deleted.
-  * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
-  * @returns {Object} Returns a redux action with the properties type, id and permanently.
-*/
-export const MoveBatch = (contentItems = {}, path: string) => ({
+ * Action creator for moving multiple Content in the Content Repository.
+ * @param ids {number[]} Array of ids of the Content that should be deleted.
+ * @param permanently {boolean} Defines whether Content must be moved to the Trash or deleted permanently.
+ * @returns {Object} Returns a redux action with the properties type, id and permanently.
+ */
+export const moveBatch = (contentItems = {}, path: string) => ({
     type: 'MOVE_BATCH_REQUEST',
     contentItems,
-    path
+    path,
 })
 /**
-  * Action creator for the step when multiple Content was moved successfully.
-  * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
-  * @returns {Object} Returns a redux action with the properties type and index.
-*/
-export const MoveBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+ * Action creator for the step when multiple Content was moved successfully.
+ * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
+ * @returns {Object} Returns a redux action with the properties type and index.
+ */
+export const moveBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
     type: 'MOVE_BATCH_SUCCESS',
-    response
+    response,
 })
 /**
  * Action creator for the step when moving multiple Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const MoveBatchFailure = (error: any) => ({
+ */
+export const moveBatchFailure = (error: any) => ({
     type: 'MOVE_BATCH_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for checking out a Content in the Content Repository.
-  * @param content {number} Content that should be checked out.
-  * @returns {Object} Returns a redux action with the properties type and id .
-*/
-export const CheckOut = <T extends IContent = IContent>(content: T) => ({
+ * Action creator for checking out a Content in the Content Repository.
+ * @param content {number} Content that should be checked out.
+ * @returns {Object} Returns a redux action with the properties type and id .
+ */
+export const checkOut = <T extends IContent = IContent>(content: T) => ({
     type: 'CHECKOUT_CONTENT_REQUEST',
-    content
+    content,
 })
 /**
-  * Action creator for the step when a Content is checked out successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const CheckOutSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is checked out successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const checkOutSuccess = (response: Content) => ({
     type: 'CHECKOUT_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when checking out a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const CheckOutFailure = (error: any) => ({
+ */
+export const checkOutFailure = (error: any) => ({
     type: 'CHECKOUT_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for checking in a Content in the Content Repository.
-  * @param content {Content} Content that should be checked in.
-  * @returns {Object} Returns a redux action with the properties type, id and checkinComment.
-*/
-export const CheckIn = <T extends IContent = IContent>(content: T, checkInComment: string = '') => ({
+ * Action creator for checking in a Content in the Content Repository.
+ * @param content {Content} Content that should be checked in.
+ * @returns {Object} Returns a redux action with the properties type, id and checkinComment.
+ */
+export const checkIn = <T extends IContent = IContent>(content: T, checkInComment: string = '') => ({
     type: 'CHECKIN_CONTENT_REQUEST',
     content,
-    checkInComment
+    checkInComment,
 })
 /**
-  * Action creator for the step when a Content is checked in successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const CheckInSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is checked in successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const checkInSuccess = (response: Content) => ({
     type: 'CHECKIN_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when checking out a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const CheckInFailure = (error: any) => ({
+ */
+export const checkInFailure = (error: any) => ({
     type: 'CHECKIN_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for publishing a Content in the Content Repository.
-  * @param content {Content} Content that should be published.
-  * @returns {Object} Returns a redux action with the properties type and id.
-*/
-export const Publish = <T extends IContent = IContent>(content: T) => ({
+ * Action creator for publishing a Content in the Content Repository.
+ * @param content {Content} Content that should be published.
+ * @returns {Object} Returns a redux action with the properties type and id.
+ */
+export const publish = <T extends IContent = IContent>(content: T) => ({
     type: 'PUBLISH_CONTENT_REQUEST',
-    content
+    content,
 })
 /**
-  * Action creator for the step when a Content is published successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const PublishSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is published successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const publishSuccess = (response: Content) => ({
     type: 'PUBLISH_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when publishing a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const PublishFailure = (error: any) => ({
+ */
+export const publishFailure = (error: any) => ({
     type: 'PUBLISH_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for approving a Content in the Content Repository.
-  * @param content {Content} Content that should be approved.
-  * @returns {Object} Returns a redux action with the properties type and id.
-*/
-export const Approve = <T extends IContent = IContent>(content: T) => ({
+ * Action creator for approving a Content in the Content Repository.
+ * @param content {Content} Content that should be approved.
+ * @returns {Object} Returns a redux action with the properties type and id.
+ */
+export const approve = <T extends IContent = IContent>(content: T) => ({
     type: 'APPROVE_CONTENT_REQUEST',
-    content
+    content,
 })
 /**
-  * Action creator for the step when a Content is approved successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const ApproveSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is approved successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const approveSuccess = (response: Content) => ({
     type: 'APPROVE_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when approving a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const ApproveFailure = (error: any) => ({
+ */
+export const approveFailure = (error: any) => ({
     type: 'APPROVE_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for rejecting a Content in the Content Repository.
-  * @param content {Content} Content that should be rejected.
-  * @param rejectReason {string} Reason of rejecting.
-  * @returns {Object} Returns a redux action with the properties type, rejectReason and id.
-*/
-export const Reject = <T extends IContent = IContent>(content: T, rejectReason: string = '') => ({
+ * Action creator for rejecting a Content in the Content Repository.
+ * @param content {Content} Content that should be rejected.
+ * @param rejectReason {string} Reason of rejecting.
+ * @returns {Object} Returns a redux action with the properties type, rejectReason and id.
+ */
+export const reject = <T extends IContent = IContent>(content: T, rejectReason: string = '') => ({
     type: 'REJECT_CONTENT_REQUEST',
     content,
-    rejectReason
+    rejectReason,
 })
 /**
-  * Action creator for the step when a Content is rejected successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const RejectSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is rejected successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const rejectSuccess = (response: Content) => ({
     type: 'REJECT_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when rejecting a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const RejectFailure = (error: any) => ({
+ */
+export const rejectFailure = (error: any) => ({
     type: 'REJECT_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for undoing checkout on a Content in the Content Repository.
-  * @param content {Content} Content that should be checked in.
-  * @returns {Object} Returns a redux action with the properties type and id.
-*/
-export const UndoCheckout = <T extends IContent = IContent>(content: T) => ({
+ * Action creator for undoing checkout on a Content in the Content Repository.
+ * @param content {Content} Content that should be checked in.
+ * @returns {Object} Returns a redux action with the properties type and id.
+ */
+export const undoCheckout = <T extends IContent = IContent>(content: T) => ({
     type: 'UNDOCHECKOUT_CONTENT_REQUEST',
-    content
+    content,
 })
 /**
-  * Action creator for the step when a Content is checked-in successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const UndoCheckoutSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is checked-in successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const undoCheckoutSuccess = (response: Content) => ({
     type: 'UNDOCHECKOUT_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when undoing checkout on a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const UndoCheckoutFailure = (error: any) => ({
+ */
+export const undoCheckoutFailure = (error: any) => ({
     type: 'UNDOCHECKOUT_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for undoing checkout on a Content in the Content Repository.
-  * @param content {Content} Content that should be checked in.
-  * @returns {Object} Returns a redux action with the properties type and id.
-*/
-export const ForceUndoCheckout = <T extends IContent = IContent>(content: T) => ({
+ * Action creator for undoing checkout on a Content in the Content Repository.
+ * @param content {Content} Content that should be checked in.
+ * @returns {Object} Returns a redux action with the properties type and id.
+ */
+export const forceUndoCheckout = <T extends IContent = IContent>(content: T) => ({
     type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST',
-    content
+    content,
 })
 /**
-  * Action creator for the step when a Content is checked-in successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const ForceUndoCheckoutSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is checked-in successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const forceUndoCheckoutSuccess = (response: Content) => ({
     type: 'FORCEUNDOCHECKOUT_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when undoing checkout on a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const ForceUndoCheckoutFailure = (error: any) => ({
+ */
+export const forceUndoCheckoutFailure = (error: any) => ({
     type: 'FORCEUNDOCHECKOUT_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for restoring the version of a Content in the Content Repository.
-  * @param content {Content} Content that should be checked in.
-  * @param version {string} Specify which old version to restore
-  * @returns {Object} Returns a redux action with the properties type and id.
-*/
-export const RestoreVersion = <T extends IContent = IContent>(content: T, version: string) => ({
+ * Action creator for restoring the version of a Content in the Content Repository.
+ * @param content {Content} Content that should be checked in.
+ * @param version {string} Specify which old version to restore
+ * @returns {Object} Returns a redux action with the properties type and id.
+ */
+export const restoreVersion = <T extends IContent = IContent>(content: T, version: string) => ({
     type: 'RESTOREVERSION_CONTENT_REQUEST',
     content,
-    version
+    version,
 })
 /**
-  * Action creator for the step when a Content is restored to a previous version successfully.
-  * @param response {Content} JSON response of the ajax request as a Content object.
-  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
-*/
-export const RestoreVersionSuccess = (response: Content) => ({
+ * Action creator for the step when a Content is restored to a previous version successfully.
+ * @param response {Content} JSON response of the ajax request as a Content object.
+ * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
+ */
+export const restoreVersionSuccess = (response: Content) => ({
     type: 'RESTOREVERSION_CONTENT_SUCCESS',
-    response: response
+    response,
 })
 /**
  * Action creator for the step when restoring a previous version of a Content is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const RestoreVersionFailure = (error: any) => ({
+ */
+export const restoreVersionFailure = (error: any) => ({
     type: 'RESTOREVERSION_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 
 /**
-  * Action creator for check user state in a sensenet ECM application.
-  * @returns {Object} Returns a redux action with the properties.
-*/
-export const CheckLoginState = () => ({
-    type: 'CHECK_LOGIN_STATE_REQUEST'
+ * Action creator for check user state in a sensenet ECM application.
+ * @returns {Object} Returns a redux action with the properties.
+ */
+export const checkLoginState = () => ({
+    type: 'CHECK_LOGIN_STATE_REQUEST',
 })
 /**
  * Action creator for user changes.
  * @param user {ContentTypes.User} User that should be checked.
  */
-export const UserChanged = (user) => ({
+export const userChanged = (user) => ({
     type: 'USER_CHANGED',
-    user
+    user,
 })
 
 /**
-  * Action creator for login a user to a sensenet portal.
-  * @param {string} userName Login name of the user.
-  * @param {string} password Password of the user.
-  * @returns {Object} Returns a redux action with the properties userName and password.
-*/
-export const UserLogin = (userName: string, password: string) => ({
+ * Action creator for login a user to a sensenet portal.
+ * @param {string} userName Login name of the user.
+ * @param {string} password Password of the user.
+ * @returns {Object} Returns a redux action with the properties userName and password.
+ */
+export const userLogin = (userName: string, password: string) => ({
     type: 'USER_LOGIN_REQUEST',
     userName,
-    password
+    password,
 })
 /**
  * Action creator for handling a user login success response without a loggedin user.
  * @param {boolean} response Response of the login request
  * @returns {Object} Returns a redux action with the properties userName and password.
  */
-export const UserLoginBuffer = (response: boolean) => ({
+export const userLoginBuffer = (response: boolean) => ({
     type: 'USER_LOGIN_BUFFER',
-    response
+    response,
 })
 /**
-  * Action creator for the step when a User is logged in successfully.
-  * @param response {any} JSON response of the ajax request.
-  * @returns {Object} Returns a redux action with the user as a response.
-*/
-export const UserLoginSuccess = (content: Content<ContentTypes.User>) => ({
+ * Action creator for the step when a User is logged in successfully.
+ * @param response {any} JSON response of the ajax request.
+ * @returns {Object} Returns a redux action with the user as a response.
+ */
+export const userLoginSuccess = (content: Content<ContentTypes.User>) => ({
     type: 'USER_LOGIN_SUCCESS',
-    response: content
+    response: content,
 })
 /**
  * Action creator for the step when login of a user is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const UserLoginFailure = (error: { status?: number, message: string }) => ({
+ */
+export const userLoginFailure = (error: { status?: number, message: string }) => ({
     type: 'USER_LOGIN_FAILURE',
-    message: (error.status === 403) ? 'The username or the password is not valid!' : error.message
+    message: (error.status === 403) ? 'The username or the password is not valid!' : error.message,
 })
 /**
-  * Action creator for login a user to a sensenet portal with her google account.
-  * @returns {Object} Returns a redux action.
-*/
-export const UserLoginGoogle = () => ({
-    type: 'USER_LOGIN_GOOGLE'
+ * Action creator for login a user to a sensenet portal with her google account.
+ * @returns {Object} Returns a redux action.
+ */
+export const userLoginGoogle = () => ({
+    type: 'USER_LOGIN_GOOGLE',
 })
 /**
-  * Action creator for logout a user from a sensenet portal.
-  * @returns {Object} Returns a redux action.
-*/
-export const UserLogout = () => ({
-    type: 'USER_LOGOUT_REQUEST'
+ * Action creator for logout a user from a sensenet portal.
+ * @returns {Object} Returns a redux action.
+ */
+export const userLogout = () => ({
+    type: 'USER_LOGOUT_REQUEST',
 })
 /**
-  * Action creator for the step when a user is logged out successfully.
-  * @param response {any} JSON response of the ajax request.
-  * @returns {Object} Returns a redux action with a response.
-*/
-export const UserLogoutSuccess = (response: any) => ({
-    type: 'USER_LOGOUT_SUCCESS'
+ * Action creator for the step when a user is logged out successfully.
+ * @param response {any} JSON response of the ajax request.
+ * @returns {Object} Returns a redux action with a response.
+ */
+export const userLogoutSuccess = (response: any) => ({
+    type: 'USER_LOGOUT_SUCCESS',
 })
 /**
  * Action creator for the step when logging out of a user is failed.
  * @param error {any} The catched error object.
  * @returns {Object} Returns a redux action with the properties type and the error message.
-*/
-export const UserLogoutFailure = (error: any) => ({
+ */
+export const userLogoutFailure = (error: any) => ({
     type: 'USER_LOGOUT_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
-  * Action creator for load repository config.
-  * @param repositoryConfig {any} The repository config object.
-  * @returns {Object} Returns a redux action.
-*/
-export const LoadRepository = (repositoryConfig) => ({
+ * Action creator for load repository config.
+ * @param repositoryConfig {any} The repository config object.
+ * @returns {Object} Returns a redux action.
+ */
+export const loadRepository = (repositoryConfig) => ({
     type: 'LOAD_REPOSITORY',
-    repository: repositoryConfig
+    repository: repositoryConfig,
 })
 /**
  * Action creator for selecting a Content
  * @param id {number} The id of the selected Content
  * @returns {Object} Returns a redux action.
  */
-export const SelectContent = (content) => ({
+export const selectContent = (content) => ({
     type: 'SELECT_CONTENT',
-    content
+    content,
 })
 /**
  * Action creator for deselecting a Content
  * @param id {number} The id of the deselected Content
-* @returns {Object} Returns a redux action.
+ * @returns {Object} Returns a redux action.
  */
-export const DeSelectContent = (content) => ({
+export const deSelectContent = (content) => ({
     type: 'DESELECT_CONTENT',
-    content
-})/**
-    * Action creator for clearing the array of selected content
-   * @returns {Object} Returns a redux action.
-    */
-export const ClearSelection = () => ({
-    type: 'CLEAR_SELECTION'
+    content,
+})
+/**
+ * Action creator for clearing the array of selected content
+ * @returns {Object} Returns a redux action.
+ */
+export const clearSelection = () => ({
+    type: 'CLEAR_SELECTION',
 })
 /**
  * Action creator for a request for get actions of a content by a given scenario.
  * @param content {Content} The name of the scenario
  * @param scenario {string} The name of the scenario
-* @returns {Object} Returns a redux action.
+ * @returns {Object} Returns a redux action.
  */
-export const RequestContentActions = (content, scenario?: string, customItems?: Object[]) => ({
+export const requestContentActions = (content, scenario?: string, customItems?: object[]) => ({
     type: 'REQUEST_CONTENT_ACTIONS',
     content,
     scenario,
-    customItems: customItems || []
+    customItems: customItems || [],
 })
 /**
  * Action creator for the step getting the actions of a content successfully.
  * @param response {any} JSON response of the ajax request.
  * @returns {Object} Returns a redux action with a response.
  */
-export const RequestContentActionsSuccess = (response: any, id: number) => {
+export const requestContentActionsSuccess = (response: any, id: number) => {
     return ({
         type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
-        response: response,
-        id
+        response,
+        id,
     })
 }
 /**
@@ -817,9 +818,9 @@ export const RequestContentActionsSuccess = (response: any, id: number) => {
  * @param error {any} JSON response of the ajax request.
  * @returns {Object} Returns a redux action with a response.
  */
-export const RequestContentActionsFailure = (error: any) => ({
+export const requestContentActionsFailure = (error: any) => ({
     type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
-    message: error.message
+    message: error.message,
 })
 /**
  * Action creator for uploading a Content into the Content Repository.
@@ -827,11 +828,11 @@ export const RequestContentActionsFailure = (error: any) => ({
  * @param file The file that should be uploaded
  * @param {ContentTypes.ContentType} [contentType=ContentTypes.File] ContentType of the Content that should be created with the binary (default is File)
  * @param {boolean} [overwrite=true] Determines whether the existing file with a same name should be overwritten or not (default is true)
- * @param {Object} [body=null] Contains extra stuff to request body 
+ * @param {Object} [body=null] Contains extra stuff to request body
  * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
  * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
  */
-export const UploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string, scenario?: string) => ({
+export const uploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string, scenario?: string) => ({
     type: 'UPLOAD_CONTENT_REQUEST',
     content,
     file,
@@ -839,23 +840,23 @@ export const UploadRequest = (content: Content, file, contentType?, overwrite?: 
     overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
     body: body ? body : null,
     propertyName: propertyName ? propertyName : 'Binary',
-    scenario: scenario || 'ListItems'
+    scenario: scenario || 'ListItems',
 })
 /**
  * Action creator for the step when a content was uploaded successfully.
  * @param response {any} JSON response of the ajax request.
  * @returns {Object} Returns a redux action with a response.
  */
-export const UploadSuccess = (response) => ({
+export const uploadSuccess = (response) => ({
     type: 'UPLOAD_CONTENT_SUCCESS',
-    response
+    response,
 })
 /**
  * Action creator for the step when uploading a content is failed
  * @param error {any} JSON response of the ajax request.
  * @returns {Object} Returns a redux action with a response.
  */
-export const UploadFailure = (error: any) => ({
+export const uploadFailure = (error: any) => ({
     type: 'UPLOAD_CONTENT_FAILURE',
-    message: error.message
+    message: error.message,
 })

@@ -1,9 +1,9 @@
-import { createStore, applyMiddleware } from 'redux';
+import { applyMiddleware, createStore } from 'redux'
 import { createLogger } from 'redux-logger'
-import { createEpicMiddleware } from 'redux-observable';
-import * as Epics from './Epics';
-import * as Reducers from './Reducers';
-import { Repository } from 'sn-client-js';
+import { createEpicMiddleware } from 'redux-observable'
+import { Repository } from 'sn-client-js'
+import * as Epics from './Epics'
+import * as Reducers from './Reducers'
 
 /**
  * Module for configuring a store.
@@ -59,40 +59,37 @@ import { Repository } from 'sn-client-js';
  * );
  * ```
  */
-export const configureStore = (rootReducer: any = Reducers.sensenet, rootEpic?: any, middlewares?: Array<any>, persistedState?: Object, repository?: Repository.BaseRepository<any, any>) => {
-    let epicMiddleware;
+export const configureStore = (rootReducer: any = Reducers.sensenet, rootEpic?: any, middlewares?: any[], persistedState?: object, repository?: Repository.BaseRepository<any, any>) => {
+    let epicMiddleware
 
     if (!repository) {
-        repository = new Repository.SnRepository();
+        repository = new Repository.SnRepository()
     }
 
     if (typeof rootEpic === 'undefined' || rootEpic === null) {
-        epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } });
+        epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } })
+    } else {
+        epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } })
     }
-    else {
-        epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } });
-    }
-    let middlewareArray = [];
+    let middlewareArray = []
     if (typeof middlewares === 'undefined' || middlewares === null) {
-        middlewareArray.push(epicMiddleware);
+        middlewareArray.push(epicMiddleware)
+    } else {
+        middlewareArray = [...middlewares, epicMiddleware]
     }
-    else {
-        middlewareArray = [...middlewares, epicMiddleware];
-    }
-    const loggerMiddleware = createLogger();
-    middlewareArray.push(loggerMiddleware);
+    const loggerMiddleware = createLogger()
+    middlewareArray.push(loggerMiddleware)
 
     if (persistedState && typeof persistedState !== 'undefined') {
         return createStore(
             rootReducer,
             persistedState,
-            applyMiddleware(...middlewareArray)
-        );
-    }
-    else {
+            applyMiddleware(...middlewareArray),
+        )
+    } else {
         return createStore(
             rootReducer,
-            applyMiddleware(...middlewareArray)
-        );
+            applyMiddleware(...middlewareArray),
+        )
     }
-};
+}
