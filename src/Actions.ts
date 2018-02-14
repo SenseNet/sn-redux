@@ -1,5 +1,8 @@
+import { IContent } from '@sensenet/client-core'
+import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
+import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
+import { File, User } from '@sensenet/default-content-types'
 import { normalize } from 'normalizr'
-import { Content, ContentTypes, IContent, ODataApi } from 'sn-client-js'
 import * as Schemas from './Schema'
 
 /**
@@ -115,7 +118,7 @@ import * as Schemas from './Schema'
  * @param path {string} Path of the root Content
  * @param options {OData.IODataParams} Represents an ODataOptions object based on the IODataOptions interface. Holds the possible url parameters as properties.
  */
-export const initSensenetStore = (path?: string, options: ODataApi.IODataParams<IContent> = {}) => ({
+export const initSensenetStore = (path?: string, options: IODataParams<IContent> = {}) => ({
     type: 'INIT_SENSENET_STORE',
     path: path ? path : '/Root',
     options,
@@ -127,7 +130,7 @@ export const initSensenetStore = (path?: string, options: ODataApi.IODataParams<
  * @param contentType {ContentType} Content Type of the requested content.
  * @returns {Object} Returns a redux action with the properties type, path, options and contentType.
  */
-export const requestContent = <T extends IContent = IContent>(path: string, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
+export const requestContent = <T extends IContent = IContent>(path: string, options: IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
     type: 'FETCH_CONTENT_REQUEST',
     path,
     options,
@@ -163,7 +166,7 @@ export const receiveContentFailure = (params: any, error: any) => ({
  * @param contentType {ContentType} Content Type of the requested content.
  * @returns {Object} Returns a redux action with the properties id, options and contentType.
  */
-export const loadContent = <T extends IContent = IContent>(id: number, options: ODataApi.IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
+export const loadContent = <T extends IContent = IContent>(id: number, options: IODataParams<T> = {}, contentType?: { new(...args): T }) => ({
     type: 'LOAD_CONTENT_REQUEST',
     id,
     options,
@@ -175,7 +178,7 @@ export const loadContent = <T extends IContent = IContent>(id: number, options: 
  * @param params {string} String with the url params.
  * @returns {Object} Returns a redux action with the properties type, normalized response and params.
  */
-export const receiveLoadedContent = <T extends IContent = IContent>(response: Content<T>, params: any) =>
+export const receiveLoadedContent = <T extends IContent = IContent>(response: T, params: any) =>
     ({
         type: 'LOAD_CONTENT_SUCCESS',
         response,
@@ -224,7 +227,7 @@ export const receiveContentActionsFailure = (error: any) => ({
  * @param actionName {string} Name of the action witch which we want to reload the content (edit, new, etc).
  * @returns {Object} Returns a redux action with the properties type and actionName.
  */
-export const reloadContent = <T extends IContent = IContent>(content: Content<T>, actionName: 'edit' | 'view') => ({
+export const reloadContent = <T extends IContent = IContent>(content: T, actionName: 'edit' | 'view') => ({
     type: 'RELOAD_CONTENT_REQUEST',
     content,
     actionName,
@@ -234,7 +237,7 @@ export const reloadContent = <T extends IContent = IContent>(content: Content<T>
  * @param response {Content} Response of the ajax request as Content.
  * @returns {Object} Returns a redux action with the properties type and the response.
  */
-export const receiveReloadedContent = (response: Content) =>
+export const receiveReloadedContent = (response: IContent) =>
     ({
         type: 'RELOAD_CONTENT_SUCCESS',
         response,
@@ -254,7 +257,7 @@ export const receiveReloadedContentFailure = (error: any) => ({
  * @param fields {any[]} List of the fields to be loaded
  * @returns {Object} Returns a redux action with the properties type and fields.
  */
-export const reloadContentFields = (content: Content, fields: any[]) => ({
+export const reloadContentFields = (content: IContent, fields: any[]) => ({
     type: 'RELOAD_CONTENTFIELDS_REQUEST',
     content,
     fields,
@@ -264,7 +267,7 @@ export const reloadContentFields = (content: Content, fields: any[]) => ({
  * @param response {Content} Response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and normalized response.
  */
-export const receiveReloadedContentFields = (response: Content) =>
+export const receiveReloadedContentFields = (response: IContent) =>
     ({
         type: 'RELOAD_CONTENTFIELDS_SUCCESS',
         response,
@@ -292,7 +295,7 @@ export const createContent = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and the normalized response.
  */
-export const createContentSuccess = (response: Content) =>
+export const createContentSuccess = (response: IContent) =>
     ({
         type: 'CREATE_CONTENT_SUCCESS',
         response: normalize(response, Schemas.contentItem),
@@ -320,7 +323,7 @@ export const updateContent = <T extends IContent = IContent>(content: Partial<T>
  * @param response {Content} JSON response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and the response.
  */
-export const updateContentSuccess = (response: Content) =>
+export const updateContentSuccess = (response: IContent) =>
     ({
         type: 'UPDATE_CONTENT_SUCCESS',
         response,
@@ -377,7 +380,7 @@ export const deleteBatch = (contentItems: object, permanently: boolean = false) 
  * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
  * @returns {Object} Returns a redux action with the properties type and index.
  */
-export const deleteBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+export const deleteBatchSuccess = (response: IODataBatchResponse<IContent>) => ({
     type: 'DELETE_BATCH_SUCCESS',
     response,
 })
@@ -406,7 +409,7 @@ export const copyBatch = (contentItems: object, path: string) => ({
  * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
  * @returns {Object} Returns a redux action with the properties type and index.
  */
-export const copyBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+export const copyBatchSuccess = (response: IODataBatchResponse<IContent>) => ({
     type: 'COPY_BATCH_SUCCESS',
     response,
 })
@@ -435,7 +438,7 @@ export const moveBatch = (contentItems = {}, path: string) => ({
  * @param response {ODataApi.ODataBatchResponse} response object contains the list of successes and/or errors.
  * @returns {Object} Returns a redux action with the properties type and index.
  */
-export const moveBatchSuccess = (response: ODataApi.ODataBatchResponse) => ({
+export const moveBatchSuccess = (response: IODataBatchResponse<IContent>) => ({
     type: 'MOVE_BATCH_SUCCESS',
     response,
 })
@@ -462,7 +465,7 @@ export const checkOut = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const checkOutSuccess = (response: Content) => ({
+export const checkOutSuccess = (response: IContent) => ({
     type: 'CHECKOUT_CONTENT_SUCCESS',
     response,
 })
@@ -490,7 +493,7 @@ export const checkIn = <T extends IContent = IContent>(content: T, checkInCommen
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const checkInSuccess = (response: Content) => ({
+export const checkInSuccess = (response: IContent) => ({
     type: 'CHECKIN_CONTENT_SUCCESS',
     response,
 })
@@ -517,7 +520,7 @@ export const publish = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const publishSuccess = (response: Content) => ({
+export const publishSuccess = (response: IContent) => ({
     type: 'PUBLISH_CONTENT_SUCCESS',
     response,
 })
@@ -544,7 +547,7 @@ export const approve = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const approveSuccess = (response: Content) => ({
+export const approveSuccess = (response: IContent) => ({
     type: 'APPROVE_CONTENT_SUCCESS',
     response,
 })
@@ -573,7 +576,7 @@ export const reject = <T extends IContent = IContent>(content: T, rejectReason: 
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const rejectSuccess = (response: Content) => ({
+export const rejectSuccess = (response: IContent) => ({
     type: 'REJECT_CONTENT_SUCCESS',
     response,
 })
@@ -600,7 +603,7 @@ export const undoCheckout = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const undoCheckoutSuccess = (response: Content) => ({
+export const undoCheckoutSuccess = (response: IContent) => ({
     type: 'UNDOCHECKOUT_CONTENT_SUCCESS',
     response,
 })
@@ -627,7 +630,7 @@ export const forceUndoCheckout = <T extends IContent = IContent>(content: T) => 
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const forceUndoCheckoutSuccess = (response: Content) => ({
+export const forceUndoCheckoutSuccess = (response: IContent) => ({
     type: 'FORCEUNDOCHECKOUT_CONTENT_SUCCESS',
     response,
 })
@@ -656,7 +659,7 @@ export const restoreVersion = <T extends IContent = IContent>(content: T, versio
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const restoreVersionSuccess = (response: Content) => ({
+export const restoreVersionSuccess = (response: IContent) => ({
     type: 'RESTOREVERSION_CONTENT_SUCCESS',
     response,
 })
@@ -711,7 +714,7 @@ export const userLoginBuffer = (response: boolean) => ({
  * @param response {any} JSON response of the ajax request.
  * @returns {Object} Returns a redux action with the user as a response.
  */
-export const userLoginSuccess = (content: Content<ContentTypes.User>) => ({
+export const userLoginSuccess = (content: User) => ({
     type: 'USER_LOGIN_SUCCESS',
     response: content,
 })
@@ -832,11 +835,11 @@ export const requestContentActionsFailure = (error: any) => ({
  * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
  * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
  */
-export const uploadRequest = (content: Content, file, contentType?, overwrite?: boolean, body?, propertyName?: string, scenario?: string) => ({
+export const uploadRequest = (content: IContent, file, contentType?, overwrite?: boolean, body?, propertyName?: string, scenario?: string) => ({
     type: 'UPLOAD_CONTENT_REQUEST',
     content,
     file,
-    contentType: contentType || ContentTypes.File,
+    contentType: contentType || File,
     overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
     body: body ? body : null,
     propertyName: propertyName ? propertyName : 'Binary',

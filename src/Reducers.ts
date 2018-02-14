@@ -1,14 +1,25 @@
-import { combineReducers } from 'redux'
-import { Authentication } from 'sn-client-js'
+import { LoginState, IContent } from '@sensenet/client-core'
+import { combineReducers, Reducer } from 'redux'
+import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse';
 
-/**
- * Module for defining Redux reducers.
- *
- * _Actions describe the fact that something happened, but don't specify how the application's state changes in response. This is the job of a reducer._
- *
- * Following module contains the reducers of sn-redux, some 'reducer groups' and the root reducer which could be passed to the store creator function. Using a root reduces means
- * that you define which combination of reducers will be used and eventually defines which type of actions can be called on the store.
- */
+export interface SelectStateType {
+    ids: number[],
+    entities: object
+}
+
+export interface BatchResponseStateType {
+    response: IODataBatchResponse<IContent>,
+    error: object,
+}
+
+export interface SensenetStateType {
+    session: object,
+    children: object,
+    currentcontent: object,
+    selected: SelectStateType,
+    batchResponses: BatchResponseStateType,
+}
+
 /**
  * Reducer to handle Actions on the country property in the session object.
  * @param {Object} [state=''] Represents the current state.
@@ -39,20 +50,20 @@ export const language = (state = 'en-US', action) => {
 }
 /**
  * Reducer to handle Actions on the loginState property in the session object.
- * @param {Object} [state=Authentication.LoginState.Pending] Represents the current state.
+ * @param {Object} [state=LoginState.Pending] Represents the current state.
  * @param {Object} action Represents an action that is called.
  * @returns {Object} state. Returns the next state based on the action.
  */
-export const loginState = (state = Authentication.LoginState.Pending, action) => {
+export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
         case 'USER_LOGIN_SUCCESS':
-            return Authentication.LoginState.Authenticated
+            return LoginState.Authenticated
         case 'USER_LOGOUT_SUCCESS':
-            return Authentication.LoginState.Unauthenticated
+            return LoginState.Unauthenticated
         case 'USER_LOGIN_FAILURE':
-            return Authentication.LoginState.Unauthenticated
+            return LoginState.Unauthenticated
         case 'USER_LOGOUT_FAILURE':
-            return Authentication.LoginState.Unauthenticated
+            return LoginState.Unauthenticated
         default:
             return state
     }
@@ -656,7 +667,7 @@ export const selectedContentItems = (state = {}, action) => {
 /**
  * Reducer combining ids and entities into a single object, ```selected```.
  */
-export const selected = combineReducers({
+const selected = combineReducers({
     ids: selectedIds,
     entities: selectedContentItems,
 })
@@ -695,14 +706,14 @@ export const batchResponseError = (state = '', action) => {
 /**
  * Reducer combining response and error into a single object, ```batchResponses```.
  */
-export const batchResponses = combineReducers({
+const batchResponses = combineReducers<BatchResponseStateType>({
     response: odataBatchResponse,
     error: batchResponseError,
 })
 /**
  * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
  */
-export const sensenet = combineReducers({
+export const sensenet:Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
     session,
     children,
     currentcontent,
@@ -739,10 +750,10 @@ export const getError = (state: any) => {
 /**
  * Method to get the authentication status.
  * @param {Object} state Current state object.
- * @returns {Authentication.LoginState} Returns the authentication state.
+ * @returns {LoginState} Returns the authentication state.
  */
 export const getAuthenticationStatus = (state) => {
-    return state.session.loginState as Authentication.LoginState
+    return state.session.loginState as LoginState
 }
 /**
  * Method to get the authentication error.
