@@ -41,7 +41,7 @@
   "nyc": {
     "cache": true,
     "include": "temp/src/**/*.*",
-    "exclude": "temp/test/**/*.*",
+    "exclude": ["temp/test/**/*.*", "**/index.js"],
     "all": true,
     "reporter": [
       "lcov",
