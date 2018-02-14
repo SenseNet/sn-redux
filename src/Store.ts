@@ -1,7 +1,5 @@
-import { Repository } from '@sensenet/client-core'
 import { applyMiddleware, createStore, Store } from 'redux'
 import { createLogger } from 'redux-logger'
-import * as Reducers from './Reducers'
 
 /**
  * Module for configuring a store.
@@ -57,12 +55,19 @@ import * as Reducers from './Reducers'
  * );
  * ```
  */
-export const configureStore: (rootReducer: any, rootEpic?: any, middlewares?: any[], persistedState?: object, repository?: Repository) => Store<any> = (rootReducer: any = Reducers.sensenet, rootEpic?: any, middlewares?: any[], persistedState?: object, repository?: Repository) => {
-    let epicMiddleware
 
-    if (!repository) {
-        repository = new Repository()
-    }
+export interface CreateStoreOptions {
+    rootReducer,
+    repository,
+    middlewares?,
+    persistedState?
+}
+/**
+ * Method that configures a sensenet Redux store
+ * @param options
+ */
+export const configureStore: (options: CreateStoreOptions) => Store<any> = (options: CreateStoreOptions) => {
+    // let epicMiddleware
 
     // if (typeof rootEpic === 'undefined' || rootEpic === null) {
     //     epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } })
@@ -70,23 +75,23 @@ export const configureStore: (rootReducer: any, rootEpic?: any, middlewares?: an
     //     epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } })
     // }
     let middlewareArray = []
-    if (typeof middlewares === 'undefined' || middlewares === null) {
-        middlewareArray.push(epicMiddleware)
+    if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
+        // middlewareArray.push(epicMiddleware)
     } else {
-        middlewareArray = [...middlewares, epicMiddleware]
+        middlewareArray = [...options.middlewares]
     }
     const loggerMiddleware = createLogger()
     middlewareArray.push(loggerMiddleware)
 
-    if (persistedState && typeof persistedState !== 'undefined') {
+    if (options.persistedState && typeof options.persistedState !== 'undefined') {
         return createStore(
-            rootReducer,
-            persistedState,
+            options.rootReducer,
+            options.persistedState,
             applyMiddleware(...middlewareArray),
         )
     } else {
         return createStore(
-            rootReducer,
+            options.rootReducer,
             applyMiddleware(...middlewareArray),
         )
     }
