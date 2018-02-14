@@ -1,17 +1,24 @@
-import { LoginState, IContent } from '@sensenet/client-core'
+import { IContent, LoginState } from '@sensenet/client-core'
+import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { combineReducers, Reducer } from 'redux'
-import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse';
 
+/**
+ * Interface to define state type for select Reducer.
+ */
 export interface SelectStateType {
     ids: number[],
     entities: object
 }
-
+/**
+ * Interface to define state type for batchResponse Reducer.
+ */
 export interface BatchResponseStateType {
     response: IODataBatchResponse<IContent>,
     error: object,
 }
-
+/**
+ * Interface to define state type for sensenet Reducer.
+ */
 export interface SensenetStateType {
     session: object,
     children: object,
@@ -593,7 +600,7 @@ export const fields = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
         case 'RELOAD_CONTENT_SUCCESS':
-            return action.response.GetFields()
+            return action.response
         default:
             return state
     }
@@ -713,7 +720,7 @@ const batchResponses = combineReducers<BatchResponseStateType>({
 /**
  * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
  */
-export const sensenet:Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
+export const sensenet: Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
     session,
     children,
     currentcontent,

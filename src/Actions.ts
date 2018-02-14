@@ -1,7 +1,7 @@
 import { IContent } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
-import { File, User } from '@sensenet/default-content-types'
+import { File as SNFile, User } from '@sensenet/default-content-types'
 import { normalize } from 'normalizr'
 import * as Schemas from './Schema'
 
@@ -237,7 +237,7 @@ export const reloadContent = <T extends IContent = IContent>(content: T, actionN
  * @param response {Content} Response of the ajax request as Content.
  * @returns {Object} Returns a redux action with the properties type and the response.
  */
-export const receiveReloadedContent = (response: IContent) =>
+export const receiveReloadedContent = <T extends IContent = IContent>(response: T, params: any) =>
     ({
         type: 'RELOAD_CONTENT_SUCCESS',
         response,
@@ -267,7 +267,7 @@ export const reloadContentFields = (content: IContent, fields: any[]) => ({
  * @param response {Content} Response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and normalized response.
  */
-export const receiveReloadedContentFields = (response: IContent) =>
+export const receiveReloadedContentFields = <T extends IContent = IContent>(response: T, params: any) =>
     ({
         type: 'RELOAD_CONTENTFIELDS_SUCCESS',
         response,
@@ -295,7 +295,7 @@ export const createContent = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and the normalized response.
  */
-export const createContentSuccess = (response: IContent) =>
+export const createContentSuccess = <T extends IContent = IContent>(response: T) =>
     ({
         type: 'CREATE_CONTENT_SUCCESS',
         response: normalize(response, Schemas.contentItem),
@@ -323,7 +323,7 @@ export const updateContent = <T extends IContent = IContent>(content: Partial<T>
  * @param response {Content} JSON response of the ajax request as a Content.
  * @returns {Object} Returns a redux action with the properties type and the response.
  */
-export const updateContentSuccess = (response: IContent) =>
+export const updateContentSuccess = <T extends IContent = IContent>(response: T) =>
     ({
         type: 'UPDATE_CONTENT_SUCCESS',
         response,
@@ -465,7 +465,7 @@ export const checkOut = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const checkOutSuccess = (response: IContent) => ({
+export const checkOutSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'CHECKOUT_CONTENT_SUCCESS',
     response,
 })
@@ -493,7 +493,7 @@ export const checkIn = <T extends IContent = IContent>(content: T, checkInCommen
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const checkInSuccess = (response: IContent) => ({
+export const checkInSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'CHECKIN_CONTENT_SUCCESS',
     response,
 })
@@ -520,7 +520,7 @@ export const publish = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const publishSuccess = (response: IContent) => ({
+export const publishSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'PUBLISH_CONTENT_SUCCESS',
     response,
 })
@@ -547,7 +547,7 @@ export const approve = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const approveSuccess = (response: IContent) => ({
+export const approveSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'APPROVE_CONTENT_SUCCESS',
     response,
 })
@@ -576,7 +576,7 @@ export const reject = <T extends IContent = IContent>(content: T, rejectReason: 
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const rejectSuccess = (response: IContent) => ({
+export const rejectSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'REJECT_CONTENT_SUCCESS',
     response,
 })
@@ -603,7 +603,7 @@ export const undoCheckout = <T extends IContent = IContent>(content: T) => ({
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const undoCheckoutSuccess = (response: IContent) => ({
+export const undoCheckoutSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'UNDOCHECKOUT_CONTENT_SUCCESS',
     response,
 })
@@ -630,7 +630,7 @@ export const forceUndoCheckout = <T extends IContent = IContent>(content: T) => 
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const forceUndoCheckoutSuccess = (response: IContent) => ({
+export const forceUndoCheckoutSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'FORCEUNDOCHECKOUT_CONTENT_SUCCESS',
     response,
 })
@@ -659,7 +659,7 @@ export const restoreVersion = <T extends IContent = IContent>(content: T, versio
  * @param response {Content} JSON response of the ajax request as a Content object.
  * @returns {Object} Returns a redux action with the properties type and the normalized JSON response.
  */
-export const restoreVersionSuccess = (response: IContent) => ({
+export const restoreVersionSuccess = <T extends IContent = IContent>(response: T) => ({
     type: 'RESTOREVERSION_CONTENT_SUCCESS',
     response,
 })
@@ -839,7 +839,7 @@ export const uploadRequest = (content: IContent, file, contentType?, overwrite?:
     type: 'UPLOAD_CONTENT_REQUEST',
     content,
     file,
-    contentType: contentType || File,
+    contentType: contentType || SNFile,
     overwrite: typeof overwrite !== 'undefined' ? overwrite : true,
     body: body ? body : null,
     propertyName: propertyName ? propertyName : 'Binary',
