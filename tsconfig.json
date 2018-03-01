@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
         "sourceMap": true,
-        "target": "esnext",
+        "target": "es2015",
         "module": "commonjs",
         "moduleResolution": "node",
+        
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
@@ -12,7 +13,7 @@
         "alwaysStrict": false,
         "suppressImplicitAnyIndexErrors": true,
         "declaration": true,
-        "noUnusedLocals": true,
+        "noUnusedLocals": false,
         "strict": true,
         "removeComments": true,
         "preserveConstEnums": true,
