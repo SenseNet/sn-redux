@@ -1,5 +1,7 @@
+import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import { applyMiddleware, createStore, Store } from 'redux'
 import { createLogger } from 'redux-logger'
+import * as Actions from './Actions'
 
 /**
  * Module for configuring a store.
@@ -66,14 +68,7 @@ export interface CreateStoreOptions {
  * Method that configures a sensenet Redux store
  * @param options
  */
-export const configureStore: (options: CreateStoreOptions) => Store<any> = (options: CreateStoreOptions) => {
-    // let epicMiddleware
-
-    // if (typeof rootEpic === 'undefined' || rootEpic === null) {
-    //     epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } })
-    // } else {
-    //     epicMiddleware = createEpicMiddleware(rootEpic, { dependencies: { repository } })
-    // }
+export const createSensenetStore: (options: CreateStoreOptions) => Store<any> = (options: CreateStoreOptions) => {
     let middlewareArray = []
     if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
         // middlewareArray.push(epicMiddleware)
@@ -81,18 +76,16 @@ export const configureStore: (options: CreateStoreOptions) => Store<any> = (opti
         middlewareArray = [...options.middlewares]
     }
     const loggerMiddleware = createLogger()
-    middlewareArray.push(loggerMiddleware)
+    const reduxPromiseMiddleware = promiseMiddleware(options.repository)
+    middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware)
 
-    if (options.persistedState && typeof options.persistedState !== 'undefined') {
-        return createStore(
-            options.rootReducer,
-            options.persistedState,
-            applyMiddleware(...middlewareArray),
-        )
-    } else {
-        return createStore(
-            options.rootReducer,
-            applyMiddleware(...middlewareArray),
-        )
-    }
+    const store = createStore(
+        options.rootReducer,
+        {},
+        applyMiddleware(...middlewareArray),
+    )
+    options.repository.authentication.currentUser.subscribe((user) => {
+        store.dispatch(Actions.userChanged(user))
+    }, true)
+    return store
 }

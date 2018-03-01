@@ -10,22 +10,25 @@ describe('Store', () => {
     const loggerMiddleware = createLogger()
     const middlewareArray = []
     middlewareArray.push(loggerMiddleware)
-    const myReducer = combineReducers({})
+    const testReducer = (state = {}, action) => {
+        return state
+    }
+    const myReducer = combineReducers({ testReducer })
     const store = createStore(
         myReducer,
         {},
         applyMiddleware(...middlewareArray),
     )
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore({ repository, rootReducer: myReducer })).to.be.equal(typeof store)
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer })).to.be.equal(typeof store)
     })
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore({ repository, rootReducer: myReducer, middlewares: null, persistedState: {} })).to.be.equal(typeof store)
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer, middlewares: null, persistedState: {} })).to.be.equal(typeof store)
     })
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore({ repository, rootReducer: myReducer, middlewares: null })).to.be.equal(typeof store)
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer, middlewares: null })).to.be.equal(typeof store)
     })
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore({ repository, rootReducer: myReducer, middlewares: middlewareArray })).to.be.equal(typeof store)
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer, middlewares: middlewareArray })).to.be.equal(typeof store)
     })
 })
