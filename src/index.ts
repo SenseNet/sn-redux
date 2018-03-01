@@ -1,4 +1,6 @@
-export * from './Actions'
-export * from './Reducers'
-export * from './Schema'
-export * from './Store'
+import * as Actions from './Actions'
+import * as Reducers from './Reducers'
+import * as Schema from './Schema'
+import * as Store from './Store'
+
+export { Actions, Reducers, Schema, Store }
