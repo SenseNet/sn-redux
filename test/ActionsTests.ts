@@ -1,631 +1,565 @@
-import { IContent } from '@sensenet/client-core'
-import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
-import { File as SNFile, Folder, Task, User } from '@sensenet/default-content-types'
+import { JwtService } from '@sensenet/authentication-jwt'
+import { Repository } from '@sensenet/client-core'
+import { File as SNFile, Task, User } from '@sensenet/default-content-types'
+import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import * as Chai from 'chai'
+import configureStore from 'redux-mock-store'
 import * as Actions from '../src/Actions'
 const expect = Chai.expect
 
+declare const global: any
+
+// tslint:disable:completed-docs
+
+global.File = class {
+    public size: number = 1024
+    public namme: string = 'file.txt'
+    public slice(...args: any[]) { return '' }
+}
+// tslint:disable-next-line:max-classes-per-file
+global.FormData = class {
+    public append(...args: any[]) { /** */ }
+}
+
+const repository = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => jwtMockResponse)
+
+// tslint:disable-next-line:variable-name
+const _jwtService = new JwtService(repository)
+
+const collectionMockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            d: {
+                results: [],
+            },
+        }
+    },
+} as Response
+
+const contentMockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            d: {
+                Name: 'DefaultSite',
+            },
+        }
+    },
+} as Response
+
+const actionsMockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            d: [],
+        }
+    },
+} as Response
+
+const uploadResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            Id: 4037,
+            Length: 18431,
+            Name: 'LICENSE',
+            Thumbnail_url: '/Root/Sites/Default_Site/Workspace/Document_Library/LICENSE',
+            Type: 'File',
+            Url: '/Root/Sites/Default_Site/Workspace/Document_Library/LICENSE',
+        }
+    },
+} as Response
+
+const jwtMockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            access: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZW5zZW5ldC10b2tlbi1zZXJ2aWNlIiwic3ViIjoic2Vuc2VuZXQiLCJhdWQiOiJjbGllbnQiLCJleHAiOjE1MTk4MzM0MDQsImlhdCI6MTUxOTgzMzEwNCwibmJmIjoxNTE5ODMzMTA0LCJuYW1lIjoiUHVibGljXFxhbGJhQHNlbnNlbmV0LmNvbSIsImp0aSI6ImUyMTgyOGQxOWVlMjQwNDM4MTAzMTZhMjkwZjQ3YzkxIn0',
+            refresh: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZW5zZW5ldC10b2tlbi1zZXJ2aWNlIiwic3ViIjoic2Vuc2VuZXQiLCJhdWQiOiJjbGllbnQiLCJleHAiOjE1MTk5MTk4MDQsImlhdCI6MTUxOTgzMzEwNCwibmJmIjoxNTE5ODMzNDA0LCJuYW1lIjoiUHVibGljXFxhbGJhQHNlbnNlbmV0LmNvbSIsImp0aSI6IjgzZDZmNzA0NjNmNTQ4YWZhN2U4ZDAxMmIyMGRiYzRiIn0',
+        }
+    },
+} as Response
+
 describe('Actions', () => {
     const path = '/workspaces/project'
-    describe('InitSensenetStore', () => {
-        it('should create an action to an init sensenet store request', () => {
-            const expectedAction = {
-                type: 'INIT_SENSENET_STORE',
-                path: '/workspaces/project',
-                options: {},
-            }
-            expect(Actions.initSensenetStore(path, {})).to.deep.equal(expectedAction)
-        })
-        it('should create an action to an init sensenet store request with "/Root"', () => {
-            const expectedAction = {
-                type: 'INIT_SENSENET_STORE',
-                path: '/Root',
-                options: {},
-            }
-            expect(Actions.initSensenetStore()).to.deep.equal(expectedAction)
-        })
+    // tslint:disable-next-line:variable-name
+    let _store
+    let repo
+    beforeEach(() => {
+        repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => contentMockResponse)
+        const mockStore = configureStore([promiseMiddleware(repo)])
+        _store = mockStore({})
     })
     describe('FetchContent', () => {
-        it('should create an action to a fetch content request', () => {
-            const expectedAction = {
-                type: 'FETCH_CONTENT_REQUEST',
-                path: '/workspaces/project',
-                options: {},
-                contentType: Task,
-            }
-            expect(Actions.requestContent(path, {}, Task)).to.deep.equal(expectedAction)
+        beforeEach(() => {
+            repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => collectionMockResponse)
+            const mockStore = configureStore([promiseMiddleware(repo)])
+            _store = mockStore({})
         })
-        it('should create an action to a fetch content request', () => {
-            const expectedAction = {
-                type: 'FETCH_CONTENT_REQUEST',
-                path: '/workspaces/project',
-                options: {},
-                contentType: undefined,
-            }
-            expect(Actions.requestContent(path)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.requestContent(path, {}).type).to.eql('FETCH_CONTENT')
         })
-        it('should create an action to receive content', () => {
-            const expectedAction = {
-                type: 'FETCH_CONTENT_SUCCESS',
-                response: { entities: {}, result: [] },
-                params: '?$select=Id,Type&metadata=no',
-            }
-            expect(Actions.receiveContent([], '?$select=Id,Type&metadata=no')).to.deep.equal(expectedAction)
-        })
-        it('should create an action to content fetch request failure', () => {
-            const expectedAction = {
-                type: 'FETCH_CONTENT_FAILURE',
-                message: 'error',
-                params: '?$select=Id,Type&metadata=no',
-            }
-            expect(Actions.receiveContentFailure('?$select=Id,Type&metadata=no', { message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.loadCollection() resolves', () => {
+                let data
+                let dataWithoutOptions
+                beforeEach(async () => {
+                    data = await Actions.requestContent(path, {}).payload(repo)
+                    dataWithoutOptions = await Actions.requestContent(path).payload(repo)
+                })
+                it('should return a FETCH_CONTENT action', () => {
+                    expect(Actions.requestContent(path, {})).to.have.property(
+                        'type', 'FETCH_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal({ entities: {}, result: [] })
+                })
+                it('should return mockdata without options attribute', async () => {
+                    expect(dataWithoutOptions).to.deep.equal({ entities: {}, result: [] })
+                })
+            })
         })
     })
     describe('LoadContent', () => {
-        it('should create an action to a load content request', () => {
-            const expectedAction = {
-                type: 'LOAD_CONTENT_REQUEST',
-                id: 123,
-                options: {},
-                contentType: Task,
-            }
-            expect(Actions.loadContent(123, {}, Task)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to a load content request', () => {
-            const expectedAction = {
-                type: 'LOAD_CONTENT_REQUEST',
-                id: 123,
-                options: {},
-                contentType: undefined,
-            }
-            expect(Actions.loadContent(123)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to receive a loaded content', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            expect(Actions.receiveLoadedContent(content, { select: ['Id', 'DisplayName'] }).response.DisplayName).to.deep.equal('My content')
+        describe('Action types are types', () => {
+            expect(Actions.loadContent(path, {}).type).to.eql('LOAD_CONTENT')
         })
 
-        it('should create an action to content reload request failure', () => {
-            const expectedAction = {
-                type: 'LOAD_CONTENT_FAILURE',
-                message: 'error',
-                params: '?$select=Id,Type&metadata=no',
-            }
-            expect(Actions.receiveLoadedContentFailure('?$select=Id,Type&metadata=no', { message: 'error' })).to.deep.equal(expectedAction)
+        describe('serviceChecks()', () => {
+            context('Given repository.load() resolves', () => {
+                let data
+                let dataWithoutOptions
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.loadContent(path, {}).payload(repo)
+                    dataWithoutOptions = await Actions.loadContent(path).payload(repo)
+                })
+                it('should return a LOAD_CONTENT action', () => {
+                    expect(Actions.loadContent(path, {})).to.have.property(
+                        'type', 'LOAD_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+                it('should return mockdata without options attribute', async () => {
+                    expect(dataWithoutOptions).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('LoadContentActions', () => {
-        it('should create an action to a load content actions request', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            const expectedAction = {
-                type: 'LOAD_CONTENT_ACTIONS',
-                content,
-                scenario: 'ListItem',
-            }
-            expect(Actions.loadContentActions(content, 'ListItem')).to.deep.equal(expectedAction)
+        beforeEach(() => {
+            repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => actionsMockResponse)
+            const mockStore = configureStore([promiseMiddleware(repo)])
+            _store = mockStore({})
         })
-        it('should create an action to receive a loaded contents actions', () => {
-            const expectedAction = {
-                type: 'LOAD_CONTENT_ACTIONS_SUCCESS',
-                actions: ['aa', 'bb'],
-            }
-            expect(Actions.receiveContentActions(['aa', 'bb'])).to.deep.equal(expectedAction)
-        })
-        it('should create an action to load content action request failure', () => {
-            const expectedAction = {
-                type: 'LOAD_CONTENT_ACTIONS_FAILURE',
-                error: 'error',
-            }
-            expect(Actions.receiveContentActionsFailure('error')).to.deep.equal(expectedAction)
-        })
-    })
-    describe('ReloadContent', () => {
-        it('should create an action to a reload content request', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            const expectedAction = {
-                type: 'RELOAD_CONTENT_REQUEST',
-                content,
-                actionName: 'edit',
-            }
-            expect(Actions.reloadContent(content, 'edit')).to.deep.equal(expectedAction)
-        })
-        it('should create an action to receive the reloaded content', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            expect(Actions.receiveReloadedContent(content, {}).response.DisplayName).to.deep.equal('My content')
+        describe('Action types are types', () => {
+            expect(Actions.loadContentActions(path).type).to.eql('LOAD_CONTENT_ACTIONS')
         })
 
-        it('should create an action to content load request failure', () => {
-            const expectedAction = {
-                type: 'RELOAD_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.receiveReloadedContentFailure({ message: 'error' })).to.deep.equal(expectedAction)
-        })
-    })
-    describe('ReloadContentFields', () => {
-        it('should create an action to a reload fields of a content request', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            const expectedAction = {
-                type: 'RELOAD_CONTENTFIELDS_REQUEST',
-                content,
-                fields: ['Id', 'DisplayName'],
-            }
-            expect(Actions.reloadContentFields(content, ['Id', 'DisplayName'])).to.deep.equal(expectedAction)
-        })
-        it('should create an action to receive the reloaded fields of a content', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            expect(Actions.receiveReloadedContentFields(content, {}).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to content load request failure', () => {
-            const expectedAction = {
-                type: 'RELOAD_CONTENTFIELDS_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.receiveReloadedContentFieldsFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        describe('serviceChecks()', () => {
+            context('Given repository.getActions() resolves', () => {
+                let data
+                const expectedResult = { d: [] }
+                beforeEach(async () => {
+                    data = await Actions.loadContentActions(path).payload(repo)
+                })
+                it('should return a LOAD_CONTENT_ACTIONS action', () => {
+                    expect(Actions.loadContentActions(path)).to.have.property(
+                        'type', 'LOAD_CONTENT_ACTIONS',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('CreateContent', () => {
         const content = { DisplayName: 'My content', Id: 123 } as Task
 
-        it('should create an action to a create content request', () => {
-            const expectedAction = {
-                type: 'CREATE_CONTENT_REQUEST',
-                content,
-            }
-            expect(Actions.createContent(content)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.createContent(path, content, 'Task').type).to.eql('CREATE_CONTENT')
         })
-        it('should create an action to a create content success', () => {
-            expect(Actions.createContentSuccess(content).response.entities.entities['123'].DisplayName).to.be.eq('My content')
-        })
-        it('should create an action to content creation failure', () => {
-            const expectedAction = {
-                type: 'CREATE_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.createContentFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.post() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.createContent(path, content, 'Task').payload(repo)
+                })
+                it('should return a CREATE_CONTENT action', () => {
+                    expect(Actions.createContent(path, content, 'Task')).to.have.property(
+                        'type', 'CREATE_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('UpdateContent', () => {
-        it('should create an action to an update content request', () => {
-            const expectedAction = {
-                type: 'UPDATE_CONTENT_REQUEST',
-                content: { Id: 2 },
-            }
-            expect(Actions.updateContent({
-                Id: 2,
-            })).to.deep.equal(expectedAction)
+        const content = { DisplayName: 'My content', Id: 123 } as Task
+
+        describe('Action types are types', () => {
+            expect(Actions.updateContent(path, content).type).to.eql('UPDATE_CONTENT')
         })
-        it('should create an action to update content success', () => {
-            const content = { DisplayName: 'My content', Id: 123 } as Task
-            expect(Actions.updateContentSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to content update request failure', () => {
-            const expectedAction = {
-                type: 'UPDATE_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.updateContentFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.patch() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.updateContent(path, content).payload(repo)
+                })
+                it('should return a UPDATE_CONTENT action', () => {
+                    expect(Actions.updateContent(path, content)).to.have.property(
+                        'type', 'UPDATE_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('DeleteContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to a delete content request', () => {
-            const expectedAction = {
-                type: 'DELETE_CONTENT_REQUEST',
-                content,
-                permanently: false,
-            }
-            expect(Actions.deleteRequest(content, false)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.deleteContent(path, true).type).to.eql('DELETE_CONTENT')
         })
-        it('should create an action to a delete content request', () => {
-            const expectedAction = {
-                type: 'DELETE_CONTENT_REQUEST',
-                content,
-                permanently: false,
-            }
-            expect(Actions.deleteRequest(content)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to delete content success', () => {
-            const expectedAction = {
-                type: 'DELETE_CONTENT_SUCCESS',
-                index: 0,
-                id: 123,
-            }
-            expect(Actions.deleteSuccess(0, 123)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to delete content failure', () => {
-            const expectedAction = {
-                type: 'DELETE_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.deleteFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.delete() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.deleteContent(path).payload(repo)
+                })
+                it('should return a DELETE_CONTENT action', () => {
+                    expect(Actions.deleteContent(path)).to.have.property(
+                        'type', 'DELETE_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('DeleteBatchContent', () => {
-        it('should create an action to a delete content request', () => {
-            const expectedAction = {
-                type: 'DELETE_BATCH_REQUEST',
-                contentItems: {
-                    1: {
-                        DisplaName: 'aaa',
-                        Id: 1,
-                    },
-                    2: {
-                        DisplaName: 'bbb',
-                        Id: 2,
-                    },
-                },
-                permanently: false,
-            }
-            expect(Actions.deleteBatch({
-                1: {
-                    DisplaName: 'aaa',
-                    Id: 1,
-                },
-                2: {
-                    DisplaName: 'bbb',
-                    Id: 2,
-                },
-            })).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.deleteBatch([1, 2], true).type).to.eql('DELETE_BATCH')
         })
-        it('should create an action to delete content success', () => {
-            const response = {} as IODataBatchResponse<IContent>
-            const expectedAction = {
-                type: 'DELETE_BATCH_SUCCESS',
-                response,
-            }
-            expect(Actions.deleteBatchSuccess(response)).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.delete() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.deleteBatch([1, 2]).payload(repo)
+                })
+                it('should return a DELETE_BATCH action', () => {
+                    expect(Actions.deleteBatch([1, 2])).to.have.property(
+                        'type', 'DELETE_BATCH',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
-        it('should create an action to delete content failure', () => {
-            const expectedAction = {
-                type: 'DELETE_BATCH_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.deleteBatchFailure({ message: 'error' })).to.deep.equal(expectedAction)
+    })
+    describe('CopyContent', () => {
+        describe('Action types are types', () => {
+            expect(Actions.copyContent(path, '/workspaces').type).to.eql('COPY_CONTENT')
+        })
+
+        describe('serviceChecks()', () => {
+            context('Given repository.copy() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.copyContent(path, '/workspaces').payload(repo)
+                })
+                it('should return a COPY_CONTENT action', () => {
+                    expect(Actions.copyContent(path, '/workspaces')).to.have.property(
+                        'type', 'COPY_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('CopyBatchContent', () => {
-        it('should create an action to a copy multiple content request', () => {
-            const expectedAction = {
-                type: 'COPY_BATCH_REQUEST',
-                contentItems:
-                {
-                    1: { DisplaName: 'aaa', Id: 1 },
-                    2: { DisplaName: 'bbb', Id: 2 },
-                },
-                path: '/workspaces',
-            }
-            expect(Actions.copyBatch({
-                1: {
-                    DisplaName: 'aaa',
-                    Id: 1,
-                },
-                2: {
-                    DisplaName: 'bbb',
-                    Id: 2,
-                },
-            }, '/workspaces')).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.copyBatch([path], '/workspaces').type).to.eql('COPY_BATCH')
         })
-        it('should create an action to copy multiple content success', () => {
-            const response = {} as IODataBatchResponse<IContent>
-            const expectedAction = {
-                type: 'COPY_BATCH_SUCCESS',
-                response,
-            }
-            expect(Actions.copyBatchSuccess(response)).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.copy() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.copyBatch([path], '/workspaces').payload(repo)
+                })
+                it('should return a COPY_BATCH action', () => {
+                    expect(Actions.copyBatch([path], '/workspaces')).to.have.property(
+                        'type', 'COPY_BATCH',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
-        it('should create an action to copy multiple content failure', () => {
-            const expectedAction = {
-                type: 'COPY_BATCH_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.copyBatchFailure({ message: 'error' })).to.deep.equal(expectedAction)
+    })
+    describe('MoveContent', () => {
+        describe('Action types are types', () => {
+            expect(Actions.moveContent(path, '/workspaces').type).to.eql('MOVE_CONTENT')
+        })
+
+        describe('serviceChecks()', () => {
+            context('Given repository.move() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.moveContent(path, '/workspaces').payload(repo)
+                })
+                it('should return a MOVE_CONTENT action', () => {
+                    expect(Actions.moveContent(path, '/workspaces')).to.have.property(
+                        'type', 'MOVE_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('MoveBatchContent', () => {
-        it('should create an action to a move multiple content request with empty list', () => {
-            const expectedAction = {
-                type: 'MOVE_BATCH_REQUEST',
-                contentItems: {},
-                path: '/workspaces',
-            }
-            expect(Actions.moveBatch(undefined, '/workspaces')).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.moveBatch([path], '/workspaces').type).to.eql('MOVE_BATCH')
         })
-        it('should create an action to a move multiple content request', () => {
-            const expectedAction = {
-                type: 'MOVE_BATCH_REQUEST',
-                contentItems: {
-                    1: {
-                        DisplaName: 'aaa',
-                        Id: 1,
-                    },
-                    2: {
-                        DisplaName: 'bbb',
-                        Id: 2,
-                    },
-                },
-                path: '/workspaces',
-            }
-            expect(Actions.moveBatch({
-                1: {
-                    DisplaName: 'aaa',
-                    Id: 1,
-                },
-                2: {
-                    DisplaName: 'bbb',
-                    Id: 2,
-                },
-            }, '/workspaces')).to.deep.equal(expectedAction)
-        })
-        it('should create an action to move multiple content success', () => {
-            const response = {} as IODataBatchResponse<IContent>
-            const expectedAction = {
-                type: 'MOVE_BATCH_SUCCESS',
-                response,
-            }
-            expect(Actions.moveBatchSuccess(response)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to move multiple content failure', () => {
-            const expectedAction = {
-                type: 'MOVE_BATCH_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.moveBatchFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.move() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.moveBatch([path], '/workspaces').payload(repo)
+                })
+                it('should return a MOVE_BATCH action', () => {
+                    expect(Actions.moveBatch([path], '/workspaces')).to.have.property(
+                        'type', 'MOVE_BATCH',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('CheckoutContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to a checkout content request', () => {
-            const expectedAction = {
-                type: 'CHECKOUT_CONTENT_REQUEST',
-                content,
-            }
-            expect(Actions.checkOut(content)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.checkOut('/workspaces').type).to.eql('CHECKOUT_CONTENT')
         })
-        it('should create an action to checkout content success', () => {
-            expect(Actions.checkOutSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to checkout content failure', () => {
-            const expectedAction = {
-                type: 'CHECKOUT_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.checkOutFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.checkout() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.checkOut('/workspaces').payload(repo)
+                })
+                it('should return a CHECKOUT_CONTENT action', () => {
+                    expect(Actions.checkOut('/workspaces')).to.have.property(
+                        'type', 'CHECKOUT_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('CheckinContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to a checkin content request', () => {
-            const expectedAction = {
-                type: 'CHECKIN_CONTENT_REQUEST',
-                content,
-                checkInComment: 'comment',
-            }
-            expect(Actions.checkIn(content, 'comment')).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.checkIn('/workspaces').type).to.eql('CHECKIN_CONTENT')
         })
-        it('should create an action to a checkin content request', () => {
-            const expectedAction = {
-                type: 'CHECKIN_CONTENT_REQUEST',
-                content,
-                checkInComment: '',
-            }
-            expect(Actions.checkIn(content)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to checkin content success', () => {
-            expect(Actions.checkInSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to checkin content failure', () => {
-            const expectedAction = {
-                type: 'CHECKIN_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.checkInFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.checkin() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.checkIn('/workspaces').payload(repo)
+                })
+                it('should return a CHECKIN_CONTENT action', () => {
+                    expect(Actions.checkIn('/workspaces')).to.have.property(
+                        'type', 'CHECKIN_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('PublishContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to a publish content request', () => {
-            const expectedAction = {
-                type: 'PUBLISH_CONTENT_REQUEST',
-                content,
-            }
-            expect(Actions.publish(content)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.publish('/workspaces').type).to.eql('PUBLISH_CONTENT')
         })
-        it('should create an action to publish content success', () => {
-            expect(Actions.publishSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to publish content failure', () => {
-            const expectedAction = {
-                type: 'PUBLISH_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.publishFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.publish() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.publish('/workspaces').payload(repo)
+                })
+                it('should return a PUBLISH_CONTENT action', () => {
+                    expect(Actions.publish('/workspaces')).to.have.property(
+                        'type', 'PUBLISH_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('ApproveContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to an approve content request', () => {
-            const expectedAction = {
-                type: 'APPROVE_CONTENT_REQUEST',
-                content,
-            }
-            expect(Actions.approve(content)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.approve('/workspaces').type).to.eql('APPROVE_CONTENT')
         })
-        it('should create an action to approve content success', () => {
-            expect(Actions.approveSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to approve content failure', () => {
-            const expectedAction = {
-                type: 'APPROVE_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.approveFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.approve() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.approve('/workspaces').payload(repo)
+                })
+                it('should return a APPROVE_CONTENT action', () => {
+                    expect(Actions.approve('/workspaces')).to.have.property(
+                        'type', 'APPROVE_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('RejectContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to an reject content request', () => {
-            const expectedAction = {
-                type: 'REJECT_CONTENT_REQUEST',
-                content,
-                rejectReason: 'reason',
-            }
-            expect(Actions.reject(content, 'reason')).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.rejectContent('/workspaces').type).to.eql('REJECT_CONTENT')
         })
-        it('should create an action to an reject content request', () => {
-            const expectedAction = {
-                type: 'REJECT_CONTENT_REQUEST',
-                content,
-                rejectReason: '',
-            }
-            expect(Actions.reject(content)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to reject content success', () => {
-            expect(Actions.rejectSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to reject content failure', () => {
-            const expectedAction = {
-                type: 'REJECT_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.rejectFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.reject() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.rejectContent('/workspaces').payload(repo)
+                })
+                it('should return a REJECT_CONTENT action', () => {
+                    expect(Actions.rejectContent('/workspaces')).to.have.property(
+                        'type', 'REJECT_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('UndoCheckoutContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to an undo-checkout content request', () => {
-            const expectedAction = {
-                type: 'UNDOCHECKOUT_CONTENT_REQUEST',
-                content,
-            }
-            expect(Actions.undoCheckout(content)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.undoCheckout('/workspaces').type).to.eql('UNDOCHECKOUT_CONTENT')
         })
-        it('should create an action to undo-checkout content success', () => {
-            expect(Actions.undoCheckoutSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to undo-checkout content failure', () => {
-            const expectedAction = {
-                type: 'UNDOCHECKOUT_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.undoCheckoutFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.undoCheckout() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.undoCheckout('/workspaces').payload(repo)
+                })
+                it('should return a UNDOCHECKOUT_CONTENT action', () => {
+                    expect(Actions.undoCheckout('/workspaces')).to.have.property(
+                        'type', 'UNDOCHECKOUT_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('ForceUndoCheckoutContent', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to a force undo-checkout content request', () => {
-            const expectedAction = {
-                type: 'FORCEUNDOCHECKOUT_CONTENT_REQUEST',
-                content,
-            }
-            expect(Actions.forceUndoCheckout(content)).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.forceUndoCheckout('/workspaces').type).to.eql('FORCE_UNDOCHECKOUT_CONTENT')
         })
-        it('should create an action to force undo-checkout content success', () => {
-            expect(Actions.forceUndoCheckoutSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to force undo-checkout content failure', () => {
-            const expectedAction = {
-                type: 'FORCEUNDOCHECKOUT_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.forceUndoCheckoutFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.forceUndoCheckout() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.forceUndoCheckout('/workspaces').payload(repo)
+                })
+                it('should return a FORCE_UNDOCHECKOUT_CONTENT action', () => {
+                    expect(Actions.forceUndoCheckout('/workspaces')).to.have.property(
+                        'type', 'FORCE_UNDOCHECKOUT_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('RestoreVersion', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        it('should create an action to a version restore request', () => {
-            const expectedAction = {
-                type: 'RESTOREVERSION_CONTENT_REQUEST',
-                content,
-                version: 'A.1.0',
-            }
-            expect(Actions.restoreVersion(content, 'A.1.0')).to.deep.equal(expectedAction)
+        describe('Action types are types', () => {
+            expect(Actions.restoreVersion('/workspaces', '1').type).to.eql('RESTOREVERSION_CONTENT')
         })
-        it('should create an action to a version restore success', () => {
-            expect(Actions.restoreVersionSuccess(content).response.DisplayName).to.deep.equal('My content')
-        })
-        it('should create an action to a version restore failure', () => {
-            const expectedAction = {
-                type: 'RESTOREVERSION_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.restoreVersionFailure({ message: 'error' })).to.deep.equal(expectedAction)
-        })
-    })
-    describe('UserLogin', () => {
-        it('should create an action to a user login request', () => {
-            const expectedAction = {
-                type: 'USER_LOGIN_REQUEST',
-                userName: 'alba',
-                password: 'alba',
-            }
-            expect(Actions.userLogin('alba', 'alba')).to.deep.equal(expectedAction)
-        })
-        it('should create an action to a user login success', () => {
-            const user = { Name: 'alba' } as User
-            const expectedAction = {
-                type: 'USER_LOGIN_SUCCESS',
-                response: user,
-            }
-            expect(Actions.userLoginSuccess(user)).to.deep.equal(expectedAction)
-        })
-        it('should create an action to a user login failure', () => {
-            const expectedAction = {
-                type: 'USER_LOGIN_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.userLoginFailure({ message: 'error' })).to.deep.equal(expectedAction)
-        })
-        it('should create an action to a user login failure with the proper message when 403', () => {
-            const expectedAction = {
-                type: 'USER_LOGIN_FAILURE',
-                message: 'The username or the password is not valid!',
-            }
-            expect(Actions.userLoginFailure({ message: 'The username or the password is not valid!', status: 403 })).to.deep.equal(expectedAction)
-        })
-    })
-    describe('UserLoginBuffer', () => {
-        it('should create an action to a user login buffering', () => {
-            const expectedAction = {
-                type: 'USER_LOGIN_BUFFER',
-                response: true,
-            }
-            expect(Actions.userLoginBuffer(true)).to.deep.equal(expectedAction)
-        })
-    })
-    describe('UserLoginGoogle', () => {
-        it('should create an action to a user login with google', () => {
-            const expectedAction = {
-                type: 'USER_LOGIN_GOOGLE',
-            }
-            expect(Actions.userLoginGoogle()).to.deep.equal(expectedAction)
-        })
-    })
-    describe('UserLogout', () => {
-        it('should create an action to a user logout request', () => {
-            const expectedAction = {
-                type: 'USER_LOGOUT_REQUEST',
-            }
-            expect(Actions.userLogout()).to.deep.equal(expectedAction)
-        })
-        it('should create an action to a user logout success', () => {
-            const expectedAction = {
-                type: 'USER_LOGOUT_SUCCESS',
-            }
-            expect(Actions.userLogoutSuccess({})).to.deep.equal(expectedAction)
-        })
-        it('should create an action to a user logout failure', () => {
-            const expectedAction = {
-                type: 'USER_LOGOUT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.userLogoutFailure({ message: 'error' })).to.deep.equal(expectedAction)
+
+        describe('serviceChecks()', () => {
+            context('Given repository.versioning.restoreVersion() resolves', () => {
+                let data
+                const expectedResult = { d: { Name: 'DefaultSite' } }
+                beforeEach(async () => {
+                    data = await Actions.restoreVersion('/workspaces', '1').payload(repo)
+                })
+                it('should return a RESTOREVERSION_CONTENT action', () => {
+                    expect(Actions.restoreVersion('/workspaces', '1')).to.have.property(
+                        'type', 'RESTOREVERSION_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(expectedResult)
+                })
+            })
         })
     })
     describe('CheckLoginState', () => {
         it('should return the current authentication state', () => {
             const expectedAction = {
-                type: 'CHECK_LOGIN_STATE_REQUEST',
+                type: 'CHECK_LOGIN_STATE',
             }
             expect(Actions.checkLoginState()).to.deep.equal(expectedAction)
         })
@@ -638,6 +572,84 @@ describe('Actions', () => {
                 user,
             }
             expect(Actions.userChanged(user)).to.deep.equal(expectedAction)
+        })
+    })
+    describe('UserLogin', () => {
+        describe('Action types are types', () => {
+            expect(Actions.userLogin('alba', 'alba').type).to.eql('USER_LOGIN')
+        })
+
+        describe('serviceChecks()', () => {
+            context('Given repository.authentication.login() resolves', () => {
+                let data
+                beforeEach(async () => {
+                    data = await Actions.userLogin('alba', 'alba').payload(repository)
+                })
+                it('should return a USER_LOGIN action', () => {
+                    expect(Actions.userLogin('alba', 'alba')).to.have.property(
+                        'type', 'USER_LOGIN',
+                    )
+                })
+                it('should return mockdata', () => {
+                    // tslint:disable-next-line:no-unused-expression
+                    expect(data).to.be.false
+                })
+            })
+        })
+    })
+    // describe('UserLoginBuffer', () => {
+    //     describe('Action types are types', () => {
+    //         expect(Actions.userLoginBuffer(true).type).to.eql('USER_LOGIN_BUFFER')
+    //     })
+
+    //     describe('serviceChecks()', () => {
+    //         context('Given repository.authentication.currentUser() resolves', () => {
+    //             // let data
+    //             // beforeEach(async () => {
+    //             //     data = await Actions.userLoginBuffer(true).payload(repository)
+    //             // })
+    //             it('should return a USER_LOGIN_BUFFER action', (done) => {
+    //                 expect(Actions.userLoginBuffer(true)).to.have.property(
+    //                     'type', 'USER_LOGIN_BUFFER',
+    //                 )
+    //                 done()
+    //             })
+    //             // it('should return mockdata', () => {
+    //             //     // tslint:disable-next-line:no-unused-expression
+    //             //     expect(data).to.be.false
+    //             // })
+    //         })
+    //     })
+    // })
+    describe('UserLoginGoogle', () => {
+        it('should create an action to a user login with google', () => {
+            const expectedAction = {
+                type: 'USER_LOGIN_GOOGLE',
+            }
+            expect(Actions.userLoginGoogle()).to.deep.equal(expectedAction)
+        })
+    })
+    describe('UserLogout', () => {
+        describe('Action types are types', () => {
+            expect(Actions.userLogout().type).to.eql('USER_LOGOUT')
+        })
+
+        describe('serviceChecks()', () => {
+            context('Given repository.authentication.logout() resolves', () => {
+                let data
+                beforeEach(async () => {
+                    data = await Actions.userLogout().payload(repository)
+                })
+                it('should return a USER_LOGOUT action', () => {
+                    expect(Actions.userLogout()).to.have.property(
+                        'type', 'USER_LOGOUT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    // tslint:disable-next-line:no-unused-expression
+                    expect(data).to.be.true
+                })
+            })
         })
     })
     describe('LoadRepository', () => {
@@ -677,146 +689,31 @@ describe('Actions', () => {
             expect(Actions.clearSelection()).to.deep.equal(expectedAction)
         })
     })
-    describe('RequestContentActions', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
+    describe('UploadContent', () => {
+        beforeEach(() => {
+            repo = new Repository({}, async (...args: any[]) => ({ ok: 'true', json: async () => (uploadResponse), text: async () => '' } as any))
+            const mockStore = configureStore([promiseMiddleware(repo)])
+            _store = mockStore({})
+        })
+        describe('Action types are types', () => {
+            expect(Actions.uploadRequest('Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'Binary').type).to.eql('UPLOAD_CONTENT')
+        })
 
-        it('should return the RequestContentActions action', () => {
-            const expectedAction = {
-                type: 'REQUEST_CONTENT_ACTIONS',
-                content,
-                scenario: 'DMSListItem',
-                customItems: [],
-            }
-            expect(Actions.requestContentActions(content, 'DMSListItem')).to.deep.equal(expectedAction)
-        })
-        it('should return the RequestContentActions action', () => {
-            const expectedAction = {
-                type: 'REQUEST_CONTENT_ACTIONS',
-                content,
-                scenario: 'DMSListItem',
-                customItems: [{ DisplayName: 'aaa', Name: 'bbb', Icon: 'ccc' }],
-            }
-            expect(Actions.requestContentActions(content, 'DMSListItem', [{ DisplayName: 'aaa', Name: 'bbb', Icon: 'ccc' }])).to.deep.equal(expectedAction)
-        })
-        it('should return the RequestContentActionsSuccess action', () => {
-            const expectedAction = {
-                type: 'REQUEST_CONTENT_ACTIONS_SUCCESS',
-                response: [
-                    {
-                        ActionName: 'Rename',
-                    },
-                ],
-                id: 1,
-            }
-            expect(Actions.requestContentActionsSuccess([{ ActionName: 'Rename' }], 1)).to.deep.equal(expectedAction)
-        })
-        it('should return the RequestContentActionsFailure action', () => {
-            const expectedAction = {
-                type: 'REQUEST_CONTENT_ACTIONS_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.requestContentActionsFailure({ message: 'error' })).to.deep.equal(expectedAction)
-        })
-    })
-    describe('UploadContentActions', () => {
-        const content = { DisplayName: 'My content', Id: 123 } as Task
-        const file = {
-            lastModified: 1499931166346,
-            name: 'README.md',
-            size: 75,
-            type: '',
-        }
-        it('should return the upload content action set only content and file', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_REQUEST',
-                content,
-                file,
-                overwrite: true,
-                propertyName: 'Binary',
-                contentType: SNFile,
-                body: null,
-                scenario: 'ListItems',
-            }
-            expect(Actions.uploadRequest(content, file)).to.deep.equal(expectedAction)
-        })
-        it('should return the upload content action set content, file and contentType to Folder', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_REQUEST',
-                content,
-                contentType: Folder,
-                file,
-                overwrite: true,
-                propertyName: 'Binary',
-                body: null,
-                scenario: 'ListItems',
-            }
-            expect(Actions.uploadRequest(content, file, Folder)).to.deep.equal(expectedAction)
-        })
-        it('should return the upload content action set content, file and overwrite to false', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_REQUEST',
-                content,
-                contentType: SNFile,
-                file,
-                overwrite: false,
-                propertyName: 'Binary',
-                body: null,
-                scenario: 'ListItems',
-            }
-            expect(Actions.uploadRequest(content, file, undefined, false)).to.deep.equal(expectedAction)
-        })
-        it('should return the upload content action set content, file and propertyName to Avatar', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_REQUEST',
-                content,
-                contentType: SNFile,
-                file,
-                overwrite: true,
-                propertyName: 'Avatar',
-                body: null,
-                scenario: 'ListItems',
-            }
-            expect(Actions.uploadRequest(content, file, undefined, undefined, undefined, 'Avatar')).to.deep.equal(expectedAction)
-        })
-        it('should return the upload content action set content, file and body', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_REQUEST',
-                content,
-                contentType: SNFile,
-                file,
-                overwrite: true,
-                propertyName: 'Binary',
-                body: { vmi: 'aaa' },
-                scenario: 'ListItems',
-            }
-            expect(Actions.uploadRequest(content, file, undefined, undefined, { vmi: 'aaa' })).to.deep.equal(expectedAction)
-        })
-        it('should return the upload content action set content, file and scenario', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_REQUEST',
-                content,
-                contentType: SNFile,
-                file,
-                overwrite: true,
-                propertyName: 'Binary',
-                body: null,
-                scenario: 'DMSListItems',
-            }
-            expect(Actions.uploadRequest(content, file, undefined, undefined,  undefined, null, 'DMSListItems')).to.deep.equal(expectedAction)
-        })
-        it('should create an action to upload content success', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_SUCCESS',
-                response: [],
-            }
-            expect(Actions.uploadSuccess([])).to.deep.equal(expectedAction)
-        })
-        it('should create an action to content upload request failure', () => {
-            const expectedAction = {
-                type: 'UPLOAD_CONTENT_FAILURE',
-                message: 'error',
-            }
-            expect(Actions.uploadFailure({ message: 'error' })).to.deep.equal(expectedAction)
+        describe('serviceChecks()', () => {
+            context('Given Upload.file() resolves', () => {
+                let data
+                beforeEach(async () => {
+                    data = await Actions.uploadRequest('Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'Binary').payload(repo)
+                })
+                it('should return a UPLOAD_CONTENT action', () => {
+                    expect(Actions.uploadRequest('Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'Binary')).to.have.property(
+                        'type', 'UPLOAD_CONTENT',
+                    )
+                })
+                it('should return mockdata', () => {
+                    expect(data).to.deep.equal(uploadResponse)
+                })
+            })
         })
     })
 })
