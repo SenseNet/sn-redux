@@ -63,11 +63,11 @@ export const language = (state = 'en-US', action) => {
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
-        case 'USER_LOGIN_FULFILLED':
+        case 'USER_LOGIN_SUCCESS':
             return LoginState.Authenticated
         case 'USER_LOGOUT_SUCCESS':
             return LoginState.Unauthenticated
-        case 'USER_LOGIN_REJECTED':
+        case 'USER_LOGIN_FAILURE':
             return LoginState.Unauthenticated
         case 'USER_LOGOUT_FAILURE':
             return LoginState.Unauthenticated
@@ -85,7 +85,7 @@ export const loginState = (state = LoginState.Pending, action) => {
  */
 export const loginError = (state = '', action) => {
     switch (action.type) {
-        case 'USER_LOGIN_REJECTED':
+        case 'USER_LOGIN_FAILURE':
             return action.message
         case 'USER_LOGOUT_FAILURE':
             return action.message
@@ -197,7 +197,7 @@ const session = combineReducers({
  */
 export const ids = (state = [], action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_FULFILLED':
+        case 'FETCH_CONTENT_SUCCESS':
             return action.response.result
         case 'CREATE_CONTENT_SUCCESS':
             return [...state, action.response.result]
@@ -233,14 +233,16 @@ export const ids = (state = [], action) => {
  */
 export const entities = (state = {}, action) => {
     if (action.response && (
-        action.type !== 'USER_LOGIN_FULFILLED' &&
+        action.type !== 'USER_LOGIN_FAILURE' &&
         action.type !== 'USER_LOGIN_BUFFER' &&
         action.type !== 'LOAD_CONTENT_SUCCESS' &&
         action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
         action.type !== 'UPDATE_CONTENT_SUCCESS' &&
         action.type !== 'UPLOAD_CONTENT_SUCCESS' &&
         action.type !== 'DELETE_BATCH_SUCCESS' &&
+        action.type !== 'COPY_CONTENT_SUCCESS' &&
         action.type !== 'COPY_BATCH_SUCCESS' &&
+        action.type !== 'MOVE_CONTENT_SUCCESS' &&
         action.type !== 'MOVE_BATCH_SUCCESS')) {
         if (action.response.entities !== undefined && action.response.entities.entities !== undefined) {
             return (Object as any).assign({}, state, action.response.entities.entities)
@@ -276,10 +278,11 @@ export const entities = (state = {}, action) => {
  */
 export const isFetching = (state = false, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT_LOADING':
             return true
-        case 'FETCH_CONTENT_FULFILLED':
-        case 'FETCH_CONTENT_REJECTED':
+        case 'FETCH_CONTENT':
+        case 'FETCH_CONTENT_SUCCESS':
+        case 'FETCH_CONTENT_FAILURE':
             return false
         default:
             return state
@@ -293,9 +296,9 @@ export const isFetching = (state = false, action) => {
  */
 export const childrenerror = (state = null, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REJECTED':
+        case 'FETCH_CONTENT_FAILURE':
             return action.message
-        case 'FETCH_CONTENT_FULFILLED':
+        case 'FETCH_CONTENT_SUCCESS':
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPDATE_CONTENT_SUCCESS':
         case 'DELETE_CONTENT_SUCCESS':
@@ -334,7 +337,7 @@ export const childrenactions = (state = [], action) => {
  */
 export const top = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
             if (action.options.top) {
                 return action.options.top
             } else {
@@ -352,7 +355,7 @@ export const top = (state = {}, action) => {
  */
 export const skip = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
             if (action.options.skip) {
                 return action.options.skip
             } else {
@@ -370,7 +373,7 @@ export const skip = (state = {}, action) => {
  */
 export const query = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
             if (action.options.query) {
                 return action.options.query
             } else {
@@ -388,7 +391,7 @@ export const query = (state = {}, action) => {
  */
 export const order = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
             if (action.options.orderby) {
                 return action.options.orderby
             } else {
@@ -406,7 +409,7 @@ export const order = (state = {}, action) => {
  */
 export const filter = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
             if (action.options.filter) {
                 return action.options.filter
             } else {
@@ -424,7 +427,7 @@ export const filter = (state = {}, action) => {
  */
 export const select = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
             if (action.options.select) {
                 return action.options.select
             } else {
@@ -473,11 +476,11 @@ const children = combineReducers({
  */
 export const isSaved = (state = true, action) => {
     switch (action.type) {
-        case 'CREATE_CONTENT_REQUEST':
+        case 'CREATE_CONTENT':
         case 'CREATE_CONTENT_FAILURE':
-        case 'UPDATE_CONTENT_REQUEST':
+        case 'UPDATE_CONTENT':
         case 'UPDATE_CONTENT_FAILURE':
-        case 'LOAD_CONTENT_REQUEST':
+        case 'LOAD_CONTENT':
         case 'LOAD_CONTENT_FAILURE':
             return false
         default:
@@ -510,9 +513,9 @@ export const isDirty = (state = false, action) => {
  */
 export const isOperationInProgress = (state = false, action) => {
     switch (action.type) {
-        case 'CREATE_CONTENT_REQUEST':
-        case 'UPDATE_CONTENT_REQUEST':
-        case 'DELETE_CONTENT_REQUEST':
+        case 'CREATE_CONTENT_LOADING':
+        case 'UPDATE_CONTENT_LOADING':
+        case 'DELETE_CONTENT_LOADING':
             return true
         default:
             return false
@@ -548,31 +551,30 @@ export const contenterror = (state: any = null, action) => {
         case 'FORCEUNDOCHECKOUT_CONTENT_FAILURE':
         case 'RESTOREVERSION_CONTENT_FAILURE':
             return action.message
-        case 'FETCH_CONTENT_PENDING':
-        case 'FETCH_CONTENT_REQUEST':
-        case 'FETCH_CONTENT_FULFILLED':
-        case 'FETCH_CONTENT_REJECTED':
-        case 'CREATE_CONTENT_REQUEST':
+        case 'FETCH_CONTENT':
+        case 'FETCH_CONTENT_FAILURE':
+        case 'FETCH_CONTENT_FAILURE':
+        case 'CREATE_CONTENT':
         case 'CREATE_CONTENT_SUCCESS':
-        case 'UPDATE_CONTENT_REQUEST':
+        case 'UPDATE_CONTENT':
         case 'UPDATE_CONTENT_SUCCESS':
-        case 'DELETE_CONTENT_REQUEST':
+        case 'DELETE_CONTENT':
         case 'DELETE_CONTENT_SUCCESS':
-        case 'CHECKIN_CONTENT_REQUEST':
+        case 'CHECKIN_CONTENT':
         case 'CHECKIN_CONTENT_SUCCESS':
-        case 'CHECKOUT_CONTENT_REQUEST':
+        case 'CHECKOUT_CONTENT':
         case 'CHECKOUT_CONTENT_SUCCESS':
-        case 'APPROVE_CONTENT_REQUEST':
+        case 'APPROVE_CONTENT':
         case 'APPROVE_CONTENT_SUCCESS':
-        case 'PUBLISH_CONTENT_REQUEST':
+        case 'PUBLISH_CONTENT':
         case 'PUBLISH_CONTENT_SUCCESS':
-        case 'REJECT_CONTENT_REQUEST':
+        case 'REJECT_CONTENT':
         case 'REJECT_CONTENT_SUCCESS':
-        case 'UNDOCHECKOUT_CONTENT_REQUEST':
+        case 'UNDOCHECKOUT_CONTENT':
         case 'UNDOCHECKOUT_CONTENT_SUCCESS':
-        case 'FORCEUNDOCHECKOUT_CONTENT_REQUEST':
+        case 'FORCEUNDOCHECKOUT_CONTENT':
         case 'FORCEUNDOCHECKOUT_CONTENT_SUCCESS':
-        case 'RESTOREVERSION_CONTENT_REQUEST':
+        case 'RESTOREVERSION_CONTENT':
         case 'RESTOREVERSION_CONTENT_SUCCESS':
             return null
         default:
@@ -602,7 +604,6 @@ export const contentactions = (state = {}, action) => {
 export const fields = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-        case 'RELOAD_CONTENT_SUCCESS':
             return action.response
         default:
             return state
@@ -617,7 +618,6 @@ export const fields = (state = {}, action) => {
 export const content = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-        case 'RELOAD_CONTENT_SUCCESS':
             return action.response
         default:
             return state
