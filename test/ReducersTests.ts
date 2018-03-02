@@ -29,13 +29,13 @@ describe('Reducers', () => {
             expect(Reducers.loginState(undefined, {})).to.be.deep.equal(LoginState.Pending)
         })
         it('should return that a user is logged-in', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS' })).to.be.deep.equal(LoginState.Authenticated)
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_FULFILLED' })).to.be.deep.equal(LoginState.Authenticated)
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_SUCCESS' })).to.be.deep.equal(LoginState.Unauthenticated)
         })
         it('should return theres no authenticated user', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_REJECTED' })).to.be.deep.equal(LoginState.Unauthenticated)
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
@@ -47,7 +47,7 @@ describe('Reducers', () => {
             expect(Reducers.loginError(undefined, {})).to.be.deep.equal(null)
         })
         it('should return an error message', () => {
-            expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_FAILURE', message: 'error' })).to.be.deep.equal('error')
+            expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_REJECTED', message: 'error' })).to.be.deep.equal('error')
         })
         it('should return an error message', () => {
             expect(Reducers.loginError(undefined, { type: 'USER_LOGOUT_FAILURE', message: 'error' })).to.be.deep.equal('error')
@@ -56,7 +56,7 @@ describe('Reducers', () => {
 
     describe('userName reducer', () => {
         it('should return the initial state', () => {
-            expect(Reducers.userName(undefined, {})).to.be.deep.equal('Visitor')
+            expect(Reducers.userName(undefined, {}).LoginName).to.be.deep.equal('Visitor')
         })
         it('should return the logged-in users name', () => {
             expect(Reducers.userName(undefined, { type: 'USER_CHANGED', user: { Name: 'Alba' } })).to.be.deep.equal('Alba')
@@ -65,7 +65,7 @@ describe('Reducers', () => {
 
     describe('fullName reducer', () => {
         it('should return the initial state', () => {
-            expect(Reducers.fullName(undefined, {})).to.be.deep.equal('Visitor')
+            expect(Reducers.fullName(undefined, {}).DisplayName).to.be.deep.equal('Visitor')
         })
         it('should return the logged-in users full-name', () => {
             expect(Reducers.fullName(undefined, { type: 'USER_CHANGED', user: { DisplayName: 'Alba Monday' } })).to.be.deep.equal('Alba Monday')
@@ -102,10 +102,10 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.ids(undefined, {})).to.be.deep.equal([])
         })
-        it('should handle FETCH_CONTENT_SUCCESS', () => {
+        it('should handle FETCH_CONTENT_FULFILLED', () => {
             expect(Reducers.ids([],
                 {
-                    type: 'FETCH_CONTENT_SUCCESS',
+                    type: 'FETCH_CONTENT_FULFILLED',
                     response: {
                         result: [5145, 5146],
                         entities: {
@@ -385,14 +385,14 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.isFetching(undefined, {})).to.be.eq(false)
         })
-        it('should handle FETCH_CONTENT_SUCCESS', () => {
+        it('should handle FETCH_CONTENT_FULFILLED', () => {
             expect(Reducers.isFetching(false, { type: 'FETCH_CONTENT_REQUEST' })).to.be.eq(true)
         })
-        it('should handle FETCH_CONTENT_SUCCESS', () => {
-            expect(Reducers.isFetching(true, { type: 'FETCH_CONTENT_SUCCESS' })).to.be.eq(false)
+        it('should handle FETCH_CONTENT_FULFILLED', () => {
+            expect(Reducers.isFetching(true, { type: 'FETCH_CONTENT_FULFILLED' })).to.be.eq(false)
         })
-        it('should handle FETCH_CONTENT_FAILURE', () => {
-            expect(Reducers.isFetching(true, { type: 'FETCH_CONTENT_FAILURE' })).to.be.eq(false)
+        it('should handle FETCH_CONTENT_REJECTED', () => {
+            expect(Reducers.isFetching(true, { type: 'FETCH_CONTENT_REJECTED' })).to.be.eq(false)
         })
     })
 
@@ -400,8 +400,8 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.childrenerror(undefined, {})).to.be.eq(null)
         })
-        it('should handle FETCH_CONTENT_FAILURE', () => {
-            expect(Reducers.childrenerror(null, { type: 'FETCH_CONTENT_FAILURE', message: 'error' })).to.be.eq('error')
+        it('should handle FETCH_CONTENT_REJECTED', () => {
+            expect(Reducers.childrenerror(null, { type: 'FETCH_CONTENT_REJECTED', message: 'error' })).to.be.eq('error')
         })
         it('should handle CREATE_CONTENT_FAILURE', () => {
             expect(Reducers.childrenerror(null, { type: 'CREATE_CONTENT_FAILURE', message: 'error' })).to.be.eq(null)
@@ -439,8 +439,8 @@ describe('Reducers', () => {
         it('should handle FETCH_CONTENT_REQUEST', () => {
             expect(Reducers.childrenerror(null, { type: 'FETCH_CONTENT_REQUEST' })).to.be.eq(null)
         })
-        it('should handle FETCH_CONTENT_SUCCESS', () => {
-            expect(Reducers.childrenerror(null, { type: 'FETCH_CONTENT_SUCCESS' })).to.be.eq(null)
+        it('should handle FETCH_CONTENT_FULFILLED', () => {
+            expect(Reducers.childrenerror(null, { type: 'FETCH_CONTENT_FULFILLED' })).to.be.eq(null)
         })
         it('should handle CREATE_CONTENT_REQUEST', () => {
             expect(Reducers.childrenerror(null, { type: 'CREATE_CONTENT_REQUEST' })).to.be.eq(null)
@@ -654,8 +654,8 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.contenterror(undefined, {})).to.be.eq(null)
         })
-        it('should handle FETCH_CONTENT_FAILURE', () => {
-            expect(Reducers.contenterror(null, { type: 'FETCH_CONTENT_FAILURE', message: 'error' })).to.be.eq(null)
+        it('should handle FETCH_CONTENT_REJECTED', () => {
+            expect(Reducers.contenterror(null, { type: 'FETCH_CONTENT_REJECTED', message: 'error' })).to.be.eq(null)
         })
         it('should handle CREATE_CONTENT_FAILURE', () => {
             expect(Reducers.contenterror(null, { type: 'CREATE_CONTENT_FAILURE', message: 'error' })).to.be.eq('error')
@@ -693,8 +693,8 @@ describe('Reducers', () => {
         it('should handle FETCH_CONTENT_REQUEST', () => {
             expect(Reducers.contenterror(null, { type: 'FETCH_CONTENT_REQUEST' })).to.be.eq(null)
         })
-        it('should handle FETCH_CONTENT_SUCCESS', () => {
-            expect(Reducers.contenterror(null, { type: 'FETCH_CONTENT_SUCCESS' })).to.be.eq(null)
+        it('should handle FETCH_CONTENT_FULFILLED', () => {
+            expect(Reducers.contenterror(null, { type: 'FETCH_CONTENT_FULFILLED' })).to.be.eq(null)
         })
         it('should handle CREATE_CONTENT_REQUEST', () => {
             expect(Reducers.contenterror(null, { type: 'CREATE_CONTENT_REQUEST' })).to.be.eq(null)

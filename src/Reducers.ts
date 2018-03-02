@@ -1,4 +1,4 @@
-import { IContent, LoginState } from '@sensenet/client-core'
+import { ConstantContent, IContent, LoginState } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { combineReducers, Reducer } from 'redux'
 
@@ -63,14 +63,16 @@ export const language = (state = 'en-US', action) => {
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
-        case 'USER_LOGIN_SUCCESS':
+        case 'USER_LOGIN_FULFILLED':
             return LoginState.Authenticated
         case 'USER_LOGOUT_SUCCESS':
             return LoginState.Unauthenticated
-        case 'USER_LOGIN_FAILURE':
+        case 'USER_LOGIN_REJECTED':
             return LoginState.Unauthenticated
         case 'USER_LOGOUT_FAILURE':
             return LoginState.Unauthenticated
+        case 'USER_CHANGED':
+            return action.user.Name === 'Visitor' ? LoginState.Unauthenticated : LoginState.Authenticated
         default:
             return state
     }
@@ -83,7 +85,7 @@ export const loginState = (state = LoginState.Pending, action) => {
  */
 export const loginError = (state = '', action) => {
     switch (action.type) {
-        case 'USER_LOGIN_FAILURE':
+        case 'USER_LOGIN_REJECTED':
             return action.message
         case 'USER_LOGOUT_FAILURE':
             return action.message
@@ -97,7 +99,7 @@ export const loginError = (state = '', action) => {
  * @param {Object} action Represents an action that is called.
  * @returns {Object} state. Returns the next state based on the action.
  */
-export const userName = (state = 'Visitor', action) => {
+export const userName = (state = ConstantContent.VISITOR_USER, action) => {
     switch (action.type) {
         case 'USER_CHANGED':
             return action.user.Name
@@ -112,7 +114,7 @@ export const userName = (state = 'Visitor', action) => {
  * @param {Object} action Represents an action that is called.
  * @returns {Object} state. Returns the next state based on the action.
  */
-export const fullName = (state = 'Visitor', action) => {
+export const fullName = (state = ConstantContent.VISITOR_USER, action) => {
     switch (action.type) {
         case 'USER_CHANGED':
             return action.user.DisplayName
@@ -195,7 +197,7 @@ const session = combineReducers({
  */
 export const ids = (state = [], action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_SUCCESS':
+        case 'FETCH_CONTENT_FULFILLED':
             return action.response.result
         case 'CREATE_CONTENT_SUCCESS':
             return [...state, action.response.result]
@@ -231,7 +233,7 @@ export const ids = (state = [], action) => {
  */
 export const entities = (state = {}, action) => {
     if (action.response && (
-        action.type !== 'USER_LOGIN_SUCCESS' &&
+        action.type !== 'USER_LOGIN_FULFILLED' &&
         action.type !== 'USER_LOGIN_BUFFER' &&
         action.type !== 'LOAD_CONTENT_SUCCESS' &&
         action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
@@ -276,8 +278,8 @@ export const isFetching = (state = false, action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_REQUEST':
             return true
-        case 'FETCH_CONTENT_SUCCESS':
-        case 'FETCH_CONTENT_FAILURE':
+        case 'FETCH_CONTENT_FULFILLED':
+        case 'FETCH_CONTENT_REJECTED':
             return false
         default:
             return state
@@ -291,9 +293,9 @@ export const isFetching = (state = false, action) => {
  */
 export const childrenerror = (state = null, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT_FAILURE':
+        case 'FETCH_CONTENT_REJECTED':
             return action.message
-        case 'FETCH_CONTENT_SUCCESS':
+        case 'FETCH_CONTENT_FULFILLED':
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPDATE_CONTENT_SUCCESS':
         case 'DELETE_CONTENT_SUCCESS':
@@ -546,9 +548,10 @@ export const contenterror = (state: any = null, action) => {
         case 'FORCEUNDOCHECKOUT_CONTENT_FAILURE':
         case 'RESTOREVERSION_CONTENT_FAILURE':
             return action.message
-        case 'FETCH_CONTENT_FAILURE':
+        case 'FETCH_CONTENT_PENDING':
         case 'FETCH_CONTENT_REQUEST':
-        case 'FETCH_CONTENT_SUCCESS':
+        case 'FETCH_CONTENT_FULFILLED':
+        case 'FETCH_CONTENT_REJECTED':
         case 'CREATE_CONTENT_REQUEST':
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPDATE_CONTENT_REQUEST':
