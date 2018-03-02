@@ -29,18 +29,18 @@ export interface SensenetStateType {
 
 /**
  * Reducer to handle Actions on the country property in the session object.
- * @param {Object} [state=''] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state=''] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const country = (state = '', action) => {
     return state
 }
 /**
  * Reducer to handle Actions on the language property in the session object.
- * @param {Object} [state='en-US'] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {string} [state='en-US'] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const language = (state = 'en-US', action) => {
     switch (action.type) {
@@ -57,9 +57,9 @@ export const language = (state = 'en-US', action) => {
 }
 /**
  * Reducer to handle Actions on the loginState property in the session object.
- * @param {Object} [state=LoginState.Pending] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {LoginState} [state=LoginState.Pending] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
@@ -79,9 +79,9 @@ export const loginState = (state = LoginState.Pending, action) => {
 }
 /**
  * Reducer to handle Actions on the loginError property in the session object.
- * @param {Object} [state=''] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {string} [state=''] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const loginError = (state = '', action) => {
     switch (action.type) {
@@ -95,9 +95,9 @@ export const loginError = (state = '', action) => {
 }
 /**
  * Reducer to handle Actions on the userName property in the user object.
- * @param {Object} [state='Visitor'] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {User} [state=ConstantContent.VISITOR_USER] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const userName = (state = ConstantContent.VISITOR_USER, action) => {
     switch (action.type) {
@@ -110,9 +110,9 @@ export const userName = (state = ConstantContent.VISITOR_USER, action) => {
 }
 /**
  * Reducer to handle Actions on the fullName property in the user object.
- * @param {Object} [state='Visitor'] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {User} [state=ConstantContent.VISITOR_USER] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const fullName = (state = ConstantContent.VISITOR_USER, action) => {
     switch (action.type) {
@@ -124,9 +124,9 @@ export const fullName = (state = ConstantContent.VISITOR_USER, action) => {
 }
 /**
  * Reducer to handle Actions on the userLanguage property in the user object.
- * @param {Object} [state='en-US'] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {string} [state='en-US'] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const userLanguage = (state = 'en-US', action) => {
     switch (action.type) {
@@ -143,9 +143,9 @@ export const userLanguage = (state = 'en-US', action) => {
 }
 /**
  * Reducer to handle Actions on the userAvatarPath property in the user object.
- * @param {Object} [state=''] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {string} [state=''] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const userAvatarPath = (state = '', action) => {
     switch (action.type) {
@@ -166,9 +166,9 @@ const user = combineReducers({
 })
 /**
  * Reducer to handle Actions on the repostory property in the user object.
- * @param {Object} [state=null] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state=null] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const repository = (state = null, action) => {
     switch (action.type) {
@@ -179,7 +179,7 @@ export const repository = (state = null, action) => {
     }
 }
 /**
- * Reducer combining country, language, loginState, error and user into a single object, ```session```.
+ * Reducer combining country, language, loginState, error, user and repository into a single object, ```session```.
  */
 const session = combineReducers({
     country,
@@ -191,9 +191,9 @@ const session = combineReducers({
 })
 /**
  * Reducer to handle Actions on the ids array in the children object.
- * @param {Object} [state=[]] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {number[]} [state=[]] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const ids = (state = [], action) => {
     switch (action.type) {
@@ -227,9 +227,9 @@ export const ids = (state = [], action) => {
 }
 /**
  * Reducer to handle Actions on the entities object in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const entities = (state = {}, action) => {
     if (action.response && (
@@ -272,9 +272,9 @@ export const entities = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the isFetching property in the children object.
- * @param {Object} [state=false] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {boolean} [state=false] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const isFetching = (state = false, action) => {
     switch (action.type) {
@@ -290,9 +290,9 @@ export const isFetching = (state = false, action) => {
 }
 /**
  * Reducer to handle Actions on the childrenerror property in the children object.
- * @param {Object} [state=null] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state=null] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const childrenerror = (state = null, action) => {
     switch (action.type) {
@@ -317,9 +317,9 @@ export const childrenerror = (state = null, action) => {
 }
 /**
  * Reducer to handle Actions on the chidlrenactions object in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {any[]} [state=[]] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const childrenactions = (state = [], action) => {
     switch (action.type) {
@@ -331,9 +331,9 @@ export const childrenactions = (state = [], action) => {
 }
 /**
  * Reducer to handle Actions on the top property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const top = (state = {}, action) => {
     switch (action.type) {
@@ -349,9 +349,9 @@ export const top = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the skip property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const skip = (state = {}, action) => {
     switch (action.type) {
@@ -367,9 +367,9 @@ export const skip = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the query property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const query = (state = {}, action) => {
     switch (action.type) {
@@ -385,9 +385,9 @@ export const query = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the order property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const order = (state = {}, action) => {
     switch (action.type) {
@@ -403,9 +403,9 @@ export const order = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the filter property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const filter = (state = {}, action) => {
     switch (action.type) {
@@ -421,9 +421,9 @@ export const filter = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the select property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const select = (state = {}, action) => {
     switch (action.type) {
@@ -439,9 +439,9 @@ export const select = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the isOpened property in the children object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const isOpened = (state = null, action) => {
     switch (action.type) {
@@ -452,14 +452,14 @@ export const isOpened = (state = null, action) => {
     }
 }
 /**
- * Reducer combining ids, entities, isFetching, error, top, skip, query, order, filter and select into a single object, ```children```.
+ * Reducer combining ids, entities, isFetching, actions, error, top, skip, query, order, filter, select and isOpened into a single object, ```children```.
  */
 const children = combineReducers({
     ids,
     entities,
     isFetching,
-    error: childrenerror,
     actions: childrenactions,
+    error: childrenerror,
     top,
     skip,
     query,
@@ -470,9 +470,9 @@ const children = combineReducers({
 })
 /**
  * Reducer to handle Actions on the isSaved property in the contentState object.
- * @param {Object} [state=true] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {boolean} [state=true] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const isSaved = (state = true, action) => {
     switch (action.type) {
@@ -489,27 +489,27 @@ export const isSaved = (state = true, action) => {
 }
 /**
  * Reducer to handle Actions on the isValid property in the contentState object.
- * @param {Object} [state=true] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {boolean} [state=true] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const isValid = (state = true, action) => {
     return state
 }
 /**
  * Reducer to handle Actions on the isDirty property in the contentState object.
- * @param {Object} [state=false] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {boolean} [state=false] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const isDirty = (state = false, action) => {
     return state
 }
 /**
  * Reducer to handle Actions on the isOperationInProgress property in the contentState object.
- * @param {Object} [state=false] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {boolean} [state=false] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const isOperationInProgress = (state = false, action) => {
     switch (action.type) {
@@ -533,11 +533,11 @@ const contentState = combineReducers({
 })
 /**
  * Reducer to handle Actions on the contenterror property in the currentcontent object.
- * @param {Object} [state=null] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state=null] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
-export const contenterror = (state: any = null, action) => {
+export const contenterror = (state = null, action) => {
     switch (action.type) {
         case 'CREATE_CONTENT_FAILURE':
         case 'UPDATE_CONTENT_FAILURE':
@@ -583,9 +583,9 @@ export const contenterror = (state: any = null, action) => {
 }
 /**
  * Reducer to handle Actions on the contentactions object in the currentcontent object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const contentactions = (state = {}, action) => {
     switch (action.type) {
@@ -597,9 +597,9 @@ export const contentactions = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the fields object in the currentcontent object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const fields = (state = {}, action) => {
     switch (action.type) {
@@ -611,9 +611,9 @@ export const fields = (state = {}, action) => {
 }
 /**
  * Reducer to handle Actions on the content object in the currentcontent object.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const content = (state = {}, action) => {
     switch (action.type) {
@@ -635,9 +635,9 @@ const currentcontent = combineReducers({
 })
 /**
  * Reducer to handle Actions on the selected array.
- * @param {Array} [state=[]] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {number[]} [state=[]] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const selectedIds = (state = [], action) => {
     switch (action.type) {
@@ -654,9 +654,9 @@ export const selectedIds = (state = [], action) => {
 }
 /**
  * Reducer to handle selected content items.
- * @param {Object} [state={}] Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const selectedContentItems = (state = {}, action) => {
     switch (action.type) {
@@ -682,12 +682,12 @@ const selected = combineReducers({
     entities: selectedContentItems,
 })
 /**
- * Reducer to handle Actions on the OdataBatchResponse Object.
- * @param {Array} state Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * Reducer to handle Actions on the OdataBatchResponse object.
+ * @param {object} state Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
-export const odataBatchResponse = (state = Object, action) => {
+export const odataBatchResponse = (state = {}, action) => {
     switch (action.type) {
         case 'DELETE_BATCH_SUCCESS':
         case 'COPY_BATCH_SUCCESS':
@@ -698,10 +698,10 @@ export const odataBatchResponse = (state = Object, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the batchResponseError Object.
+ * Reducer to handle Actions on the batchResponseError object.
  * @param {string} state Represents the current state.
- * @param {Object} action Represents an action that is called.
- * @returns {Object} state. Returns the next state based on the action.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
  */
 export const batchResponseError = (state = '', action) => {
     switch (action.type) {
@@ -732,26 +732,26 @@ export const sensenet: Reducer<SensenetStateType> = combineReducers<SensenetStat
 })
 /**
  * Method to get a Content item from a state object by its Id.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @param {number} Id Id of the Content.
- * @returns {Object} content. Returns the Content from a state object with the given Id.
+ * @returns {object} content. Returns the Content from a state object with the given Id.
  */
 export const getContent = (state: object, id: number) => state[id]
 /**
  * Method to get the ```ids``` array from a state object.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {number[]} content. Returns the ```ids``` array from the given state.
  */
 export const getIds = (state: any) => state.ids
 /**
  * Method to get if the fetching of data is in progress.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {boolean} Returns true or false whether data fetching is in progress or not.
  */
 export const getFetching = (state: any) => state.isFetching
 /**
  * Method to get the error message.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {string} Returns the error message.
  */
 export const getError = (state: any) => {
@@ -759,7 +759,7 @@ export const getError = (state: any) => {
 }
 /**
  * Method to get the authentication status.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {LoginState} Returns the authentication state.
  */
 export const getAuthenticationStatus = (state) => {
@@ -767,7 +767,7 @@ export const getAuthenticationStatus = (state) => {
 }
 /**
  * Method to get the authentication error.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {string} Returns the error message.
  */
 export const getAuthenticationError = (state) => {
@@ -775,7 +775,7 @@ export const getAuthenticationError = (state) => {
 }
 /**
  * Method to get the repository url.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {string} Returns the url of the repository.
  */
 export const getRepositoryUrl = (state) => {
@@ -783,7 +783,7 @@ export const getRepositoryUrl = (state) => {
 }
 /**
  * Method to get the ids of the selected content items.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {number[]} Returns an array with the ids.
  */
 export const getSelectedContentIds = (state) => {
@@ -791,15 +791,15 @@ export const getSelectedContentIds = (state) => {
 }
 /**
  * Method to get the selected content items.
- * @param {Object} state Current state object.
- * @returns {Object} Returns an Oject with the selected content items.
+ * @param {object} state Current state object.
+ * @returns {object} Returns an Oject with the selected content items.
  */
 export const getSelectedContentItems = (state) => {
     return state.selected.entities
 }
 /**
  * Method to get the id of the opened content item.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {number} Returns the id of the opened content item.
  */
 export const getOpenedContent = (state) => {
@@ -807,7 +807,7 @@ export const getOpenedContent = (state) => {
 }
 /**
  * Method to get the list of actions of the children items.
- * @param {Object} state Current state object.
+ * @param {object} state Current state object.
  * @returns {any[]} Returns the list of actions.
  */
 export const getChildrenActions = (state) => {
@@ -815,16 +815,16 @@ export const getChildrenActions = (state) => {
 }
 /**
  * Method to get the current content object.
- * @param {Object} state Current state object.
- * @returns {Content} Returns the content object.
+ * @param {object} state Current state object.
+ * @returns {IContent} Returns the content object.
  */
 export const getCurrentContent = (state) => {
     return state.currentcontent.content
 }
 /**
  * Method to get the children items.
- * @param {Object} state Current state object.
- * @returns {Object} Returns the content items as an object.
+ * @param {object} state Current state object.
+ * @returns {object} Returns the content items as an object.
  */
 export const getChildren = (state) => {
     return state.entities

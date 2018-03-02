@@ -4,13 +4,13 @@ import { createLogger } from 'redux-logger'
 import * as Actions from './Actions'
 
 /**
- * Module for configuring a store.
+ * Module to create and configure a sensenet redux store.
  *
  * It is actually a redux based data store, that lets you keep your application data in on place, allows you to access (get and update) the application state or subscribe to its listeners.
  *
  * Two middlewares are built-in:
- * * [redux-observable](https://redux-observable.js.org/) is as RxJS 5-based middleware for Redux. It's needed to compose and cancel async actions to create side effects and more,
- * so that your app are able to get or post data to sensenet Content Repository through OData with ajax requests.
+ * * [sn-redux-promise-middleware](https://github.com/SenseNet/sn-redux-promise-middleware) is a redux-promise-middleware based middleware for Redux. It's needed to handle async actions to create side effects and more,
+ * so that your app will be able to get or post data to sensenet Content Repository through OData with ajax requests.
  * * [redux-logger](https://github.com/evgenyrodionov/redux-logger) creates a detailed log on the dev toolbar console on all state changes.
  * You can add other middlewares too through the configureStore functions second param as an array of middlewares. But the built-in middlewares will be the part of the applied middleware group
  * in every way.
@@ -18,11 +18,10 @@ import * as Actions from './Actions'
  * ```
  * import * as React from "react";
  * import * as ReactDOM from "react-dom";
- * import Authentication from 'redux-authentication'
+ * import Authentication from 'redux-authentication' //for including custom middleware
  * import { myRootReducer } from '../myApp/Reducers'
- * import { myRootEpic } from '../myApp/Epics'
  *
- * const store = Store.configureStore(myRootReducer, myRootEpic, [Authentication]);
+ * const store = Store.createSensenetSto(myRootReducer, myRootEpic, [Authentication]);
  *
  * ReactDOM.render(
  * <Root store={store} />,
@@ -49,7 +48,14 @@ import * as Actions from './Actions'
  * const repository = new Repository.SnRepository({
  *  RepositoryUrl: 'https://sn-services/'
  * });
- * const store = Store.configureStore(myRootReducer, myRootEpic, [Authentication], {}, repository);
+ *
+ * const options = {
+ * repository,
+ * rootReducer: myRootReducer,
+ * middlewares: [Authentication]
+ * } as Store.CreateStoreOptions
+ *
+ * const store = Store.createSensenetStore(options);
  *
  * ReactDOM.render(
  * <Root store={store} />,
@@ -58,6 +64,9 @@ import * as Actions from './Actions'
  * ```
  */
 
+/**
+ * Defines config options for a sensenet Redux store.
+ */
 export interface CreateStoreOptions {
     rootReducer,
     repository,
@@ -66,7 +75,8 @@ export interface CreateStoreOptions {
 }
 /**
  * Method that configures a sensenet Redux store
- * @param options
+ * @param options {CreateStoreOptions} An object to hold config options of the Store.
+ * @returns store {Store} Returns a preconfigured Redux store.
  */
 export const createSensenetStore: (options: CreateStoreOptions) => Store<any> = (options: CreateStoreOptions) => {
     let middlewareArray = []
