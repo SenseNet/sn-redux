@@ -72,7 +72,7 @@ export const loginState = (state = LoginState.Pending, action) => {
         case 'USER_LOGOUT_FAILURE':
             return LoginState.Unauthenticated
         case 'USER_CHANGED':
-            return action.user.Name === 'Visitor' ? LoginState.Unauthenticated : LoginState.Authenticated
+            return !action.user || action.user.Name === 'Visitor' ? LoginState.Unauthenticated : LoginState.Authenticated
         default:
             return state
     }
