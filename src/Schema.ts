@@ -17,36 +17,27 @@ import { schema } from 'normalizr'
  *
  * Example of normalizing the JSON response of a SenseNet OData Action for fetching Content as arrayOfContent schema which will create an entities object.
  * ```ts
- * export const receiveContent = (response: Content[], params: string) =>
- *  ({
- *      type: 'FETCH_CONTENT_SUCCESS',
- *      response: normalize(response, Schemas.arrayOfContent),
- *      params
- *  })
+ * export const requestContent = <T extends IContent = IContent>(path: string, options: IODataParams<T> = {}) => ({
+ *  type: 'FETCH_CONTENT',
+ *  async payload(repository: Repository) {
+ *      const data = await repository.loadCollection({
+ *          path,
+ *          oDataOptions: options,
+ *      })
+ *      return normalize(data.d.results, Schemas.arrayOfContent)
+ *   },
+ * })
  * ```
- *
- * ![Normalized collection](http://download.sensenet.com/aniko/sn7/jsapidocs/img/normalized-collection.png)
- *
- * Example of normalizing the JSON response of a SenseNet OData Action for creating Content as content schema.
- * ```ts
- * export const createContentSuccess = (response: Content) =>
- *  ({
- *      type: 'CREATE_CONTENT_SUCCESS',
- *      response: normalize(response, Schemas.content)
- *  });
- * ```
- *
- * ![Normalized content](http://download.sensenet.com/aniko/sn7/jsapidocs/img/normalized-content.png)
  */
 /**
  * Schema of a Content.
  *
- * It represents an item in the entities Object of the sn-redux store. The items are identified by the attribute 'Id'.
+ * It represents an item in the entities Object of the sensenet redux store. The items are identified by the attribute 'Id'.
  */
 export const contentItem = new schema.Entity('entities', {}, { idAttribute: 'Id' })
 /**
  * Schema of a Collection.
  *
- * It represents the ```children``` object of the sn-redux store. It's a parent element of the Content items so it is defined as array of items with the schema content.
+ * It represents the ```children``` object of the sensenet redux store. It's a parent element of the Content items so it is defined as array of items with the schema content.
  */
 export const arrayOfContent = new schema.Array(contentItem)
