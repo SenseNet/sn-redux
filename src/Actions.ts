@@ -125,6 +125,7 @@ import * as Schemas from './Schema'
  */
 export const requestContent = <T extends IContent = IContent>(path: string, options: IODataParams<T> = {}) => ({
     type: 'FETCH_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.loadCollection({
             path,
@@ -141,6 +142,7 @@ export const requestContent = <T extends IContent = IContent>(path: string, opti
  */
 export const loadContent = <T extends IContent = IContent>(idOrPath: number | string, options: IODataParams<T> = {}) => ({
     type: 'LOAD_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataResponse<T>> {
         const data = await repository.load<T>({ idOrPath, oDataOptions: options })
         return data
@@ -154,6 +156,7 @@ export const loadContent = <T extends IContent = IContent>(idOrPath: number | st
  */
 export const loadContentActions = (idOrPath: number | string, scenario?: string) => ({
     type: 'LOAD_CONTENT_ACTIONS',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<{ d: IActionModel[] }> {
         const data = await repository.getActions({ idOrPath, scenario })
         return data
@@ -168,6 +171,7 @@ export const loadContentActions = (idOrPath: number | string, scenario?: string)
  */
 export const createContent = <T extends IContent = IContent>(parentPath: string, content: T, contentType: string) => ({
     type: 'CREATE_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataResponse<T>> {
         const data = await repository.post<T>({ parentPath, content, contentType })
         return data
@@ -181,6 +185,7 @@ export const createContent = <T extends IContent = IContent>(parentPath: string,
  */
 export const updateContent = <T extends IContent = IContent>(idOrPath: number | string, content: Partial<T>) => ({
     type: 'UPDATE_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.patch<T>({ idOrPath, content })
         return data
@@ -194,6 +199,7 @@ export const updateContent = <T extends IContent = IContent>(idOrPath: number | 
  */
 export const deleteContent = (idOrPath: number | string, permanently: boolean = false) => ({
     type: 'DELETE_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataBatchResponse<IContent>> {
         const data = await repository.delete({ idOrPath, permanent: permanently })
         return data
@@ -207,6 +213,7 @@ export const deleteContent = (idOrPath: number | string, permanently: boolean = 
  */
 export const deleteBatch = (contentItems: Array<number | string>, permanently: boolean = false) => ({
     type: 'DELETE_BATCH',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataBatchResponse<IContent>> {
         const data = await repository.delete({ idOrPath: contentItems, permanent: permanently })
         return data
@@ -220,6 +227,7 @@ export const deleteBatch = (contentItems: Array<number | string>, permanently: b
  */
 export const copyContent = (idOrPath: number | string, targetPath: string) => ({
     type: 'COPY_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataBatchResponse<IContent>> {
         const data = await repository.copy({ idOrPath, targetPath })
         return data
@@ -233,6 +241,7 @@ export const copyContent = (idOrPath: number | string, targetPath: string) => ({
  */
 export const copyBatch = (items: Array<number | string>, targetPath: string) => ({
     type: 'COPY_BATCH',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataBatchResponse<IContent>> {
         const data = await repository.copy({ idOrPath: items, targetPath })
         return data
@@ -246,6 +255,7 @@ export const copyBatch = (items: Array<number | string>, targetPath: string) => 
  */
 export const moveContent = (idOrPath: number | string, targetPath: string) => ({
     type: 'MOVE_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataBatchResponse<IContent>> {
         const data = await repository.move({ idOrPath, targetPath })
         return data
@@ -259,6 +269,7 @@ export const moveContent = (idOrPath: number | string, targetPath: string) => ({
  */
 export const moveBatch = (items: Array<number | string>, targetPath: string) => ({
     type: 'MOVE_BATCH',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataBatchResponse<IContent>> {
         const data = await repository.copy({ idOrPath: items, targetPath })
         return data
@@ -272,6 +283,7 @@ export const moveBatch = (items: Array<number | string>, targetPath: string) => 
  */
 export const checkOut = <T extends IContent = IContent>(idOrPath: number | string, options?: IODataParams<T>) => ({
     type: 'CHECKOUT_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.checkOut(idOrPath, options)
         return data
@@ -286,6 +298,7 @@ export const checkOut = <T extends IContent = IContent>(idOrPath: number | strin
  */
 export const checkIn = <T extends IContent = IContent>(idOrPath: number | string, checkInComments: string = '', options?: IODataParams<T>) => ({
     type: 'CHECKIN_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.checkIn(idOrPath, checkInComments, options)
         return data
@@ -299,6 +312,7 @@ export const checkIn = <T extends IContent = IContent>(idOrPath: number | string
  */
 export const publish = <T extends IContent = IContent>(idOrPath: number | string, options?: IODataParams<T>) => ({
     type: 'PUBLISH_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.publish(idOrPath, options)
         return data
@@ -312,6 +326,7 @@ export const publish = <T extends IContent = IContent>(idOrPath: number | string
  */
 export const approve = <T extends IContent = IContent>(idOrPath: number | string, options?: IODataParams<T>) => ({
     type: 'APPROVE_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.approve(idOrPath, options)
         return data
@@ -326,6 +341,7 @@ export const approve = <T extends IContent = IContent>(idOrPath: number | string
  */
 export const rejectContent = <T extends IContent = IContent>(idOrPath: number | string, rejectReason: string = '', options?: IODataParams<T>) => ({
     type: 'REJECT_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.reject(idOrPath, rejectReason, options)
         return data
@@ -339,6 +355,7 @@ export const rejectContent = <T extends IContent = IContent>(idOrPath: number | 
  */
 export const undoCheckout = <T extends IContent = IContent>(idOrPath: number | string, options?: IODataParams<T>) => ({
     type: 'UNDOCHECKOUT_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.undoCheckOut(idOrPath, options)
         return data
@@ -352,6 +369,7 @@ export const undoCheckout = <T extends IContent = IContent>(idOrPath: number | s
  */
 export const forceUndoCheckout = <T extends IContent = IContent>(idOrPath: number | string, options?: IODataParams<T>) => ({
     type: 'FORCE_UNDOCHECKOUT_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.forceUndoCheckOut(idOrPath, options)
         return data
@@ -366,6 +384,7 @@ export const forceUndoCheckout = <T extends IContent = IContent>(idOrPath: numbe
  */
 export const restoreVersion = <T extends IContent = IContent>(idOrPath: number | string, version: string, options?: IODataParams<T>) => ({
     type: 'RESTOREVERSION_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository) {
         const data = await repository.versioning.restoreVersion(idOrPath, version, options)
         return data
@@ -395,6 +414,7 @@ export const userChanged = (user) => ({
  */
 export const userLogin = (userName: string, password: string) => ({
     type: 'USER_LOGIN',
+    // tslint:disable:completed-docs
     async payload(repository) {
         const response = await repository.authentication.login(userName, password)
         return response
@@ -428,6 +448,7 @@ export const userLoginGoogle = () => ({
  */
 export const userLogout = () => ({
     type: 'USER_LOGOUT',
+    // tslint:disable:completed-docs
     async payload(repository) {
         const response = await repository.authentication.logout()
         return response
@@ -479,6 +500,7 @@ export const clearSelection = () => ({
  */
 export const uploadRequest = (parentPath: string, file, contentType?, overwrite: boolean = true, body?, propertyName: string = 'Binary') => ({
     type: 'UPLOAD_CONTENT',
+    // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IUploadResponse>  {
         const data = Upload.file({
             binaryPropertyName: propertyName,
