@@ -1,5 +1,5 @@
 import { LoginState, Repository } from '@sensenet/client-core'
-import { Status, Task } from '@sensenet/default-content-types'
+import { Status, Task, User } from '@sensenet/default-content-types'
 import * as Chai from 'chai'
 import * as Reducers from '../src/Reducers'
 const expect = Chai.expect
@@ -39,6 +39,15 @@ describe('Reducers', () => {
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
+        })
+        it('should return the state by the current users name', () => {
+            expect(Reducers.loginState(undefined, { type: 'USER_CHANGED' })).to.be.deep.equal(LoginState.Unauthenticated)
+        })
+        it('should return the state by the current users name', () => {
+            expect(Reducers.loginState(undefined, { type: 'USER_CHANGED', user: { Name: 'Visitor' } as User})).to.be.deep.equal(LoginState.Unauthenticated)
+        })
+        it('should return the state by the current users name', () => {
+            expect(Reducers.loginState(undefined, { type: 'USER_CHANGED', user: { Name: 'alba' } as User})).to.be.deep.equal(LoginState.Authenticated)
         })
     })
 
@@ -762,6 +771,9 @@ describe('Reducers', () => {
         it('should handle RESTOREVERSION_CONTENT_SUCCESS', () => {
             expect(Reducers.contenterror(null, { type: 'RESTOREVERSION_CONTENT_SUCCESS' })).to.be.eq(null)
         })
+        it('should handle FETCH_CONTENT_PENDING', () => {
+            expect(Reducers.contenterror(null, { type: 'FETCH_CONTENT_PENDING' })).to.be.eq(null)
+        })
     })
     describe('contentactions reducer', () => {
         const action = {
@@ -819,7 +831,7 @@ describe('Reducers', () => {
             const content = {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
-            }as Task
+            } as Task
             const action = {
                 type: 'LOAD_CONTENT_SUCCESS',
                 response: content,
@@ -831,7 +843,7 @@ describe('Reducers', () => {
             const content = {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
-            }as Task
+            } as Task
             const action = {
                 type: 'RELOAD_CONTENT_SUCCESS',
                 response: content,
@@ -849,7 +861,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 1,
-            }as Task
+            } as Task
             const action = {
                 type: 'SELECT_CONTENT',
                 content,
@@ -861,7 +873,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 2,
-            }as Task
+            } as Task
             const action = {
                 type: 'SELECT_CONTENT',
                 content,
@@ -873,7 +885,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 2,
-            }as Task
+            } as Task
             const action = {
                 type: 'DESELECT_CONTENT',
                 content,
@@ -885,7 +897,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 1,
-            }as Task
+            } as Task
             const action = {
                 type: 'DESELECT_CONTENT',
                 content,
@@ -909,7 +921,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 1,
-            }as Task
+            } as Task
             const action = {
                 type: 'SELECT_CONTENT',
                 content,
@@ -928,7 +940,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 2,
-            }as Task
+            } as Task
             const action = {
                 type: 'SELECT_CONTENT',
                 content,
@@ -961,7 +973,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 2,
-            }as Task
+            } as Task
             const action = {
                 type: 'DESELECT_CONTENT',
                 content,
@@ -988,7 +1000,7 @@ describe('Reducers', () => {
                 Path: '/Root/Sites/Default_Site/tasks',
                 Status: Status.active,
                 Id: 1,
-            }as Task
+            } as Task
             const action = {
                 type: 'DESELECT_CONTENT',
                 content,
