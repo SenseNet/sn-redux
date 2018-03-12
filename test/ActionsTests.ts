@@ -3,7 +3,7 @@ import { Repository } from '@sensenet/client-core'
 import { File as SNFile, Task, User } from '@sensenet/default-content-types'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import * as Chai from 'chai'
-import configureStore from 'redux-mock-store'
+import * as configureStore from 'redux-mock-store'
 import * as Actions from '../src/Actions'
 const expect = Chai.expect
 
