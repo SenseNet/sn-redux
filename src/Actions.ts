@@ -1,11 +1,9 @@
 import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
-import { IUploadResponse } from '@sensenet/client-core/dist/Repository/Upload'
 import { IActionModel } from '@sensenet/default-content-types'
 import { normalize } from 'normalizr'
 import * as Schemas from './Schema'
-
 /**
  * Module that contains the action creators.
  *
@@ -498,11 +496,11 @@ export const clearSelection = () => ({
  * @param {string} [propertyName='Binary'] Name of the field where the binary should be saved
  * @returns {Object} Returns a redux action with the properties type, content, file, contentType, overwrite, body and propertyName.
  */
-export const uploadRequest = (parentPath: string, file, contentType?, overwrite: boolean = true, body?, propertyName: string = 'Binary') => ({
+export const uploadRequest = <T extends IContent>(parentPath: string, file, contentType?, overwrite: boolean = true, body?, propertyName: string = 'Binary') => ({
     type: 'UPLOAD_CONTENT',
     // tslint:disable:completed-docs
-    async payload(repository: Repository): Promise<IUploadResponse>  {
-        const data = Upload.file({
+    async payload(repository: Repository): Promise<T> {
+        const data = await Upload.file<T>({
             binaryPropertyName: propertyName,
             overwrite,
             file,
@@ -510,6 +508,7 @@ export const uploadRequest = (parentPath: string, file, contentType?, overwrite:
             contentTypeName: contentType,
             parentPath,
         })
-        return data
+        const content = await repository.load<T>({ idOrPath: data.Id })
+        return content.d
     },
 })
