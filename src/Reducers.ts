@@ -86,9 +86,9 @@ export const loginState = (state = LoginState.Pending, action) => {
 export const loginError = (state = '', action) => {
     switch (action.type) {
         case 'USER_LOGIN_FAILURE':
-            return action.message
+            return action.payload.message
         case 'USER_LOGOUT_FAILURE':
-            return action.message
+            return action.payload.message
         default:
             return null
     }
@@ -198,12 +198,12 @@ const session = combineReducers({
 export const ids = (state = [], action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_SUCCESS':
-            return action.response.result
+            return action.payload.result
         case 'CREATE_CONTENT_SUCCESS':
-            return [...state, action.response.result]
+            return [...state, action.payload.result]
         case 'UPLOAD_CONTENT_SUCCESS':
-            if (state.indexOf(action.response.CreatedContent.Id) === -1) {
-                return [...state, action.response.CreatedContent.Id]
+            if (state.indexOf(action.payload.Id) === -1) {
+                return [...state, action.payload.Id]
             } else {
                 return state
             }
@@ -211,9 +211,9 @@ export const ids = (state = [], action) => {
             return [...state.slice(0, action.index), ...state.slice(action.index + 1)]
         case 'DELETE_BATCH_SUCCESS':
         case 'MOVE_BATCH_SUCCESS':
-            if (action.response.d.results.length > 0) {
+            if (action.payload.d.results.length > 0) {
                 const newIds = []
-                const deletedIds = action.response.d.results.map((result) => result.Id)
+                const deletedIds = action.payload.d.results.map((result) => result.Id)
                 for (const id of state) {
                     if (deletedIds.indexOf(id) === -1) {
                         newIds.push(id)
@@ -232,7 +232,7 @@ export const ids = (state = [], action) => {
  * @returns {object} state. Returns the next state based on the action.
  */
 export const entities = (state = {}, action) => {
-    if (action.response && (
+    if (action.payload && (
         action.type !== 'USER_LOGIN_FAILURE' &&
         action.type !== 'USER_LOGIN_BUFFER' &&
         action.type !== 'LOAD_CONTENT_SUCCESS' &&
@@ -244,8 +244,8 @@ export const entities = (state = {}, action) => {
         action.type !== 'COPY_BATCH_SUCCESS' &&
         action.type !== 'MOVE_CONTENT_SUCCESS' &&
         action.type !== 'MOVE_BATCH_SUCCESS')) {
-        if (action.response.entities !== undefined && action.response.entities.entities !== undefined) {
-            return (Object as any).assign({}, state, action.response.entities.entities)
+        if (action.payload.entities !== undefined && action.payload.entities.entities !== undefined) {
+            return (Object as any).assign({}, state, action.payload.entities.entities)
         }
     }
     switch (action.type) {
@@ -256,14 +256,14 @@ export const entities = (state = {}, action) => {
         case 'DELETE_BATCH_SUCCESS':
         case 'MOVE_BATCH_SUCCESS':
             const resource = Object.assign({}, state)
-            action.response.d.results.map((result) => delete resource[result.Id])
+            action.payload.d.results.map((result) => delete resource[result.Id])
             return resource
         case 'UPDATE_CONTENT_SUCCESS':
-            state[action.response.Id] = action.response
+            state[action.payload.Id] = action.payload
             return state
         case 'UPLOAD_CONTENT_SUCCESS':
-            if (typeof state[action.response.CreatedContent.Id] === 'undefined') {
-                state[action.response.CreatedContent.Id] = action.response.CreatedContent
+            if (typeof state[action.payload.Id] === 'undefined') {
+                state[action.payload.Id] = action.payload
             }
             return state
         default:
@@ -297,7 +297,7 @@ export const isFetching = (state = false, action) => {
 export const childrenerror = (state = null, action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_FAILURE':
-            return action.message
+            return action.payload.message
         case 'FETCH_CONTENT_SUCCESS':
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPDATE_CONTENT_SUCCESS':
@@ -324,7 +324,7 @@ export const childrenerror = (state = null, action) => {
 export const childrenactions = (state = [], action) => {
     switch (action.type) {
         case 'REQUEST_CONTENT_ACTIONS_SUCCESS':
-            return action.response
+            return action.payload
         default:
             return state
     }
@@ -550,9 +550,8 @@ export const contenterror = (state = null, action) => {
         case 'UNDOCHECKOUT_CONTENT_FAILURE':
         case 'FORCEUNDOCHECKOUT_CONTENT_FAILURE':
         case 'RESTOREVERSION_CONTENT_FAILURE':
-            return action.message
+            return action.payload.message
         case 'FETCH_CONTENT':
-        case 'FETCH_CONTENT_FAILURE':
         case 'FETCH_CONTENT_FAILURE':
         case 'CREATE_CONTENT':
         case 'CREATE_CONTENT_SUCCESS':
@@ -604,7 +603,7 @@ export const contentactions = (state = {}, action) => {
 export const fields = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-            return action.response
+            return action.payload
         default:
             return state
     }
@@ -618,7 +617,7 @@ export const fields = (state = {}, action) => {
 export const content = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-            return action.response
+            return action.payload.d
         default:
             return state
     }
@@ -692,7 +691,7 @@ export const odataBatchResponse = (state = {}, action) => {
         case 'DELETE_BATCH_SUCCESS':
         case 'COPY_BATCH_SUCCESS':
         case 'MOVE_BATCH_SUCCESS':
-            return action.response
+            return action.payload
         default:
             return {}
     }
@@ -708,7 +707,7 @@ export const batchResponseError = (state = '', action) => {
         case 'DELETE_BATCH_FAILURE':
         case 'COPY_BATCH_FAILURE':
         case 'MOVE_BATCH_FAILURE':
-            return action.message
+            return action.payload.message
         default:
             return ''
     }
@@ -779,7 +778,7 @@ export const getAuthenticationError = (state) => {
  * @returns {string} Returns the url of the repository.
  */
 export const getRepositoryUrl = (state) => {
-    return state.session.repository.RepositoryUrl
+    return state.session.repository.repositoryUrl
 }
 /**
  * Method to get the ids of the selected content items.
