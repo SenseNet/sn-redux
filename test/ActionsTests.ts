@@ -3,7 +3,7 @@ import { Repository } from '@sensenet/client-core'
 import { File as SNFile, Task, User } from '@sensenet/default-content-types'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import * as Chai from 'chai'
-import * as configureStore from 'redux-mock-store'
+import configureStore from 'redux-mock-store'
 import * as Actions from '../src/Actions'
 const expect = Chai.expect
 
@@ -597,30 +597,6 @@ describe('Actions', () => {
             })
         })
     })
-    // describe('UserLoginBuffer', () => {
-    //     describe('Action types are types', () => {
-    //         expect(Actions.userLoginBuffer(true).type).to.eql('USER_LOGIN_BUFFER')
-    //     })
-
-    //     describe('serviceChecks()', () => {
-    //         context('Given repository.authentication.currentUser() resolves', () => {
-    //             // let data
-    //             // beforeEach(async () => {
-    //             //     data = await Actions.userLoginBuffer(true).payload(repository)
-    //             // })
-    //             it('should return a USER_LOGIN_BUFFER action', (done) => {
-    //                 expect(Actions.userLoginBuffer(true)).to.have.property(
-    //                     'type', 'USER_LOGIN_BUFFER',
-    //                 )
-    //                 done()
-    //             })
-    //             // it('should return mockdata', () => {
-    //             //     // tslint:disable-next-line:no-unused-expression
-    //             //     expect(data).to.be.false
-    //             // })
-    //         })
-    //     })
-    // })
     describe('UserLoginGoogle', () => {
         it('should create an action to a user login with google', () => {
             const expectedAction = {
@@ -691,7 +667,8 @@ describe('Actions', () => {
     })
     describe('UploadContent', () => {
         beforeEach(() => {
-            repo = new Repository({}, async (...args: any[]) => ({ ok: 'true', json: async () => (uploadResponse), text: async () => '' } as any))
+            repo = new Repository({}, async (...args: any[]) => ({ ok: 'true', json: async () => (uploadResponse.json()), text: async () => '' } as any))
+            repo.load = () => contentMockResponse.json()
             const mockStore = configureStore([promiseMiddleware(repo)])
             _store = mockStore({})
         })
@@ -704,14 +681,17 @@ describe('Actions', () => {
                 let data
                 beforeEach(async () => {
                     data = await Actions.uploadRequest('Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'Binary').payload(repo)
+
                 })
                 it('should return a UPLOAD_CONTENT action', () => {
-                    expect(Actions.uploadRequest('Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'Binary')).to.have.property(
+                    expect(Actions.uploadRequest('/Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'File', undefined, null, undefined)).to.have.property(
                         'type', 'UPLOAD_CONTENT',
                     )
                 })
                 it('should return mockdata', () => {
-                    expect(data).to.deep.equal(uploadResponse)
+                    expect(data).to.deep.equal({
+                        Name: 'DefaultSite',
+                    })
                 })
             })
         })
