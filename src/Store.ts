@@ -1,3 +1,4 @@
+import { Repository } from '@sensenet/client-core'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import { applyMiddleware, createStore, Store } from 'redux'
 import { createLogger } from 'redux-logger'
@@ -94,7 +95,9 @@ export const createSensenetStore: (options: CreateStoreOptions) => Store<any> = 
         {},
         applyMiddleware(...middlewareArray),
     )
+    const repo: Repository = options.repository
     options.repository.authentication.currentUser.subscribe((user) => {
+        store.dispatch(Actions.loadRepository(repo.configuration))
         store.dispatch(Actions.userChanged(user))
     }, true)
     return store
