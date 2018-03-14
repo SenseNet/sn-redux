@@ -1,42 +1,34 @@
-import * as Chai from 'chai';
-import { createStore, applyMiddleware } from 'redux'
+import { Repository } from '@sensenet/client-core'
+import * as Chai from 'chai'
+import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { createLogger } from 'redux-logger'
-import { createEpicMiddleware } from 'redux-observable';
-import { Repository } from 'sn-client-js'
-import { Store } from '../src/Store'
-import { Reducers } from '../src/Reducers'
-import { Epics } from '../src/Epics'
-const expect = Chai.expect;
-import 'rxjs';
+import * as Store from '../src/Store'
+const expect = Chai.expect
 
 describe('Store', () => {
-    const repository = new Repository.SnRepository();
-    const loggerMiddleware = createLogger();
-    const epicMiddleware = createEpicMiddleware(Epics.rootEpic, { dependencies: { repository } });
-    const middlewareArray = [];
-    middlewareArray.push(epicMiddleware);
-    middlewareArray.push(loggerMiddleware);
+    const repository = new Repository({}, async () => ({ ok: true } as any))
+    const loggerMiddleware = createLogger()
+    const middlewareArray = []
+    middlewareArray.push(loggerMiddleware)
+    const testReducer = (state = {}, action) => {
+        return state
+    }
+    const myReducer = combineReducers({ testReducer })
     const store = createStore(
-        Reducers.sensenet,
+        myReducer,
         {},
-        applyMiddleware(...middlewareArray)
+        applyMiddleware(...middlewareArray),
     )
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore()).to.be.equal(typeof store)
-    });
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer })).to.be.equal(typeof store)
+    })
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore(Reducers.sensenet)).to.be.equal(typeof store)
-    });
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer, middlewares: null, persistedState: {} })).to.be.equal(typeof store)
+    })
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore(Reducers.sensenet, null, null, {})).to.be.equal(typeof store)
-    });
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer, middlewares: null })).to.be.equal(typeof store)
+    })
     it('should return a redux store', () => {
-        expect(typeof Store.configureStore(Reducers.sensenet, Epics.rootEpic)).to.be.equal(typeof store)
-    });
-    it('should return a redux store', () => {
-        expect(typeof Store.configureStore(Reducers.sensenet, null, [])).to.be.equal(typeof store)
-    });
-    it('should return a redux store', () => {
-        expect(typeof Store.configureStore(Reducers.sensenet, null, null, {}, repository)).to.be.equal(typeof store)
-    });
-});
+        expect(typeof Store.createSensenetStore({ repository, rootReducer: myReducer, middlewares: middlewareArray })).to.be.equal(typeof store)
+    })
+})
