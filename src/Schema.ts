@@ -1,7 +1,6 @@
-import { schema } from 'normalizr'
-
 /**
- * This module is for defining Content and Collection schemas to normalize nested JSON response data in redux state store.
+ * @module  Schema
+ * @description This module is for defining Content and Collection schemas to normalize nested JSON response data in redux state store.
  *
  * Normalizr takes JSON and a schema and replaces nested entities with their IDs, gathering all entities in dictionaries.
  * * Entities can be nested inside other entities, objects and arrays;
@@ -29,6 +28,10 @@ import { schema } from 'normalizr'
  * })
  * ```
  */
+/**
+ */
+import { schema } from 'normalizr'
+
 /**
  * Schema of a Content.
  *

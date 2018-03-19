@@ -1,11 +1,7 @@
-import { Repository } from '@sensenet/client-core'
-import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import { applyMiddleware, createStore, Store } from 'redux'
-import { createLogger } from 'redux-logger'
-import * as Actions from './Actions'
-
 /**
- * Module to create and configure a sensenet redux store.
+ * Module for configuring a store.
+ * @module  Store
+ * @description Module to create and configure a sensenet redux store.
  *
  * It is actually a redux based data store, that lets you keep your application data in on place, allows you to access (get and update) the application state or subscribe to its listeners.
  *
@@ -30,6 +26,13 @@ import * as Actions from './Actions'
  * );
  * ```
  */
+/**
+ */
+import { Repository } from '@sensenet/client-core'
+import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
+import { applyMiddleware, createStore, Store } from 'redux'
+import { createLogger } from 'redux-logger'
+import * as Actions from './Actions'
 
 /**
  * Method to create a Redux store that holds the application state.
