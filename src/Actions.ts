@@ -1,11 +1,6 @@
-import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
-import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
-import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
-import { IActionModel } from '@sensenet/default-content-types'
-import { normalize } from 'normalizr'
-import * as Schemas from './Schema'
 /**
- * Module that contains the action creators.
+ * @module  Schema
+ * @description Module that contains the action creators.
  *
  * _Redux actions are payloads of information that send data from your application to your store. They are the only source of information for the store. You send them to the store using
  * ```store.dispatch()```. Actions are plain JavaScript objects. Actions must have a type property that indicates the type of action being performed._
@@ -114,6 +109,12 @@ import * as Schemas from './Schema'
  * const store = Store.createSensenetStore(options);
  * ```
  */
+import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
+import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
+import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
+import { IActionModel } from '@sensenet/default-content-types'
+import { normalize } from 'normalizr'
+import * as Schemas from './Schema'
 
 /**
  * Action creator for requesting a content from sensenet Content Repository to get its children content.

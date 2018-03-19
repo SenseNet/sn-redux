@@ -1,3 +1,9 @@
+/**
+ * @module  Reducers
+ */
+/**
+ */
+
 import { ConstantContent, IContent, LoginState } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { combineReducers, Reducer } from 'redux'
@@ -520,7 +526,6 @@ export const isOperationInProgress = (state = false, action) => {
         default:
             return false
     }
-
 }
 /**
  * Reducer combining isSaved, isValid, isDirty and isOperationInProgress into a single object, ```contentState```.
@@ -589,7 +594,7 @@ export const contenterror = (state = null, action) => {
 export const contentactions = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_ACTIONS_SUCCESS':
-            return action.actions
+            return action.payload.d.Actions
         default:
             return state
     }

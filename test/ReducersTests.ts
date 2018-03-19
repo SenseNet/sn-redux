@@ -777,7 +777,11 @@ describe('Reducers', () => {
     describe('contentactions reducer', () => {
         const action = {
             type: 'LOAD_CONTENT_ACTIONS_SUCCESS',
-            actions: ['aaa', 'bbb'],
+            payload: {
+                d: {
+                    Actions: ['aaa', 'bbb'],
+                },
+            },
         }
         it('should return the initial state', () => {
             expect(Reducers.contentactions(undefined, {})).to.deep.equal({})
