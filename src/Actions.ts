@@ -1,5 +1,5 @@
 /**
- * @module  Schema
+ * @module  Actions
  * @description Module that contains the action creators.
  *
  * _Redux actions are payloads of information that send data from your application to your store. They are the only source of information for the store. You send them to the store using
@@ -108,6 +108,8 @@
  * } as Store.CreateStoreOptions
  * const store = Store.createSensenetStore(options);
  * ```
+ */
+/**
  */
 import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'

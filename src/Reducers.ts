@@ -1,5 +1,6 @@
 /**
  * @module  Reducers
+ * @description Module that contains the reducers.
  */
 /**
  */
