@@ -1,7 +1,7 @@
 {
   "name": "@sensenet/redux",
   "version": "4.0.1",
-  "description": "A set of redux actions, reducers and redux-ovbservable epics for Sense/Net ECM",
+  "description": "A set of redux actions, reducers and redux-ovbservable epics for sensenet",
   "main": "dist/index.js",
   "scripts": {
     "precommit": "npm run test",

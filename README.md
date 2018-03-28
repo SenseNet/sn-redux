@@ -11,7 +11,7 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat)](http://commitizen.github.io/cz-cli/)
 [![Greenkeeper badge](https://badges.greenkeeper.io/SenseNet/sn-redux.svg)](https://greenkeeper.io/)
 
-sn-redux is a convention driven way of building sensenet ECM applications using Redux. It contains all the action types, actions and reducers for [built-in sensenet Actions 
+sn-redux is a convention driven way of building sensenet applications using Redux. It contains all the action types, actions and reducers for [built-in sensenet Actions 
 and Functions](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
 
 sn-redux gives you a standard set of:
@@ -20,7 +20,7 @@ sn-redux gives you a standard set of:
 * actions: e.g. updateContentSuccess, updateContentFailure
 * reducers: for the action types above e.g. updateContentSuccess
 
-## Installation on an existing sensenet ECM portal
+## Installation on an existing sensenet portal
 
 Get the latest stable version with npm
 
@@ -56,7 +56,7 @@ To install the latest stable version
 npm install --save @sensenet/redux
 ```
 
-Create your sensenet ECM portal Repository to use. You can configure your Store to use this repository, when calling Store.ConfigureStore
+Create your sensenet portal Repository to use. You can configure your Store to use this repository, when calling Store.ConfigureStore
 
 ```ts
 import { Repository } from '@sensenet/client-core';
@@ -83,9 +83,9 @@ const store = Store.createSensenetStore(options)
 
 ```
 
-To enable your external app to send request against your sensenet ECM portal change your ```Portal.settings```. For further information about cross-origin resource sharing in sensenet ECM check [this](http://wiki.sensenet.com/Cross-origin_resource_sharing#Origin_check) article.
+To enable your external app to send request against your sensenet portal change your ```Portal.settings```. For further information about cross-origin resource sharing in sensenet check [this](http://wiki.sensenet.com/Cross-origin_resource_sharing#Origin_check) article.
 
-Check your sensenet ECM portal's web.config and if the ```ODataServiceToken``` is set, you can pass to your Repository as a config value on client side.
+Check your sensenet portal's web.config and if the ```ODataServiceToken``` is set, you can pass to your Repository as a config value on client side.
 
 ```ts
 let repository = new Repository.SnRepository({
@@ -184,9 +184,9 @@ dispatch(Actions.CreateContent(parentPath, content, 'Task'))
 * [sn-redux API Reference](https://community.sensenet.com/api/sn-redux/)
 * [sn-client-js API reference](https://community.sensenet.com/api/sn-client-js/)
 * [sn-redux-promise-middleware API reference](https://community.sensenet.com/api/sn-redux-promise-middleware/)
-* [About OData REST API in sensenet ECM](http://wiki.sensenet.com/OData_REST_API)
-* [About Built-in OData Actions and Function in sensenet ECM](http://wiki.sensenet.com/Built-in_OData_actions_and_functions)
-* [Todo App with React, Redux and sensenet ECM](https://github.com/SenseNet/sn-react-redux-todo-app)
+* [About OData REST API in sensenet](http://wiki.sensenet.com/OData_REST_API)
+* [About Built-in OData Actions and Function in sensenet](http://wiki.sensenet.com/Built-in_OData_actions_and_functions)
+* [Todo App with React, Redux and sensenet](https://github.com/SenseNet/sn-react-redux-todo-app)
 
 ## Influences
 

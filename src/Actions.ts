@@ -392,7 +392,7 @@ export const restoreVersion = <T extends IContent = IContent>(idOrPath: number |
     },
 })
 /**
- * Action creator for check user state in a sensenet ECM application.
+ * Action creator for check user state in a sensenet application.
  * @returns {Object} Returns a redux action with the properties.
  */
 export const checkLoginState = () => ({

@@ -10,7 +10,7 @@
  *
  * Read more about normalizr [here](https://github.com/paularmstrong/normalizr)
  *
- * Since everything is a Content in sensenet ECM we're working with Content and collection of Content in most of the cases. So the sn-redux Schemas module defines the two
+ * Since everything is a Content in sensenet we're working with Content and collection of Content in most of the cases. So the sn-redux Schemas module defines the two
  * neccessarry main schema, content and arrayofContent to work with. This two schemas help you to normalize your JSON responses so that you can create a pure and flexible
  * client-side datasource.
  *
