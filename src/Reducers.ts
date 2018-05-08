@@ -838,3 +838,11 @@ export const getCurrentContent = (state) => {
 export const getChildren = (state) => {
     return state.entities
 }
+/**
+ * Method to get the list of current content's chanegd fields and their values.
+ * @param {object} state Current state object.
+ * @returns {object} Returns the list of the fields.
+ */
+export const getFields = (state) => {
+    return state.currentcontent.fields
+}
