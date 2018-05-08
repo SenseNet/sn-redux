@@ -609,7 +609,11 @@ export const contentactions = (state = {}, action) => {
 export const fields = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-            return action.payload
+            return {}
+        case 'CHANGE_FIELD_VALUE':
+            const f = state
+            f[action.name] = action.value
+            return f
         default:
             return state
     }

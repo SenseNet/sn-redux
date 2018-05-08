@@ -515,3 +515,13 @@ export const uploadRequest = <T extends IContent>(parentPath: string, file, cont
         return content.d
     },
 })
+/**
+ * Action creator for changing a field value of a content
+ * @param {string} name Name of the field.
+ * @param {any} value Value of the field.
+ */
+export const changeFieldValue = (name: string, value: any) => ({
+    type: 'CHANGE_FIELD_VALUE',
+    name,
+    value,
+})
