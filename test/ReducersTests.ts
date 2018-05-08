@@ -1301,4 +1301,18 @@ describe('Reducers', () => {
             })
         })
     })
+    describe('getFields', () => {
+        const state = {
+            currentcontent: {
+                fields: {
+                    Name: 'aaa',
+                },
+            },
+        }
+        it('should return the list of the fields that were changed', () => {
+            expect(Reducers.getFields(state)).to.be.deep.equal({
+                Name: 'aaa',
+            })
+        })
+    })
 })
