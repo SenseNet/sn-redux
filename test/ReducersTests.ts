@@ -794,7 +794,7 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.fields(undefined, {})).to.deep.equal({})
         })
-        it('should return fields of the content', () => {
+        it('should return an empty object', () => {
 
             const content = {
                 Path: '/Root/Sites/Default_Site/tasks',
@@ -804,9 +804,17 @@ describe('Reducers', () => {
                 type: 'LOAD_CONTENT_SUCCESS',
                 payload: content,
             }
+            expect(Reducers.fields({}, action)).to.deep.equal({})
+        })
+        it('should return changed fields of the content', () => {
+
+            const action = {
+                type: 'CHANGE_FIELD_VALUE',
+                name: 'Name',
+                value: 'aaa',
+            }
             expect(Reducers.fields({}, action)).to.deep.equal({
-                Path: '/Root/Sites/Default_Site/tasks',
-                Status: 'active',
+                Name: 'aaa',
             })
         })
     })

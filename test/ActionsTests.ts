@@ -696,4 +696,15 @@ describe('Actions', () => {
             })
         })
     })
+
+    describe('changeFieldValue', () => {
+        it('should return CHANGE_FIELD_VALUE action', () => {
+            const expectedAction = {
+                type: 'CHANGE_FIELD_VALUE',
+                name: 'Name',
+                value: 'aaa',
+            }
+            expect(Actions.changeFieldValue('Name', 'aaa')).to.deep.equal(expectedAction)
+        })
+    })
 })
