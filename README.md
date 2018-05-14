@@ -35,7 +35,7 @@ If you want to use the module types you can find them in the src folder. Import 
 ```
 import { Actions } from '@sensenet/redux';
 import { Repository } '@sensenet/client-core';
-import { Task } from '@sensenet/default-content-types;
+import { Task } from '@sensenet/default-content-types';
 
 const repository = new Repository({
   RepositoryUrl: 'http://path-to-your-portal.com',
