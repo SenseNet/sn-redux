@@ -70,18 +70,18 @@ import * as Actions from './Actions'
 /**
  * Defines config options for a sensenet Redux store.
  */
-export interface CreateStoreOptions {
-    rootReducer: Reducer<object>,
+export interface CreateStoreOptions<T> {
+    rootReducer: Reducer<T>,
     repository: Repository,
     middlewares?: Middleware[],
-    persistedState?: object
+    persistedState?: T
 }
 /**
  * Method that configures a sensenet Redux store
  * @param options {CreateStoreOptions} An object to hold config options of the Store.
  * @returns store {Store} Returns a preconfigured Redux store.
  */
-export const createSensenetStore: (options: CreateStoreOptions) => Store<any> = (options: CreateStoreOptions) => {
+export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T> = <T>(options: CreateStoreOptions<T>) => {
     let middlewareArray = []
     if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
         // middlewareArray.push(epicMiddleware)
@@ -92,9 +92,9 @@ export const createSensenetStore: (options: CreateStoreOptions) => Store<any> = 
     const reduxPromiseMiddleware = promiseMiddleware(options.repository)
     middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware)
 
-    const store = createStore(
+    const store = createStore<T>(
         options.rootReducer,
-        {},
+        options.persistedState || {} as T,
         applyMiddleware(...middlewareArray),
     )
     const repo: Repository = options.repository
