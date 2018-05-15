@@ -30,7 +30,7 @@
  */
 import { Repository } from '@sensenet/client-core'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import { applyMiddleware, createStore, Store } from 'redux'
+import { applyMiddleware, createStore, Middleware, Reducer, Store } from 'redux'
 import { createLogger } from 'redux-logger'
 import * as Actions from './Actions'
 
@@ -67,15 +67,14 @@ import * as Actions from './Actions'
  * );
  * ```
  */
-
 /**
  * Defines config options for a sensenet Redux store.
  */
 export interface CreateStoreOptions {
-    rootReducer,
-    repository,
-    middlewares?,
-    persistedState?
+    rootReducer: Reducer<object>,
+    repository: Repository,
+    middlewares?: Middleware[],
+    persistedState?: object
 }
 /**
  * Method that configures a sensenet Redux store
