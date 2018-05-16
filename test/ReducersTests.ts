@@ -37,6 +37,9 @@ describe('Reducers', () => {
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
         })
+        it('should return pending', () => {
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_LOADING' })).to.be.deep.equal(LoginState.Pending)
+        })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
         })
