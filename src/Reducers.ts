@@ -70,6 +70,8 @@ export const language = (state = 'en-US', action) => {
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
+        case 'USER_LOGIN_LOADING':
+            return LoginState.Pending
         case 'USER_LOGIN_SUCCESS':
             return LoginState.Authenticated
         case 'USER_LOGOUT_SUCCESS':
