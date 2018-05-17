@@ -76,6 +76,7 @@ export interface CreateStoreOptions<T> {
     middlewares?: Middleware[],
     persistedState?: T,
     enchancers?: Array<StoreEnhancer<any>>,
+    logger?: boolean,
 }
 /**
  * Method that configures a sensenet Redux store
@@ -90,9 +91,10 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     } else {
         middlewareArray = [...options.middlewares]
     }
-    const loggerMiddleware = createLogger()
+    const loggerMiddleware = options.logger ? createLogger() : null
     const reduxPromiseMiddleware = promiseMiddleware(options.repository)
-    middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware)
+    loggerMiddleware ? middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware) :
+        middlewareArray.push(reduxPromiseMiddleware)
 
     if (typeof options.enchancers === 'undefined' || options.enchancers === null) {
         // middlewareArray.push(epicMiddleware)
