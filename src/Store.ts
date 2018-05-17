@@ -30,7 +30,7 @@
  */
 import { Repository } from '@sensenet/client-core'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import { applyMiddleware, createStore, Middleware, Reducer, Store } from 'redux'
+import { applyMiddleware, compose, createStore, Middleware, Reducer, Store, StoreEnhancer } from 'redux'
 import { createLogger } from 'redux-logger'
 import * as Actions from './Actions'
 
@@ -74,7 +74,8 @@ export interface CreateStoreOptions<T> {
     rootReducer: Reducer<T>,
     repository: Repository,
     middlewares?: Middleware[],
-    persistedState?: T
+    persistedState?: T,
+    enchancers?: Array<StoreEnhancer<any>>,
 }
 /**
  * Method that configures a sensenet Redux store
@@ -83,6 +84,7 @@ export interface CreateStoreOptions<T> {
  */
 export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T> = <T>(options: CreateStoreOptions<T>) => {
     let middlewareArray = []
+    let enchancerArray: Array<StoreEnhancer<any>> = []
     if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
         // middlewareArray.push(epicMiddleware)
     } else {
@@ -92,11 +94,31 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     const reduxPromiseMiddleware = promiseMiddleware(options.repository)
     middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware)
 
-    const store = createStore<T>(
-        options.rootReducer,
-        options.persistedState || {} as T,
-        applyMiddleware(...middlewareArray),
-    )
+    if (typeof options.enchancers === 'undefined' || options.enchancers === null) {
+        // middlewareArray.push(epicMiddleware)
+    } else {
+        enchancerArray = [...options.enchancers]
+    }
+
+    let store
+
+    if (enchancerArray.length > 0) {
+        store = createStore<T>(
+            options.rootReducer,
+            options.persistedState || {} as T,
+            compose(
+                applyMiddleware(...middlewareArray),
+                ...enchancerArray,
+            ),
+        )
+    } else {
+        store = createStore<T>(
+            options.rootReducer,
+            options.persistedState || {} as T,
+            applyMiddleware(...middlewareArray),
+        )
+    }
+
     const repo: Repository = options.repository
     options.repository.authentication.currentUser.subscribe((user) => {
         store.dispatch(Actions.loadRepository(repo.configuration))
