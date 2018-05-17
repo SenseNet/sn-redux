@@ -77,6 +77,7 @@ export interface CreateStoreOptions<T> {
     persistedState?: T,
     enchancers?: Array<StoreEnhancer<any>>,
     logger?: boolean,
+    devTools?: boolean,
 }
 /**
  * Method that configures a sensenet Redux store
@@ -104,11 +105,14 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
 
     let store
 
+    // tslint:disable-next-line:no-string-literal
+    const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
+
     if (enchancerArray.length > 0) {
         store = createStore<T>(
             options.rootReducer,
             options.persistedState || {} as T,
-            compose(
+            composeEnhancers(
                 applyMiddleware(...middlewareArray),
                 ...enchancerArray,
             ),
@@ -117,7 +121,9 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
         store = createStore<T>(
             options.rootReducer,
             options.persistedState || {} as T,
-            applyMiddleware(...middlewareArray),
+            composeEnhancers(
+                applyMiddleware(...middlewareArray),
+            ),
         )
     }
 
