@@ -813,6 +813,21 @@ describe('Reducers', () => {
             })
         })
     })
+    describe('schema reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.schema(undefined, {})).to.deep.equal({})
+        })
+        it('should return schema of the given content type', () => {
+
+            const action = {
+                type: 'GET_SCHEMA',
+                payload: { Icon: 'FormItem' },
+            }
+            expect(Reducers.schema({}, action)).to.deep.equal({
+                Icon: 'FormItem',
+            })
+        })
+    })
     describe('content reducer', () => {
         it('should return the initial state', () => {
             expect(Reducers.fields(undefined, {})).to.deep.equal({})
@@ -1306,6 +1321,20 @@ describe('Reducers', () => {
         }
         it('should return the list of the fields that were changed', () => {
             expect(Reducers.getFields(state)).to.be.deep.equal({
+                Name: 'aaa',
+            })
+        })
+    })
+    describe('getSchema', () => {
+        const state = {
+            currentcontent: {
+                schema: {
+                    Name: 'aaa',
+                },
+            },
+        }
+        it('should return the schema of the current content', () => {
+            expect(Reducers.getSchema(state)).to.be.deep.equal({
                 Name: 'aaa',
             })
         })

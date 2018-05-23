@@ -707,4 +707,18 @@ describe('Actions', () => {
             expect(Actions.changeFieldValue('Name', 'aaa')).to.deep.equal(expectedAction)
         })
     })
+    describe('getSchema', () => {
+        beforeEach(() => {
+            repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => contentMockResponse)
+            const mockStore = configureStore([promiseMiddleware(repo)])
+            _store = mockStore({})
+        })
+        describe('Action types are types', () => {
+            expect(Actions.getSchema('Task').type).to.eql('GET_SCHEMA')
+        })
+        it('should return task schema', () => {
+            const data = Actions.getSchema('Task').payload(repo)
+            expect(data).to.deep.equal(repo.schemas.getSchemaByName('Task'))
+        })
+    })
 })
