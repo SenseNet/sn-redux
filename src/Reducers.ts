@@ -209,7 +209,7 @@ export const ids = (state = [], action) => {
         case 'FETCH_CONTENT_SUCCESS':
             return action.payload.result
         case 'CREATE_CONTENT_SUCCESS':
-            return [...state, action.payload.result]
+            return [...state, action.payload.Id]
         case 'UPLOAD_CONTENT_SUCCESS':
             if (state.indexOf(action.payload.Id) === -1) {
                 return [...state, action.payload.Id]
