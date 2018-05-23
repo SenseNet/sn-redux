@@ -75,7 +75,7 @@ export interface CreateStoreOptions<T> {
     repository: Repository,
     middlewares?: Middleware[],
     persistedState?: T,
-    enchancers?: Array<StoreEnhancer<any>>,
+    enhancers?: Array<StoreEnhancer<any>>,
     logger?: boolean,
     devTools?: boolean,
 }
@@ -86,7 +86,7 @@ export interface CreateStoreOptions<T> {
  */
 export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T> = <T>(options: CreateStoreOptions<T>) => {
     let middlewareArray = []
-    let enchancerArray: Array<StoreEnhancer<any>> = []
+    let enhancerArray: Array<StoreEnhancer<any>> = []
     if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
         // middlewareArray.push(epicMiddleware)
     } else {
@@ -97,35 +97,23 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     loggerMiddleware ? middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware) :
         middlewareArray.push(reduxPromiseMiddleware)
 
-    if (typeof options.enchancers === 'undefined' || options.enchancers === null) {
+    if (typeof options.enhancers === 'undefined' || options.enhancers === null) {
         // middlewareArray.push(epicMiddleware)
     } else {
-        enchancerArray = [...options.enchancers]
+        enhancerArray = [...options.enhancers]
     }
-
-    let store
 
     // tslint:disable-next-line:no-string-literal
     const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
 
-    if (enchancerArray.length > 0) {
-        store = createStore<T>(
-            options.rootReducer,
-            options.persistedState || {} as T,
-            composeEnhancers(
-                applyMiddleware(...middlewareArray),
-                ...enchancerArray,
-            ),
-        )
-    } else {
-        store = createStore<T>(
-            options.rootReducer,
-            options.persistedState || {} as T,
-            composeEnhancers(
-                applyMiddleware(...middlewareArray),
-            ),
-        )
-    }
+    const store = createStore<T>(
+        options.rootReducer,
+        options.persistedState || {} as T,
+        composeEnhancers(
+            applyMiddleware(...middlewareArray),
+            ...enhancerArray,
+        ),
+    )
 
     const repo: Repository = options.repository
     options.repository.authentication.currentUser.subscribe((user) => {
