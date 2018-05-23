@@ -140,23 +140,15 @@ describe('Reducers', () => {
                 .to.be.deep.equal([5145, 5146])
         })
         it('should handle CREATE_CONTENT_SUCCESS', () => {
-            expect(Reducers.ids([],
+            expect(Reducers.ids(
+                [1, 2, 3],
                 {
                     type: 'CREATE_CONTENT_SUCCESS',
                     payload: {
-                        entities: {
-                            collection: {
-                                123: {
-                                    DisplayName: 'My content',
-                                    Id: 123,
-                                },
-                            },
-                        },
-                        result: 123,
+                        Id: 4,
                     },
-                    filter: '?$select=Id,Type&metadata=no',
                 }))
-                .to.be.deep.equal([123])
+                .to.be.deep.equal([1, 2, 3, 4])
         })
         it('should handle DELETE_CONTENT_SUCCESS', () => {
             expect(Reducers.ids(
