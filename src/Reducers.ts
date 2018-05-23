@@ -635,6 +635,20 @@ export const content = (state = {}, action) => {
     }
 }
 /**
+ * Reducer to contain schema of the current content
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const schema = (state = {}, action) => {
+    switch (action.type) {
+        case 'GET_SCHEMA':
+            return action.payload
+        default:
+            return state
+    }
+}
+/**
  * Reducer combining contentState, error, actions, fields and content into a single object, ```currentcontent```.
  */
 const currentcontent = combineReducers({
@@ -643,6 +657,7 @@ const currentcontent = combineReducers({
     actions: contentactions,
     fields,
     content,
+    schema,
 })
 /**
  * Reducer to handle Actions on the selected array.
@@ -847,4 +862,12 @@ export const getChildren = (state) => {
  */
 export const getFields = (state) => {
     return state.currentcontent.fields
+}
+/**
+ * Method to get the schema of current content.
+ * @param {object} state Current state object.
+ * @returns {object} Returns the schema object.
+ */
+export const getSchema = (state) => {
+    return state.currentcontent.schema
 }
