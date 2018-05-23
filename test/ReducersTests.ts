@@ -29,7 +29,11 @@ describe('Reducers', () => {
             expect(Reducers.loginState(undefined, {})).to.be.deep.equal(LoginState.Pending)
         })
         it('should return that a user is logged-in', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS' })).to.be.deep.equal(LoginState.Authenticated)
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS', payload: true })).to.be.deep.equal(LoginState.Authenticated)
+        })
+        it('should return theres no authenticated user', () => {
+            console.log('aaa')
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS', payload: false })).to.be.deep.equal(LoginState.Unauthenticated)
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_SUCCESS' })).to.be.deep.equal(LoginState.Unauthenticated)
@@ -57,6 +61,12 @@ describe('Reducers', () => {
     describe('loginError reducer', () => {
         it('should return the initial state', () => {
             expect(Reducers.loginError(undefined, {})).to.be.deep.equal(null)
+        })
+        it('should return null', () => {
+            expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_SUCCESS', payload: true })).to.be.deep.equal(null)
+        })
+        it('should return an error message', () => {
+            expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_SUCCESS', payload: false })).to.be.deep.equal('Wrong username or password!')
         })
         it('should return an error message', () => {
             expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_FAILURE', payload: { message: 'error' } })).to.be.deep.equal('error')
