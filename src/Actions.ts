@@ -114,7 +114,7 @@
 import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
-import { IActionModel } from '@sensenet/default-content-types'
+import { IActionModel, Schema } from '@sensenet/default-content-types'
 import { normalize } from 'normalizr'
 import * as Schemas from './Schema'
 
@@ -524,4 +524,15 @@ export const changeFieldValue = (name: string, value: any) => ({
     type: 'CHANGE_FIELD_VALUE',
     name,
     value,
+})
+/**
+ * Action creator for loading schema of a given type
+ * @param {string} typeName Name of the Content Type.
+ */
+export const getSchema = (typeName: string) => ({
+    type: 'GET_SCHEMA',
+    payload(repository: Repository): Schema {
+        const data = repository.schemas.getSchemaByName(typeName)
+        return data
+    },
 })
