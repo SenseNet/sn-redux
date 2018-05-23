@@ -71,12 +71,33 @@ import * as Actions from './Actions'
  * Defines config options for a sensenet Redux store.
  */
 export interface CreateStoreOptions<T> {
+    /**
+     * The root reducer of the store
+     */
     rootReducer: Reducer<T>,
+    /**
+     * Related repository object
+     */
     repository: Repository,
+    /**
+     * Array of additional middlewares
+     */
     middlewares?: Middleware[],
+    /**
+     * Initial state of the store
+     */
     persistedState?: T,
+    /**
+     * Array of additional enhancers
+     */
     enhancers?: Array<StoreEnhancer<any>>,
+    /**
+     * Switches redux logger on or off
+     */
     logger?: boolean,
+    /**
+     * Switches redux developer tools on or off
+     */
     devTools?: boolean,
 }
 /**
