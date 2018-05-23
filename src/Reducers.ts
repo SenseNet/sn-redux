@@ -73,7 +73,9 @@ export const loginState = (state = LoginState.Pending, action) => {
         case 'USER_LOGIN_LOADING':
             return LoginState.Pending
         case 'USER_LOGIN_SUCCESS':
-            return LoginState.Authenticated
+            return action.payload ?
+                LoginState.Authenticated :
+                LoginState.Unauthenticated
         case 'USER_LOGOUT_SUCCESS':
             return LoginState.Unauthenticated
         case 'USER_LOGIN_FAILURE':
@@ -94,6 +96,10 @@ export const loginState = (state = LoginState.Pending, action) => {
  */
 export const loginError = (state = '', action) => {
     switch (action.type) {
+        case 'USER_LOGIN_SUCCESS':
+            return !action.payload ?
+                'Wrong username or password!' :
+                null
         case 'USER_LOGIN_FAILURE':
             return action.payload.message
         case 'USER_LOGOUT_FAILURE':
