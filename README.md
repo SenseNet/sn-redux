@@ -60,7 +60,7 @@ Create your sensenet portal Repository to use. You can configure your Store to u
 
 ```ts
 import { Repository } from '@sensenet/client-core';
-import { Reducers, Store } from '@sensenet/redux;
+import { Reducers, Store } from '@sensenet/redux';
 import { combineReducers } from 'redux'
 
 const sensenet = Reducers.sensenet
