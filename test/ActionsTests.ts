@@ -1,3 +1,4 @@
+import { addGoogleAuth } from '@sensenet/authentication-google'
 import { JwtService } from '@sensenet/authentication-jwt'
 import { Repository } from '@sensenet/client-core'
 import { File as SNFile, Task, User } from '@sensenet/default-content-types'
@@ -5,9 +6,16 @@ import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import * as Chai from 'chai'
 import * as configureStore from 'redux-mock-store'
 import * as Actions from '../src/Actions'
+import { MockTokenFactory } from './MockTokenFactory'
 const expect = Chai.expect
 
 declare const global: any
+
+global.window = {
+    location: {
+        origin: '',
+    },
+}
 
 // tslint:disable:completed-docs
 
@@ -82,6 +90,28 @@ const jwtMockResponse = {
         return {
             access: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZW5zZW5ldC10b2tlbi1zZXJ2aWNlIiwic3ViIjoic2Vuc2VuZXQiLCJhdWQiOiJjbGllbnQiLCJleHAiOjE1MTk4MzM0MDQsImlhdCI6MTUxOTgzMzEwNCwibmJmIjoxNTE5ODMzMTA0LCJuYW1lIjoiUHVibGljXFxhbGJhQHNlbnNlbmV0LmNvbSIsImp0aSI6ImUyMTgyOGQxOWVlMjQwNDM4MTAzMTZhMjkwZjQ3YzkxIn0',
             refresh: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZW5zZW5ldC10b2tlbi1zZXJ2aWNlIiwic3ViIjoic2Vuc2VuZXQiLCJhdWQiOiJjbGllbnQiLCJleHAiOjE1MTk5MTk4MDQsImlhdCI6MTUxOTgzMzEwNCwibmJmIjoxNTE5ODMzNDA0LCJuYW1lIjoiUHVibGljXFxhbGJhQHNlbnNlbmV0LmNvbSIsImp0aSI6IjgzZDZmNzA0NjNmNTQ4YWZhN2U4ZDAxMmIyMGRiYzRiIn0',
+        }
+    },
+} as Response
+
+const googleMockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            access: MockTokenFactory.CreateValid().toString(),
+            refresh: MockTokenFactory.CreateValid().toString(),
+        }
+    },
+} as Response
+
+const googleFalseMockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => {
+        return {
+            access: MockTokenFactory.CreateNotValidYet().toString(),
+            refresh: MockTokenFactory.CreateNotValidYet().toString(),
         }
     },
 } as Response
@@ -598,11 +628,48 @@ describe('Actions', () => {
         })
     })
     describe('UserLoginGoogle', () => {
+        repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => googleMockResponse)
+        const jwt = new JwtService(repo)
+        const googleOauthProvider = addGoogleAuth(jwt, { clientId: '' })
         it('should create an action to a user login with google', () => {
-            const expectedAction = {
-                type: 'USER_LOGIN_GOOGLE',
-            }
-            expect(Actions.userLoginGoogle()).to.deep.equal(expectedAction)
+            expect(Actions.userLoginGoogle(googleOauthProvider).type).to.eql('USER_LOGIN_GOOGLE')
+        })
+        describe('serviceChecks()', () => {
+            context('Given provider.login() resolves', () => {
+                let data
+                beforeEach(async () => {
+                    data = await Actions.userLoginGoogle(googleOauthProvider, 'gasgsdagsdagd.dgsgfshdfhs').payload(repo)
+                })
+                it('should return a USER_LOGIN_GOOGLE action', () => {
+                    expect(Actions.userLoginGoogle(googleOauthProvider)).to.have.property(
+                        'type', 'USER_LOGIN_GOOGLE',
+                    )
+                })
+                it('should return mockdata', () => {
+                    // tslint:disable-next-line:no-unused-expression
+                    expect(data).to.be.true
+                })
+            })
+        })
+        describe('serviceChecks() false', () => {
+            context('Given provider.login() resolves', () => {
+                repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => googleFalseMockResponse)
+                const jwt2 = new JwtService(repo)
+                const googleOauthProvider2 = addGoogleAuth(jwt2, { clientId: '' })
+                let data
+                beforeEach(async () => {
+                    data = await Actions.userLoginGoogle(googleOauthProvider2, 'gasgsdagsdagd.dgsgfshdfhs').payload(repo)
+                })
+                it('should return a USER_LOGIN_GOOGLE action', () => {
+                    expect(Actions.userLoginGoogle(googleOauthProvider2)).to.have.property(
+                        'type', 'USER_LOGIN_GOOGLE',
+                    )
+                })
+                it('should return mockdata', () => {
+                    // tslint:disable-next-line:no-unused-expression
+                    expect(data).to.be.false
+                })
+            })
         })
     })
     describe('UserLogout', () => {
