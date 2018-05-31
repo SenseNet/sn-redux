@@ -182,10 +182,10 @@ dispatch(Actions.CreateContent(parentPath, content, 'Task'))
 ## Documentation
 
 * [sn-redux API Reference](https://community.sensenet.com/api/sn-redux/)
-* [sn-client-js API reference](https://community.sensenet.com/api/sn-client-js/)
+* [sn-client-core API reference](https://community.sensenet.com/api/@sensenet/client-core/)
 * [sn-redux-promise-middleware API reference](https://community.sensenet.com/api/sn-redux-promise-middleware/)
-* [About OData REST API in sensenet](http://wiki.sensenet.com/OData_REST_API)
-* [About Built-in OData Actions and Function in sensenet](http://wiki.sensenet.com/Built-in_OData_actions_and_functions)
+* [About OData REST API in sensenet](https://community.sensenet.com/docs/odata-rest-api/)
+* [About Built-in OData Actions and Function in sensenet](https://community.sensenet.com/docs/built-in-odata-actions-and-functions/)
 * [Todo App with React, Redux and sensenet](https://github.com/SenseNet/sn-react-redux-todo-app)
 
 ## Influences
