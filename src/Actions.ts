@@ -440,8 +440,12 @@ export const userLogin = (userName: string, password: string) => ({
  * Action creator for login a user to a sensenet portal with her google account.
  * @returns {Object} Returns a redux action.
  */
-export const userLoginGoogle = () => ({
+export const userLoginGoogle = (provider) => ({
     type: 'USER_LOGIN_GOOGLE',
+    async payload(repository: Repository) {
+        const response = await provider.login()
+        return response
+    },
 })
 /**
  * Action creator for logout a user from a sensenet portal.
