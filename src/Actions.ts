@@ -111,10 +111,11 @@
  */
 /**
  */
+import { GoogleOauthProvider } from '@sensenet/authentication-google'
 import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
-import { IActionModel } from '@sensenet/default-content-types'
+import { IActionModel, Schema } from '@sensenet/default-content-types'
 import { normalize } from 'normalizr'
 import * as Schemas from './Schema'
 
@@ -440,8 +441,12 @@ export const userLogin = (userName: string, password: string) => ({
  * Action creator for login a user to a sensenet portal with her google account.
  * @returns {Object} Returns a redux action.
  */
-export const userLoginGoogle = () => ({
+export const userLoginGoogle = (provider: GoogleOauthProvider, token?: string ) => ({
     type: 'USER_LOGIN_GOOGLE',
+    async payload(repository: Repository) {
+        const response = await provider.login(token)
+        return response
+    },
 })
 /**
  * Action creator for logout a user from a sensenet portal.
@@ -513,5 +518,26 @@ export const uploadRequest = <T extends IContent>(parentPath: string, file, cont
         })
         const content = await repository.load<T>({ idOrPath: data.Id })
         return content.d
+    },
+})
+/**
+ * Action creator for changing a field value of a content
+ * @param {string} name Name of the field.
+ * @param {any} value Value of the field.
+ */
+export const changeFieldValue = (name: string, value: any) => ({
+    type: 'CHANGE_FIELD_VALUE',
+    name,
+    value,
+})
+/**
+ * Action creator for loading schema of a given type
+ * @param {string} typeName Name of the Content Type.
+ */
+export const getSchema = (typeName: string) => ({
+    type: 'GET_SCHEMA',
+    payload(repository: Repository): Schema {
+        const data = repository.schemas.getSchemaByName(typeName)
+        return data
     },
 })

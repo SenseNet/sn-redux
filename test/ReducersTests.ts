@@ -29,13 +29,20 @@ describe('Reducers', () => {
             expect(Reducers.loginState(undefined, {})).to.be.deep.equal(LoginState.Pending)
         })
         it('should return that a user is logged-in', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS' })).to.be.deep.equal(LoginState.Authenticated)
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS', payload: true })).to.be.deep.equal(LoginState.Authenticated)
+        })
+        it('should return theres no authenticated user', () => {
+            console.log('aaa')
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS', payload: false })).to.be.deep.equal(LoginState.Unauthenticated)
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_SUCCESS' })).to.be.deep.equal(LoginState.Unauthenticated)
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
+        })
+        it('should return pending', () => {
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_LOADING' })).to.be.deep.equal(LoginState.Pending)
         })
         it('should return theres no authenticated user', () => {
             expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
@@ -54,6 +61,12 @@ describe('Reducers', () => {
     describe('loginError reducer', () => {
         it('should return the initial state', () => {
             expect(Reducers.loginError(undefined, {})).to.be.deep.equal(null)
+        })
+        it('should return null', () => {
+            expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_SUCCESS', payload: true })).to.be.deep.equal(null)
+        })
+        it('should return an error message', () => {
+            expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_SUCCESS', payload: false })).to.be.deep.equal('Wrong username or password!')
         })
         it('should return an error message', () => {
             expect(Reducers.loginError(undefined, { type: 'USER_LOGIN_FAILURE', payload: { message: 'error' } })).to.be.deep.equal('error')
@@ -137,23 +150,15 @@ describe('Reducers', () => {
                 .to.be.deep.equal([5145, 5146])
         })
         it('should handle CREATE_CONTENT_SUCCESS', () => {
-            expect(Reducers.ids([],
+            expect(Reducers.ids(
+                [1, 2, 3],
                 {
                     type: 'CREATE_CONTENT_SUCCESS',
                     payload: {
-                        entities: {
-                            collection: {
-                                123: {
-                                    DisplayName: 'My content',
-                                    Id: 123,
-                                },
-                            },
-                        },
-                        result: 123,
+                        Id: 4,
                     },
-                    filter: '?$select=Id,Type&metadata=no',
                 }))
-                .to.be.deep.equal([123])
+                .to.be.deep.equal([1, 2, 3, 4])
         })
         it('should handle DELETE_CONTENT_SUCCESS', () => {
             expect(Reducers.ids(
@@ -794,7 +799,7 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.fields(undefined, {})).to.deep.equal({})
         })
-        it('should return fields of the content', () => {
+        it('should return an empty object', () => {
 
             const content = {
                 Path: '/Root/Sites/Default_Site/tasks',
@@ -804,9 +809,32 @@ describe('Reducers', () => {
                 type: 'LOAD_CONTENT_SUCCESS',
                 payload: content,
             }
+            expect(Reducers.fields({}, action)).to.deep.equal({})
+        })
+        it('should return changed fields of the content', () => {
+
+            const action = {
+                type: 'CHANGE_FIELD_VALUE',
+                name: 'Name',
+                value: 'aaa',
+            }
             expect(Reducers.fields({}, action)).to.deep.equal({
-                Path: '/Root/Sites/Default_Site/tasks',
-                Status: 'active',
+                Name: 'aaa',
+            })
+        })
+    })
+    describe('schema reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.schema(undefined, {})).to.deep.equal({})
+        })
+        it('should return schema of the given content type', () => {
+
+            const action = {
+                type: 'GET_SCHEMA',
+                payload: { Icon: 'FormItem' },
+            }
+            expect(Reducers.schema({}, action)).to.deep.equal({
+                Icon: 'FormItem',
             })
         })
     })
@@ -1290,6 +1318,34 @@ describe('Reducers', () => {
                     Displayname: 'Other Article',
                     Status: ['Completed'],
                 },
+            })
+        })
+    })
+    describe('getFields', () => {
+        const state = {
+            currentcontent: {
+                fields: {
+                    Name: 'aaa',
+                },
+            },
+        }
+        it('should return the list of the fields that were changed', () => {
+            expect(Reducers.getFields(state)).to.be.deep.equal({
+                Name: 'aaa',
+            })
+        })
+    })
+    describe('getSchema', () => {
+        const state = {
+            currentcontent: {
+                schema: {
+                    Name: 'aaa',
+                },
+            },
+        }
+        it('should return the schema of the current content', () => {
+            expect(Reducers.getSchema(state)).to.be.deep.equal({
+                Name: 'aaa',
             })
         })
     })

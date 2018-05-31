@@ -30,7 +30,7 @@
  */
 import { Repository } from '@sensenet/client-core'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import { applyMiddleware, createStore, Store } from 'redux'
+import { applyMiddleware, compose, createStore, Middleware, Reducer, Store, StoreEnhancer } from 'redux'
 import { createLogger } from 'redux-logger'
 import * as Actions from './Actions'
 
@@ -67,37 +67,75 @@ import * as Actions from './Actions'
  * );
  * ```
  */
-
 /**
  * Defines config options for a sensenet Redux store.
  */
-export interface CreateStoreOptions {
-    rootReducer,
-    repository,
-    middlewares?,
-    persistedState?
+export interface CreateStoreOptions<T> {
+    /**
+     * The root reducer of the store
+     */
+    rootReducer: Reducer<T>,
+    /**
+     * Related repository object
+     */
+    repository: Repository,
+    /**
+     * Array of additional middlewares
+     */
+    middlewares?: Middleware[],
+    /**
+     * Initial state of the store
+     */
+    persistedState?: T,
+    /**
+     * Array of additional enhancers
+     */
+    enhancers?: Array<StoreEnhancer<any>>,
+    /**
+     * Switches redux logger on or off
+     */
+    logger?: boolean,
+    /**
+     * Switches redux developer tools on or off
+     */
+    devTools?: boolean,
 }
 /**
  * Method that configures a sensenet Redux store
  * @param options {CreateStoreOptions} An object to hold config options of the Store.
  * @returns store {Store} Returns a preconfigured Redux store.
  */
-export const createSensenetStore: (options: CreateStoreOptions) => Store<any> = (options: CreateStoreOptions) => {
+export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T> = <T>(options: CreateStoreOptions<T>) => {
     let middlewareArray = []
+    let enhancerArray: Array<StoreEnhancer<any>> = []
     if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
         // middlewareArray.push(epicMiddleware)
     } else {
         middlewareArray = [...options.middlewares]
     }
-    const loggerMiddleware = createLogger()
+    const loggerMiddleware = options.logger ? createLogger() : null
     const reduxPromiseMiddleware = promiseMiddleware(options.repository)
-    middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware)
+    loggerMiddleware ? middlewareArray.push(loggerMiddleware, reduxPromiseMiddleware) :
+        middlewareArray.push(reduxPromiseMiddleware)
 
-    const store = createStore(
+    if (typeof options.enhancers === 'undefined' || options.enhancers === null) {
+        // middlewareArray.push(epicMiddleware)
+    } else {
+        enhancerArray = [...options.enhancers]
+    }
+
+    // tslint:disable-next-line:no-string-literal
+    const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
+
+    const store = createStore<T>(
         options.rootReducer,
-        {},
-        applyMiddleware(...middlewareArray),
+        options.persistedState || {} as T,
+        composeEnhancers(
+            applyMiddleware(...middlewareArray),
+            ...enhancerArray,
+        ),
     )
+
     const repo: Repository = options.repository
     options.repository.authentication.currentUser.subscribe((user) => {
         store.dispatch(Actions.loadRepository(repo.configuration))

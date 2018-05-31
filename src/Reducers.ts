@@ -70,8 +70,12 @@ export const language = (state = 'en-US', action) => {
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
+        case 'USER_LOGIN_LOADING':
+            return LoginState.Pending
         case 'USER_LOGIN_SUCCESS':
-            return LoginState.Authenticated
+            return action.payload ?
+                LoginState.Authenticated :
+                LoginState.Unauthenticated
         case 'USER_LOGOUT_SUCCESS':
             return LoginState.Unauthenticated
         case 'USER_LOGIN_FAILURE':
@@ -92,6 +96,10 @@ export const loginState = (state = LoginState.Pending, action) => {
  */
 export const loginError = (state = '', action) => {
     switch (action.type) {
+        case 'USER_LOGIN_SUCCESS':
+            return !action.payload ?
+                'Wrong username or password!' :
+                null
         case 'USER_LOGIN_FAILURE':
             return action.payload.message
         case 'USER_LOGOUT_FAILURE':
@@ -207,7 +215,7 @@ export const ids = (state = [], action) => {
         case 'FETCH_CONTENT_SUCCESS':
             return action.payload.result
         case 'CREATE_CONTENT_SUCCESS':
-            return [...state, action.payload.result]
+            return [...state, action.payload.Id]
         case 'UPLOAD_CONTENT_SUCCESS':
             if (state.indexOf(action.payload.Id) === -1) {
                 return [...state, action.payload.Id]
@@ -609,7 +617,11 @@ export const contentactions = (state = {}, action) => {
 export const fields = (state = {}, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-            return action.payload
+            return {}
+        case 'CHANGE_FIELD_VALUE':
+            const f = state
+            f[action.name] = action.value
+            return f
         default:
             return state
     }
@@ -629,6 +641,20 @@ export const content = (state = {}, action) => {
     }
 }
 /**
+ * Reducer to contain schema of the current content
+ * @param {object} [state={}] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const schema = (state = {}, action) => {
+    switch (action.type) {
+        case 'GET_SCHEMA':
+            return action.payload
+        default:
+            return state
+    }
+}
+/**
  * Reducer combining contentState, error, actions, fields and content into a single object, ```currentcontent```.
  */
 const currentcontent = combineReducers({
@@ -637,6 +663,7 @@ const currentcontent = combineReducers({
     actions: contentactions,
     fields,
     content,
+    schema,
 })
 /**
  * Reducer to handle Actions on the selected array.
@@ -833,4 +860,20 @@ export const getCurrentContent = (state) => {
  */
 export const getChildren = (state) => {
     return state.entities
+}
+/**
+ * Method to get the list of current content's chanegd fields and their values.
+ * @param {object} state Current state object.
+ * @returns {object} Returns the list of the fields.
+ */
+export const getFields = (state) => {
+    return state.currentcontent.fields
+}
+/**
+ * Method to get the schema of current content.
+ * @param {object} state Current state object.
+ * @returns {object} Returns the schema object.
+ */
+export const getSchema = (state) => {
+    return state.currentcontent.schema
 }
