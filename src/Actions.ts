@@ -111,6 +111,7 @@
  */
 /**
  */
+import { GoogleOauthProvider } from '@sensenet/authentication-google'
 import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
@@ -440,10 +441,10 @@ export const userLogin = (userName: string, password: string) => ({
  * Action creator for login a user to a sensenet portal with her google account.
  * @returns {Object} Returns a redux action.
  */
-export const userLoginGoogle = (provider) => ({
+export const userLoginGoogle = (provider: GoogleOauthProvider, token?: string ) => ({
     type: 'USER_LOGIN_GOOGLE',
     async payload(repository: Repository) {
-        const response = await provider.login()
+        const response = await provider.login(token)
         return response
     },
 })
