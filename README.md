@@ -12,13 +12,17 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/SenseNet/sn-redux.svg)](https://greenkeeper.io/)
 
 sn-redux is a convention driven way of building sensenet applications using Redux. It contains all the action types, actions and reducers for [built-in sensenet Actions 
-and Functions](http://wiki.sensenet.com/Built-in_OData_actions_and_functions).
+and Functions](https://community.sensenet.com/docs/built-in-odata-actions-and-functions/).
 
 sn-redux gives you a standard set of:
 
 * action types: e.g. CREATE_CONTENT_SUCCESS
 * actions: e.g. updateContentSuccess, updateContentFailure
 * reducers: for the action types above e.g. updateContentSuccess
+
+> Tested with the following sensenet Services version: 
+> 
+> [![sensenet Services](https://img.shields.io/badge/sensenet-7.1.3%20tested-green.svg)](https://github.com/SenseNet/sensenet/releases/tag/v7.0.0)
 
 ## Installation on an existing sensenet portal
 
