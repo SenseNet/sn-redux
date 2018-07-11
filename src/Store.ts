@@ -137,8 +137,13 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     )
 
     const repo: Repository = options.repository
-    options.repository.authentication.currentUser.subscribe((user) => {
-        store.dispatch(Actions.loadRepository(repo.configuration))
+    store.dispatch(Actions.loadRepository(repo.configuration))
+
+    repo.authentication.state.subscribe((state) => {
+        store.dispatch(Actions.loginStateChanged(state))
+    })
+
+    repo.authentication.currentUser.subscribe((user) => {
         store.dispatch(Actions.userChanged(user))
     }, true)
     return store

@@ -112,7 +112,7 @@
 /**
  */
 import { GoogleOauthProvider } from '@sensenet/authentication-google'
-import { IContent, IODataResponse, Repository, Upload } from '@sensenet/client-core'
+import { IContent, IODataResponse, LoginState, Repository, Upload } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { IODataParams } from '@sensenet/client-core/dist/Models/IODataParams'
 import { IActionModel, Schema } from '@sensenet/default-content-types'
@@ -396,8 +396,9 @@ export const restoreVersion = <T extends IContent = IContent>(idOrPath: number |
  * Action creator for check user state in a sensenet application.
  * @returns {Object} Returns a redux action with the properties.
  */
-export const checkLoginState = () => ({
-    type: 'CHECK_LOGIN_STATE',
+export const loginStateChanged = (loginState: LoginState) => ({
+    type: 'USER_LOGIN_STATE_CHANGED',
+    loginState,
 })
 /**
  * Action creator for user changes.
@@ -441,7 +442,7 @@ export const userLogin = (userName: string, password: string) => ({
  * Action creator for login a user to a sensenet portal with her google account.
  * @returns {Object} Returns a redux action.
  */
-export const userLoginGoogle = (provider: GoogleOauthProvider, token?: string ) => ({
+export const userLoginGoogle = (provider: GoogleOauthProvider, token?: string) => ({
     type: 'USER_LOGIN_GOOGLE',
     async payload(repository: Repository) {
         const response = await provider.login(token)

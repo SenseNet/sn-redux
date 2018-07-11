@@ -70,23 +70,10 @@ export const language = (state = 'en-US', action) => {
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
-        case 'USER_LOGIN_LOADING':
-            return LoginState.Pending
-        case 'USER_LOGIN_SUCCESS':
-            return action.payload ?
-                LoginState.Authenticated :
-                LoginState.Unauthenticated
-        case 'USER_LOGOUT_SUCCESS':
-            return LoginState.Unauthenticated
-        case 'USER_LOGIN_FAILURE':
-            return LoginState.Unauthenticated
-        case 'USER_LOGOUT_FAILURE':
-            return LoginState.Unauthenticated
-        case 'USER_CHANGED':
-            return !action.user || action.user.Name === 'Visitor' ? LoginState.Unauthenticated : LoginState.Authenticated
-        default:
-            return state
+        case 'USER_LOGIN_STATE_CHANGED':
+            return action.loginState
     }
+    return state
 }
 /**
  * Reducer to handle Actions on the loginError property in the session object.
