@@ -30,7 +30,7 @@
  */
 import { Repository } from '@sensenet/client-core'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import { applyMiddleware, compose, createStore, Middleware, Reducer, Store, StoreEnhancer } from 'redux'
+import { AnyAction, applyMiddleware, compose, createStore, Middleware, Reducer, Store, StoreEnhancer } from 'redux'
 import { createLogger } from 'redux-logger'
 import * as Actions from './Actions'
 
@@ -127,9 +127,9 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     // tslint:disable-next-line:no-string-literal
     const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
 
-    const store = createStore<T>(
+    const store = createStore<T, AnyAction, Partial<T>, Partial<T>>(
         options.rootReducer,
-        options.persistedState || {} as T,
+        options.persistedState || {},
         composeEnhancers(
             applyMiddleware(...middlewareArray),
             ...enhancerArray,
@@ -137,8 +137,13 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     )
 
     const repo: Repository = options.repository
-    options.repository.authentication.currentUser.subscribe((user) => {
-        store.dispatch(Actions.loadRepository(repo.configuration))
+    store.dispatch(Actions.loadRepository(repo.configuration))
+
+    repo.authentication.state.subscribe((state) => {
+        store.dispatch(Actions.loginStateChanged(state))
+    })
+
+    repo.authentication.currentUser.subscribe((user) => {
         store.dispatch(Actions.userChanged(user))
     }, true)
     return store

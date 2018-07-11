@@ -5,7 +5,7 @@
 /**
  */
 
-import { ConstantContent, IContent, LoginState } from '@sensenet/client-core'
+import { ConstantContent, IContent, LoginState, Repository } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { combineReducers, Reducer } from 'redux'
 
@@ -21,17 +21,7 @@ export interface SelectStateType {
  */
 export interface BatchResponseStateType {
     response: IODataBatchResponse<IContent>,
-    error: object,
-}
-/**
- * Interface to define state type for sensenet Reducer.
- */
-export interface SensenetStateType {
-    session: object,
-    children: object,
-    currentcontent: object,
-    selected: SelectStateType,
-    batchResponses: BatchResponseStateType,
+    error: any,
 }
 
 /**
@@ -70,23 +60,10 @@ export const language = (state = 'en-US', action) => {
  */
 export const loginState = (state = LoginState.Pending, action) => {
     switch (action.type) {
-        case 'USER_LOGIN_LOADING':
-            return LoginState.Pending
-        case 'USER_LOGIN_SUCCESS':
-            return action.payload ?
-                LoginState.Authenticated :
-                LoginState.Unauthenticated
-        case 'USER_LOGOUT_SUCCESS':
-            return LoginState.Unauthenticated
-        case 'USER_LOGIN_FAILURE':
-            return LoginState.Unauthenticated
-        case 'USER_LOGOUT_FAILURE':
-            return LoginState.Unauthenticated
-        case 'USER_CHANGED':
-            return !action.user || action.user.Name === 'Visitor' ? LoginState.Unauthenticated : LoginState.Authenticated
-        default:
-            return state
+        case 'USER_LOGIN_STATE_CHANGED':
+            return action.loginState
     }
+    return state
 }
 /**
  * Reducer to handle Actions on the loginError property in the session object.
@@ -185,7 +162,7 @@ const user = combineReducers({
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
-export const repository = (state = null, action) => {
+export const repository = (state = null, action: { type: string, repository: Repository }) => {
     switch (action.type) {
         case 'LOAD_REPOSITORY':
             return action.repository
@@ -748,14 +725,15 @@ export const batchResponseError = (state = '', action) => {
 /**
  * Reducer combining response and error into a single object, ```batchResponses```.
  */
-const batchResponses = combineReducers<BatchResponseStateType>({
+const batchResponses: Reducer<BatchResponseStateType> = combineReducers<BatchResponseStateType>({
     response: odataBatchResponse,
     error: batchResponseError,
 })
+
 /**
  * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
  */
-export const sensenet: Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
+export const sensenet = combineReducers({
     session,
     children,
     currentcontent,

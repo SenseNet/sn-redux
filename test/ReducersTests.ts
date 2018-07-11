@@ -1,5 +1,5 @@
 import { LoginState, Repository } from '@sensenet/client-core'
-import { Status, Task, User } from '@sensenet/default-content-types'
+import { Status, Task } from '@sensenet/default-content-types'
 import * as Chai from 'chai'
 import * as Reducers from '../src/Reducers'
 const expect = Chai.expect
@@ -28,33 +28,8 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.loginState(undefined, {})).to.be.deep.equal(LoginState.Pending)
         })
-        it('should return that a user is logged-in', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS', payload: true })).to.be.deep.equal(LoginState.Authenticated)
-        })
-        it('should return theres no authenticated user', () => {
-            console.log('aaa')
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_SUCCESS', payload: false })).to.be.deep.equal(LoginState.Unauthenticated)
-        })
-        it('should return theres no authenticated user', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_SUCCESS' })).to.be.deep.equal(LoginState.Unauthenticated)
-        })
-        it('should return theres no authenticated user', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
-        })
-        it('should return pending', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_LOADING' })).to.be.deep.equal(LoginState.Pending)
-        })
-        it('should return theres no authenticated user', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_LOGOUT_FAILURE' })).to.be.deep.equal(LoginState.Unauthenticated)
-        })
-        it('should return the state by the current users name', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_CHANGED' })).to.be.deep.equal(LoginState.Unauthenticated)
-        })
-        it('should return the state by the current users name', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_CHANGED', user: { Name: 'Visitor' } as User })).to.be.deep.equal(LoginState.Unauthenticated)
-        })
-        it('should return the state by the current users name', () => {
-            expect(Reducers.loginState(undefined, { type: 'USER_CHANGED', user: { Name: 'alba' } as User })).to.be.deep.equal(LoginState.Authenticated)
+        it('should return the new state', () => {
+            expect(Reducers.loginState(undefined, { type: 'USER_LOGIN_STATE_CHANGED', loginState: LoginState.Authenticated })).to.be.deep.equal(LoginState.Authenticated)
         })
     })
 
@@ -1139,11 +1114,11 @@ describe('Reducers', () => {
     describe('repository reducer', () => {
         const repository = new Repository({}, async () => ({ ok: true } as any))
         it('should return the initial state', () => {
-            expect(Reducers.repository(undefined, {})).to.be.deep.equal(null)
+            expect(Reducers.repository(undefined, {} as any)).to.be.deep.equal(null)
         })
         it('should return the repository config', () => {
 
-            expect(Reducers.repository(null, { type: 'LOAD_REPOSITORY', repository: repository.configuration })).to.be.deep.equal(repository.configuration)
+            expect(Reducers.repository(null, { type: 'LOAD_REPOSITORY', repository: repository.configuration as any })).to.be.deep.equal(repository.configuration)
         })
     })
 
