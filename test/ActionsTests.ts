@@ -1,6 +1,6 @@
 import { addGoogleAuth } from '@sensenet/authentication-google'
 import { JwtService } from '@sensenet/authentication-jwt'
-import { Repository } from '@sensenet/client-core'
+import { LoginState, Repository } from '@sensenet/client-core'
 import { File as SNFile, Task, User } from '@sensenet/default-content-types'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import * as Chai from 'chai'
@@ -586,12 +586,13 @@ describe('Actions', () => {
             })
         })
     })
-    describe('CheckLoginState', () => {
+    describe('loginStateChanged', () => {
         it('should return the current authentication state', () => {
             const expectedAction = {
-                type: 'CHECK_LOGIN_STATE',
+                type: 'USER_LOGIN_STATE_CHANGED',
+                loginState: LoginState.Unauthenticated,
             }
-            expect(Actions.checkLoginState()).to.deep.equal(expectedAction)
+            expect(Actions.loginStateChanged(LoginState.Unauthenticated)).to.deep.equal(expectedAction)
         })
     })
     describe('UserChanged', () => {
