@@ -1114,11 +1114,11 @@ describe('Reducers', () => {
     describe('repository reducer', () => {
         const repository = new Repository({}, async () => ({ ok: true } as any))
         it('should return the initial state', () => {
-            expect(Reducers.repository(undefined, {})).to.be.deep.equal(null)
+            expect(Reducers.repository(undefined, {} as any)).to.be.deep.equal(null)
         })
         it('should return the repository config', () => {
 
-            expect(Reducers.repository(null, { type: 'LOAD_REPOSITORY', repository: repository.configuration })).to.be.deep.equal(repository.configuration)
+            expect(Reducers.repository(null, { type: 'LOAD_REPOSITORY', repository: repository.configuration as any })).to.be.deep.equal(repository.configuration)
         })
     })
 

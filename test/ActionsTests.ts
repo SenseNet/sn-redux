@@ -1,13 +1,11 @@
-import { addGoogleAuth } from '@sensenet/authentication-google'
+import { GoogleOauthProvider } from '@sensenet/authentication-google'
 import { JwtService } from '@sensenet/authentication-jwt'
 import { LoginState, Repository } from '@sensenet/client-core'
 import { File as SNFile, Task, User } from '@sensenet/default-content-types'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import * as Chai from 'chai'
-import * as configureStore from 'redux-mock-store'
+import { expect } from 'chai'
+import configureStore from 'redux-mock-store'
 import * as Actions from '../src/Actions'
-import { MockTokenFactory } from './MockTokenFactory'
-const expect = Chai.expect
 
 declare const global: any
 
@@ -90,28 +88,6 @@ const jwtMockResponse = {
         return {
             access: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZW5zZW5ldC10b2tlbi1zZXJ2aWNlIiwic3ViIjoic2Vuc2VuZXQiLCJhdWQiOiJjbGllbnQiLCJleHAiOjE1MTk4MzM0MDQsImlhdCI6MTUxOTgzMzEwNCwibmJmIjoxNTE5ODMzMTA0LCJuYW1lIjoiUHVibGljXFxhbGJhQHNlbnNlbmV0LmNvbSIsImp0aSI6ImUyMTgyOGQxOWVlMjQwNDM4MTAzMTZhMjkwZjQ3YzkxIn0',
             refresh: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZW5zZW5ldC10b2tlbi1zZXJ2aWNlIiwic3ViIjoic2Vuc2VuZXQiLCJhdWQiOiJjbGllbnQiLCJleHAiOjE1MTk5MTk4MDQsImlhdCI6MTUxOTgzMzEwNCwibmJmIjoxNTE5ODMzNDA0LCJuYW1lIjoiUHVibGljXFxhbGJhQHNlbnNlbmV0LmNvbSIsImp0aSI6IjgzZDZmNzA0NjNmNTQ4YWZhN2U4ZDAxMmIyMGRiYzRiIn0',
-        }
-    },
-} as Response
-
-const googleMockResponse = {
-    ok: true,
-    status: 200,
-    json: async () => {
-        return {
-            access: MockTokenFactory.CreateValid().toString(),
-            refresh: MockTokenFactory.CreateValid().toString(),
-        }
-    },
-} as Response
-
-const googleFalseMockResponse = {
-    ok: true,
-    status: 200,
-    json: async () => {
-        return {
-            access: MockTokenFactory.CreateNotValidYet().toString(),
-            refresh: MockTokenFactory.CreateNotValidYet().toString(),
         }
     },
 } as Response
@@ -629,15 +605,15 @@ describe('Actions', () => {
         })
     })
     describe('UserLoginGoogle', () => {
-        repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => googleMockResponse)
-        const jwt = new JwtService(repo)
-        const googleOauthProvider = addGoogleAuth(jwt, { clientId: '' })
+        const googleOauthProvider = {
+            login: async () => true,
+        } as GoogleOauthProvider
         it('should create an action to a user login with google', () => {
             expect(Actions.userLoginGoogle(googleOauthProvider).type).to.eql('USER_LOGIN_GOOGLE')
         })
         describe('serviceChecks()', () => {
-            context('Given provider.login() resolves', () => {
-                let data
+            context('Given provider.login() resolves', async () => {
+                let data: boolean
                 beforeEach(async () => {
                     data = await Actions.userLoginGoogle(googleOauthProvider, 'gasgsdagsdagd.dgsgfshdfhs').payload(repo)
                 })
@@ -654,9 +630,9 @@ describe('Actions', () => {
         })
         describe('serviceChecks() false', () => {
             context('Given provider.login() resolves', () => {
-                repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => googleFalseMockResponse)
-                const jwt2 = new JwtService(repo)
-                const googleOauthProvider2 = addGoogleAuth(jwt2, { clientId: '' })
+                const googleOauthProvider2 = {
+                    login: async () => false,
+                } as GoogleOauthProvider
                 let data
                 beforeEach(async () => {
                     data = await Actions.userLoginGoogle(googleOauthProvider2, 'gasgsdagsdagd.dgsgfshdfhs').payload(repo)

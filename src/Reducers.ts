@@ -5,7 +5,7 @@
 /**
  */
 
-import { ConstantContent, IContent, LoginState } from '@sensenet/client-core'
+import { ConstantContent, IContent, LoginState, Repository } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { combineReducers, Reducer } from 'redux'
 
@@ -21,17 +21,7 @@ export interface SelectStateType {
  */
 export interface BatchResponseStateType {
     response: IODataBatchResponse<IContent>,
-    error: object,
-}
-/**
- * Interface to define state type for sensenet Reducer.
- */
-export interface SensenetStateType {
-    session: object,
-    children: object,
-    currentcontent: object,
-    selected: SelectStateType,
-    batchResponses: BatchResponseStateType,
+    error: any,
 }
 
 /**
@@ -172,7 +162,7 @@ const user = combineReducers({
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
-export const repository = (state = null, action) => {
+export const repository = (state = null, action: { type: string, repository: Repository }) => {
     switch (action.type) {
         case 'LOAD_REPOSITORY':
             return action.repository
@@ -735,14 +725,15 @@ export const batchResponseError = (state = '', action) => {
 /**
  * Reducer combining response and error into a single object, ```batchResponses```.
  */
-const batchResponses = combineReducers<BatchResponseStateType>({
+const batchResponses: Reducer<BatchResponseStateType> = combineReducers<BatchResponseStateType>({
     response: odataBatchResponse,
     error: batchResponseError,
 })
+
 /**
  * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
  */
-export const sensenet: Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
+export const sensenet = combineReducers({
     session,
     children,
     currentcontent,
