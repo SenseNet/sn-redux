@@ -542,3 +542,11 @@ export const getSchema = (typeName: string) => ({
         return data
     },
 })
+/**
+ * Action creator for setting the default select, expandm etc. options
+ * @param {string} typeName Name of the Content Type.
+ */
+export const setDefaultOdataOptions = (options: IODataParams<GenericContent> & { scenario: string } = { scenario: ''}) => ({
+    type: 'SET_DEFAULT_ODATAOPTIONS',
+    options,
+})

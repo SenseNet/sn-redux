@@ -372,6 +372,12 @@ export const top = (state = {}, action) => {
             } else {
                 return state
             }
+        case 'SET_DEFAULT_ODATAOPTIONS':
+            if (action.options.top) {
+                return action.options.top
+            } else {
+                return state
+            }
         default:
             return state
     }
@@ -385,6 +391,12 @@ export const top = (state = {}, action) => {
 export const skip = (state = {}, action) => {
     switch (action.type) {
         case 'FETCH_CONTENT':
+            if (action.options.skip) {
+                return action.options.skip
+            } else {
+                return state
+            }
+        case 'SET_DEFAULT_ODATAOPTIONS':
             if (action.options.skip) {
                 return action.options.skip
             } else {
@@ -408,6 +420,12 @@ export const query = (state = {}, action) => {
             } else {
                 return state
             }
+        case 'SET_DEFAULT_ODATAOPTIONS':
+            if (action.options.query) {
+                return action.options.query
+            } else {
+                return state
+            }
         default:
             return state
     }
@@ -421,6 +439,12 @@ export const query = (state = {}, action) => {
 export const order = (state = {}, action) => {
     switch (action.type) {
         case 'FETCH_CONTENT':
+            if (action.options.orderby) {
+                return action.options.orderby
+            } else {
+                return state
+            }
+        case 'SET_DEFAULT_ODATAOPTIONS':
             if (action.options.orderby) {
                 return action.options.orderby
             } else {
@@ -444,6 +468,12 @@ export const filter = (state = {}, action) => {
             } else {
                 return state
             }
+        case 'SET_DEFAULT_ODATAOPTIONS':
+            if (action.options.filter) {
+                return action.options.filter
+            } else {
+                return state
+            }
         default:
             return state
     }
@@ -457,6 +487,12 @@ export const filter = (state = {}, action) => {
 export const select = (state = {}, action) => {
     switch (action.type) {
         case 'FETCH_CONTENT':
+            if (action.options.select) {
+                return action.options.select
+            } else {
+                return state
+            }
+        case 'SET_DEFAULT_ODATAOPTIONS':
             if (action.options.select) {
                 return action.options.select
             } else {
@@ -494,6 +530,12 @@ export const expand = (state = [], action) => {
             } else {
                 return state
             }
+        case 'SET_DEFAULT_ODATAOPTIONS':
+            if (action.options.expand) {
+                return action.options.expand
+            } else {
+                return state
+            }
         default:
             return state
     }
@@ -507,6 +549,12 @@ export const expand = (state = [], action) => {
 export const scenario = (state = '', action) => {
     switch (action.type) {
         case 'FETCH_CONTENT':
+            if (action.options.scenario) {
+                return action.options.scenario
+            } else {
+                return state
+            }
+        case 'SET_DEFAULT_ODATAOPTIONS':
             if (action.options.scenario) {
                 return action.options.scenario
             } else {
