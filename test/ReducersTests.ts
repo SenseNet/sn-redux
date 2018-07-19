@@ -572,11 +572,33 @@ describe('Reducers', () => {
         it('should return the initial state', () => {
             expect(Reducers.select(undefined, {})).to.be.deep.equal({})
         })
-        it('should return "isOf(Task)"', () => {
+        it('should return "all"', () => {
             expect(Reducers.select(undefined, { type: 'FETCH_CONTENT', options: { select: 'all' } })).to.be.eq('all')
         })
         it('should return initial state', () => {
             expect(Reducers.select(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
+        })
+    })
+    describe('expand reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.expand(undefined, {})).to.be.deep.equal([])
+        })
+        it('should return an array of strings', () => {
+            expect(Reducers.expand(undefined, { type: 'FETCH_CONTENT', options: { expand: ['Owner'] } })).to.be.deep.eq(['Owner'])
+        })
+        it('should return initial state', () => {
+            expect(Reducers.expand(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal([])
+        })
+    })
+    describe('scenario reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.scenario(undefined, {})).to.be.deep.equal('')
+        })
+        it('should return "DocLib"', () => {
+            expect(Reducers.scenario(undefined, { type: 'FETCH_CONTENT', options: { scenario: 'DocLib' } })).to.be.eq('DocLib')
+        })
+        it('should return initial state', () => {
+            expect(Reducers.scenario(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal('')
         })
     })
     describe('isOpened reducer', () => {
