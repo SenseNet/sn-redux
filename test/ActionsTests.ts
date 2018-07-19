@@ -102,7 +102,7 @@ describe('Actions', () => {
             repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => collectionMockResponse)
         })
         describe('Action types are types', () => {
-            expect(Actions.requestContent(path, {}).type).to.eql('FETCH_CONTENT')
+            expect(Actions.requestContent(path, { scenario: '' }).type).to.eql('FETCH_CONTENT')
         })
 
         describe('serviceChecks()', () => {
@@ -110,11 +110,11 @@ describe('Actions', () => {
                 let data
                 let dataWithoutOptions
                 beforeEach(async () => {
-                    data = await Actions.requestContent(path, {}).payload(repo)
+                    data = await Actions.requestContent(path, { scenario: '' }).payload(repo)
                     dataWithoutOptions = await Actions.requestContent(path).payload(repo)
                 })
                 it('should return a FETCH_CONTENT action', () => {
-                    expect(Actions.requestContent(path, {})).to.have.property(
+                    expect(Actions.requestContent(path, { scenario: '' })).to.have.property(
                         'type', 'FETCH_CONTENT',
                     )
                 })
