@@ -523,6 +523,12 @@ describe('Reducers', () => {
         it('should return initial state', () => {
             expect(Reducers.top(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
         })
+        it('should return initial state', () => {
+            expect(Reducers.top(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal({})
+        })
+        it('should return 10', () => {
+            expect(Reducers.top(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { top: 10 } })).to.be.eq(10)
+        })
     })
     describe('skip reducer', () => {
         it('should return the initial state', () => {
@@ -533,6 +539,12 @@ describe('Reducers', () => {
         })
         it('should return initial state', () => {
             expect(Reducers.skip(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
+        })
+        it('should return initial state', () => {
+            expect(Reducers.skip(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal({})
+        })
+        it('should return 10', () => {
+            expect(Reducers.skip(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { skip: 10 } })).to.be.eq(10)
         })
     })
     describe('query reducer', () => {
@@ -545,6 +557,12 @@ describe('Reducers', () => {
         it('should return initial state', () => {
             expect(Reducers.query(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
         })
+        it('should return initial state', () => {
+            expect(Reducers.query(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal({})
+        })
+        it('should return "DisplayName:aaa"', () => {
+            expect(Reducers.query(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { query: 'DisplayName:aaa' } })).to.be.eq('DisplayName:aaa')
+        })
     })
     describe('order reducer', () => {
         it('should return the initial state', () => {
@@ -555,6 +573,12 @@ describe('Reducers', () => {
         })
         it('should return initial state', () => {
             expect(Reducers.order(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
+        })
+        it('should return initial state', () => {
+            expect(Reducers.order(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal({})
+        })
+        it('should return "DisplayName desc"', () => {
+            expect(Reducers.order(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { orderby: 'DisplayName desc' } })).to.be.eq('DisplayName desc')
         })
     })
     describe('filter reducer', () => {
@@ -567,6 +591,12 @@ describe('Reducers', () => {
         it('should return initial state', () => {
             expect(Reducers.filter(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
         })
+        it('should return initial state', () => {
+            expect(Reducers.filter(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal({})
+        })
+        it('should return "isOf(Task)"', () => {
+            expect(Reducers.filter(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { filter: 'isOf(Task)' } })).to.be.eq('isOf(Task)')
+        })
     })
     describe('select reducer', () => {
         it('should return the initial state', () => {
@@ -577,6 +607,12 @@ describe('Reducers', () => {
         })
         it('should return initial state', () => {
             expect(Reducers.select(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal({})
+        })
+        it('should return initial state', () => {
+            expect(Reducers.select(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal({})
+        })
+        it('should return "all"', () => {
+            expect(Reducers.select(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { select: 'all' } })).to.be.eq('all')
         })
     })
     describe('expand reducer', () => {
@@ -589,6 +625,12 @@ describe('Reducers', () => {
         it('should return initial state', () => {
             expect(Reducers.expand(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal([])
         })
+        it('should return initial state', () => {
+            expect(Reducers.expand(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal([])
+        })
+        it('should return an array of strings', () => {
+            expect(Reducers.expand(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { expand: ['Owner'] } })).to.be.deep.eq(['Owner'])
+        })
     })
     describe('scenario reducer', () => {
         it('should return the initial state', () => {
@@ -599,6 +641,12 @@ describe('Reducers', () => {
         })
         it('should return initial state', () => {
             expect(Reducers.scenario(undefined, { type: 'FETCH_CONTENT', options: {} })).to.be.deep.equal('')
+        })
+        it('should return initial state', () => {
+            expect(Reducers.scenario(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: {} })).to.be.deep.equal('')
+        })
+        it('should return "DocLib"', () => {
+            expect(Reducers.scenario(undefined, { type: 'SET_DEFAULT_ODATAOPTIONS', options: { scenario: 'DocLib' } })).to.be.eq('DocLib')
         })
     })
     describe('isOpened reducer', () => {

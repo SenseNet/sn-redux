@@ -752,4 +752,15 @@ describe('Actions', () => {
             expect(data).to.deep.equal(repo.schemas.getSchemaByName('Task'))
         })
     })
+    describe('setDefaultOdataOptions', () => {
+        it('should return SET_DEFAULT_ODATAOPTIONS action', () => {
+            const expectedAction = {
+                type: 'SET_DEFAULT_ODATAOPTIONS',
+                options: {
+                    scenario: '',
+                },
+            }
+            expect(Actions.setDefaultOdataOptions()).to.deep.equal(expectedAction)
+        })
+    })
 })
