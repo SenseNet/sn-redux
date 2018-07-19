@@ -5,9 +5,10 @@
 /**
  */
 
-import { ConstantContent, IContent, LoginState, Repository } from '@sensenet/client-core'
+import { ConstantContent, IContent, LoginState } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
-import { IActionModel, User } from '@sensenet/default-content-types'
+import { RepositoryConfiguration } from '@sensenet/client-core/dist/Repository/RepositoryConfiguration'
+import { GenericContent, IActionModel, Schema } from '@sensenet/default-content-types'
 import { combineReducers, Reducer } from 'redux'
 
 /**
@@ -32,8 +33,8 @@ export interface SessionStateType {
     language: string,
     loginState: LoginState,
     error: string,
-    user: User,
-    repository: Repository,
+    user: UserStateType,
+    repository: RepositoryConfiguration,
 }
 /**
  * Interface to define state type for children Reducer.
@@ -60,7 +61,45 @@ export interface OdataOptions {
     scenario: string,
     expand: string[],
 }
-
+/**
+ * Interface to define state type for sensenet Reducer.
+ */
+export interface SensenetStateType {
+    session: SessionStateType,
+    children: ChildrenStateType,
+    currentcontent: CurrentContentStateType,
+    selected: SelectStateType,
+    batchResponses: BatchResponseStateType,
+}
+/**
+ * Interface to define state type for user Reducer.
+ */
+export interface UserStateType {
+    userName: string,
+    fullName: string,
+    userLanguage: string,
+    userAvatarPath: string,
+}
+/**
+ * Interface to define state type for contentState Reducer.
+ */
+export interface ContentStateType {
+    isSaved: boolean,
+    isValid: boolean,
+    isDirty: boolean,
+    isOperationInProgress: boolean,
+}
+/**
+ * Interface to define state type for currentcontent Reducer.
+ */
+export interface CurrentContentStateType {
+    contentState: ContentStateType,
+    error: string,
+    actions: IActionModel[],
+    fields: object,
+    content: GenericContent,
+    schema: Schema,
+}
 /**
  * Reducer to handle Actions on the country property in the session object.
  * @param {object} [state=''] Represents the current state.
@@ -187,7 +226,7 @@ export const userAvatarPath = (state = '', action) => {
 /**
  * Reducer combining userName, fullName, userLanguage, userAvatarPath into a single object, ```user```.
  */
-const user = combineReducers({
+const user: Reducer<UserStateType> = combineReducers<UserStateType>({
     userName,
     fullName,
     userLanguage,
@@ -642,7 +681,7 @@ export const isOperationInProgress = (state = false, action) => {
 /**
  * Reducer combining isSaved, isValid, isDirty and isOperationInProgress into a single object, ```contentState```.
  */
-const contentState = combineReducers({
+const contentState: Reducer<ContentStateType> = combineReducers<ContentStateType>({
     isSaved,
     isValid,
     isDirty,
@@ -760,7 +799,7 @@ export const schema = (state = {}, action) => {
 /**
  * Reducer combining contentState, error, actions, fields and content into a single object, ```currentcontent```.
  */
-const currentcontent = combineReducers({
+const currentcontent: Reducer<CurrentContentStateType> = combineReducers<CurrentContentStateType>({
     contentState,
     error: contenterror,
     actions: contentactions,
@@ -859,7 +898,7 @@ const batchResponses: Reducer<BatchResponseStateType> = combineReducers<BatchRes
 /**
  * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
  */
-export const sensenet = combineReducers({
+export const sensenet: Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
     session,
     children,
     currentcontent,
