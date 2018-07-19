@@ -44,13 +44,21 @@ export interface ChildrenStateType {
     isFetching: boolean,
     actions: IActionModel[],
     error: string,
+    isOpened: boolean,
+    options: OdataOptions,
+}
+/**
+ * Interface to define state type for options Reducer.
+ */
+export interface OdataOptions {
     top: number,
     skip: number,
     query: string,
     order: string[],
     filter: string,
     select: string[],
-    isOpened: boolean,
+    scenario: string,
+    expand: string[],
 }
 
 /**
@@ -473,6 +481,52 @@ export const isOpened = (state = null, action) => {
     }
 }
 /**
+ * Reducer to handle Actions on the expand property in the children object.
+ * @param {object} [state=[]] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const expand = (state = [], action) => {
+    switch (action.type) {
+        case 'FETCH_CONTENT':
+            if (action.options && action.options.expand) {
+                return action.options.expand
+            } else {
+                return state
+            }
+        default:
+            return state
+    }
+}
+/**
+ * Reducer to handle Actions on the scenario property in the children object.
+ * @param {object} [state=''] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const scenario = (state = '', action) => {
+    switch (action.type) {
+        case 'FETCH_CONTENT':
+            if (action.options.scenario) {
+                return action.options.scenario
+            } else {
+                return state
+            }
+        default:
+            return state
+    }
+}
+const odataOptions: Reducer<OdataOptions> = combineReducers<OdataOptions>({
+    top,
+    skip,
+    query,
+    order,
+    filter,
+    select,
+    expand,
+    scenario,
+})
+/**
  * Reducer combining ids, entities, isFetching, actions, error, top, skip, query, order, filter, select and isOpened into a single object, ```children```.
  */
 const children: Reducer<ChildrenStateType> = combineReducers<ChildrenStateType>({
@@ -481,13 +535,8 @@ const children: Reducer<ChildrenStateType> = combineReducers<ChildrenStateType>(
     isFetching,
     actions: childrenactions,
     error: childrenerror,
-    top,
-    skip,
-    query,
-    order,
-    filter,
-    select,
     isOpened,
+    options: odataOptions,
 })
 /**
  * Reducer to handle Actions on the isSaved property in the contentState object.
