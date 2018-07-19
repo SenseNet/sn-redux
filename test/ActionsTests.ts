@@ -2,9 +2,7 @@ import { GoogleOauthProvider } from '@sensenet/authentication-google'
 import { JwtService } from '@sensenet/authentication-jwt'
 import { LoginState, Repository } from '@sensenet/client-core'
 import { File as SNFile, Task, User } from '@sensenet/default-content-types'
-import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
 import { expect } from 'chai'
-import configureStore from 'redux-mock-store'
 import * as Actions from '../src/Actions'
 
 declare const global: any
@@ -95,18 +93,13 @@ const jwtMockResponse = {
 describe('Actions', () => {
     const path = '/workspaces/project'
     // tslint:disable-next-line:variable-name
-    let _store
     let repo
     beforeEach(() => {
         repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => contentMockResponse)
-        const mockStore = configureStore([promiseMiddleware(repo)])
-        _store = mockStore({})
     })
     describe('FetchContent', () => {
         beforeEach(() => {
             repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => collectionMockResponse)
-            const mockStore = configureStore([promiseMiddleware(repo)])
-            _store = mockStore({})
         })
         describe('Action types are types', () => {
             expect(Actions.requestContent(path, {}).type).to.eql('FETCH_CONTENT')
@@ -165,8 +158,6 @@ describe('Actions', () => {
     describe('LoadContentActions', () => {
         beforeEach(() => {
             repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => actionsMockResponse)
-            const mockStore = configureStore([promiseMiddleware(repo)])
-            _store = mockStore({})
         })
         describe('Action types are types', () => {
             expect(Actions.loadContentActions(path).type).to.eql('LOAD_CONTENT_ACTIONS')
@@ -713,8 +704,6 @@ describe('Actions', () => {
         beforeEach(() => {
             repo = new Repository({}, async (...args: any[]) => ({ ok: 'true', json: async () => (uploadResponse.json()), text: async () => '' } as any))
             repo.load = () => contentMockResponse.json()
-            const mockStore = configureStore([promiseMiddleware(repo)])
-            _store = mockStore({})
         })
         describe('Action types are types', () => {
             expect(Actions.uploadRequest('Root/Example', { size: 65535000, slice: (...args: any[]) => '' } as any as SNFile, 'Binary').type).to.eql('UPLOAD_CONTENT')
@@ -754,8 +743,6 @@ describe('Actions', () => {
     describe('getSchema', () => {
         beforeEach(() => {
             repo = new Repository({ repositoryUrl: 'https://dmsservice.demo.sensenet.com/' }, async () => contentMockResponse)
-            const mockStore = configureStore([promiseMiddleware(repo)])
-            _store = mockStore({})
         })
         describe('Action types are types', () => {
             expect(Actions.getSchema('Task').type).to.eql('GET_SCHEMA')
