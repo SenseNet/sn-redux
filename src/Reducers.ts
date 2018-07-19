@@ -7,6 +7,7 @@
 
 import { ConstantContent, IContent, LoginState, Repository } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
+import { IActionModel, User } from '@sensenet/default-content-types'
 import { combineReducers, Reducer } from 'redux'
 
 /**
@@ -22,6 +23,34 @@ export interface SelectStateType {
 export interface BatchResponseStateType {
     response: IODataBatchResponse<IContent>,
     error: any,
+}
+/**
+ * Interface to define state type for session Reducer.
+ */
+export interface SessionStateType {
+    country: string,
+    language: string,
+    loginState: LoginState,
+    error: string,
+    user: User,
+    repository: Repository,
+}
+/**
+ * Interface to define state type for children Reducer.
+ */
+export interface ChildrenStateType {
+    ids: number[],
+    entities: object,
+    isFetching: boolean,
+    actions: IActionModel[],
+    error: string,
+    top: number,
+    skip: number,
+    query: string,
+    order: string[],
+    filter: string,
+    select: string[],
+    isOpened: boolean,
 }
 
 /**
@@ -162,7 +191,7 @@ const user = combineReducers({
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
-export const repository = (state = null, action: { type: string, repository: Repository }) => {
+export const repository = (state = null, action: any) => {
     switch (action.type) {
         case 'LOAD_REPOSITORY':
             return action.repository
@@ -173,7 +202,7 @@ export const repository = (state = null, action: { type: string, repository: Rep
 /**
  * Reducer combining country, language, loginState, error, user and repository into a single object, ```session```.
  */
-const session = combineReducers({
+const session: Reducer<SessionStateType> = combineReducers<SessionStateType>({
     country,
     language,
     loginState,
@@ -446,7 +475,7 @@ export const isOpened = (state = null, action) => {
 /**
  * Reducer combining ids, entities, isFetching, actions, error, top, skip, query, order, filter, select and isOpened into a single object, ```children```.
  */
-const children = combineReducers({
+const children: Reducer<ChildrenStateType> = combineReducers<ChildrenStateType>({
     ids,
     entities,
     isFetching,
