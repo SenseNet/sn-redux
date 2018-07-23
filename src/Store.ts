@@ -127,9 +127,9 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     // tslint:disable-next-line:no-string-literal
     const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
 
-    const store = createStore<T>(
+    const store = createStore(
         options.rootReducer,
-        options.persistedState || {} as T,
+        options.persistedState || {},
         composeEnhancers(
             applyMiddleware(...middlewareArray),
             ...enhancerArray,
