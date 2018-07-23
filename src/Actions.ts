@@ -547,6 +547,6 @@ export const getSchema = (typeName: string) => ({
  * @param {string} typeName Name of the Content Type.
  */
 export const setDefaultOdataOptions = (options: IODataParams<GenericContent> & { scenario: string } = { scenario: ''}) => ({
-    type: 'SET_DEFAULT_ODATAOPTIONS',
+    type: 'SET_ODATAOPTIONS',
     options,
 })

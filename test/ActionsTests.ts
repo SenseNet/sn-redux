@@ -753,9 +753,9 @@ describe('Actions', () => {
         })
     })
     describe('setDefaultOdataOptions', () => {
-        it('should return SET_DEFAULT_ODATAOPTIONS action', () => {
+        it('should return SET_ODATAOPTIONS action', () => {
             const expectedAction = {
-                type: 'SET_DEFAULT_ODATAOPTIONS',
+                type: 'SET_ODATAOPTIONS',
                 options: {
                     scenario: '',
                 },
