@@ -5,7 +5,7 @@
 /**
  */
 
-import { ConstantContent, IContent, IODataParams, LoginState, ODataFormatType, ODataInlineCountType, ODataMetadataType } from '@sensenet/client-core'
+import { ConstantContent, IContent, IODataCollectionResponse, IODataParams, LoginState, ODataFormatType, ODataInlineCountType, ODataMetadataType } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { RepositoryConfiguration } from '@sensenet/client-core/dist/Repository/RepositoryConfiguration'
 import { GenericContent, IActionModel, Schema } from '@sensenet/default-content-types'
@@ -39,9 +39,9 @@ export interface SessionStateType {
 /**
  * Interface to define state type for currentitems Reducer.
  */
-export interface ChildrenStateType {
+export interface ChildrenStateType<T = GenericContent> {
     ids: number[],
-    entities: object,
+    entities: IODataCollectionResponse<T>,
     isFetching: boolean,
     actions: IActionModel[],
     error: string,
@@ -407,12 +407,9 @@ export const childrenactions = (state = [], action) => {
  * @returns {object} state. Returns the next state based on the action.
  */
 export const top = (state = {}, action) => {
-    console.log('aaa')
-    console.log(action)
     switch (action.type) {
         case 'SET_ODATAOPTIONS':
             if (action.options.top) {
-                console.log(action.options.top)
                 return action.options.top
             } else {
                 return state
