@@ -5,7 +5,7 @@
 /**
  */
 
-import { ConstantContent, IContent, LoginState } from '@sensenet/client-core'
+import { ConstantContent, IContent, IODataParams, LoginState, ODataFormatType, ODataInlineCountType, ODataMetadataType } from '@sensenet/client-core'
 import { IODataBatchResponse } from '@sensenet/client-core/dist/Models/IODataBatchResponse'
 import { RepositoryConfiguration } from '@sensenet/client-core/dist/Repository/RepositoryConfiguration'
 import { GenericContent, IActionModel, Schema } from '@sensenet/default-content-types'
@@ -37,7 +37,7 @@ export interface SessionStateType {
     repository: RepositoryConfiguration,
 }
 /**
- * Interface to define state type for children Reducer.
+ * Interface to define state type for currentitems Reducer.
  */
 export interface ChildrenStateType {
     ids: number[],
@@ -46,7 +46,7 @@ export interface ChildrenStateType {
     actions: IActionModel[],
     error: string,
     isOpened: boolean,
-    options: OdataOptions,
+    options: IODataParams<GenericContent> & { scenario: string },
 }
 /**
  * Interface to define state type for options Reducer.
@@ -57,16 +57,19 @@ export interface OdataOptions {
     query: string,
     order: string[],
     filter: string,
-    select: string[],
+    select: string[] | string | 'all',
     scenario: string,
     expand: string[],
+    metadata: ODataMetadataType,
+    format: ODataFormatType,
+    inlinecount: ODataInlineCountType,
 }
 /**
  * Interface to define state type for sensenet Reducer.
  */
 export interface SensenetStateType {
     session: SessionStateType,
-    children: ChildrenStateType,
+    currentitems: ChildrenStateType,
     currentcontent: CurrentContentStateType,
     selected: SelectStateType,
     batchResponses: BatchResponseStateType,
@@ -258,7 +261,7 @@ const session: Reducer<SessionStateType> = combineReducers<SessionStateType>({
     repository,
 })
 /**
- * Reducer to handle Actions on the ids array in the children object.
+ * Reducer to handle Actions on the ids array in the currentitems object.
  * @param {number[]} [state=[]] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
@@ -294,7 +297,7 @@ export const ids = (state = [], action) => {
     }
 }
 /**
- * Reducer to handle Actions on the entities object in the children object.
+ * Reducer to handle Actions on the entities object in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
@@ -339,7 +342,7 @@ export const entities = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the isFetching property in the children object.
+ * Reducer to handle Actions on the isFetching property in the currentitems object.
  * @param {boolean} [state=false] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
@@ -357,7 +360,7 @@ export const isFetching = (state = false, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the childrenerror property in the children object.
+ * Reducer to handle Actions on the childrenerror property in the currentitems object.
  * @param {object} [state=null] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
@@ -384,7 +387,7 @@ export const childrenerror = (state = null, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the chidlrenactions object in the children object.
+ * Reducer to handle Actions on the chidlrenactions object in the currentitems object.
  * @param {any[]} [state=[]] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
@@ -398,21 +401,18 @@ export const childrenactions = (state = [], action) => {
     }
 }
 /**
- * Reducer to handle Actions on the top property in the children object.
+ * Reducer to handle Actions on the top property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const top = (state = {}, action) => {
+    console.log('aaa')
+    console.log(action)
     switch (action.type) {
-        case 'FETCH_CONTENT':
+        case 'SET_ODATAOPTIONS':
             if (action.options.top) {
-                return action.options.top
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
-            if (action.options.top) {
+                console.log(action.options.top)
                 return action.options.top
             } else {
                 return state
@@ -422,20 +422,14 @@ export const top = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the skip property in the children object.
+ * Reducer to handle Actions on the skip property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const skip = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options.skip) {
-                return action.options.skip
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.skip) {
                 return action.options.skip
             } else {
@@ -446,20 +440,14 @@ export const skip = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the query property in the children object.
+ * Reducer to handle Actions on the query property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const query = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options.query) {
-                return action.options.query
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.query) {
                 return action.options.query
             } else {
@@ -470,20 +458,14 @@ export const query = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the order property in the children object.
+ * Reducer to handle Actions on the order property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const order = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options.orderby) {
-                return action.options.orderby
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.orderby) {
                 return action.options.orderby
             } else {
@@ -494,20 +476,14 @@ export const order = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the filter property in the children object.
+ * Reducer to handle Actions on the filter property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const filter = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options.filter) {
-                return action.options.filter
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.filter) {
                 return action.options.filter
             } else {
@@ -518,20 +494,14 @@ export const filter = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the select property in the children object.
+ * Reducer to handle Actions on the select property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const select = (state = {}, action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options.select) {
-                return action.options.select
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.select) {
                 return action.options.select
             } else {
@@ -542,7 +512,7 @@ export const select = (state = {}, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the isOpened property in the children object.
+ * Reducer to handle Actions on the isOpened property in the currentitems object.
  * @param {object} [state={}] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
@@ -556,20 +526,14 @@ export const isOpened = (state = null, action) => {
     }
 }
 /**
- * Reducer to handle Actions on the expand property in the children object.
+ * Reducer to handle Actions on the expand property in the currentitems object.
  * @param {object} [state=[]] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const expand = (state = [], action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options && action.options.expand) {
-                return action.options.expand
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.expand) {
                 return action.options.expand
             } else {
@@ -580,20 +544,14 @@ export const expand = (state = [], action) => {
     }
 }
 /**
- * Reducer to handle Actions on the scenario property in the children object.
+ * Reducer to handle Actions on the scenario property in the currentitems object.
  * @param {object} [state=''] Represents the current state.
  * @param {object} action Represents an action that is called.
  * @returns {object} state. Returns the next state based on the action.
  */
 export const scenario = (state = '', action) => {
     switch (action.type) {
-        case 'FETCH_CONTENT':
-            if (action.options.scenario) {
-                return action.options.scenario
-            } else {
-                return state
-            }
-        case 'SET_DEFAULT_ODATAOPTIONS':
+        case 'SET_ODATAOPTIONS':
             if (action.options.scenario) {
                 return action.options.scenario
             } else {
@@ -603,6 +561,61 @@ export const scenario = (state = '', action) => {
             return state
     }
 }
+/**
+ * Reducer to handle Actions on the metadata property in the currentitems object.
+ * @param {object} [state='no'] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const metadata = (state = 'no', action) => {
+    switch (action.type) {
+        case 'SET_ODATAOPTIONS':
+            if (action.options.metadata) {
+                return action.options.metadata
+            } else {
+                return state
+            }
+        default:
+            return state
+    }
+}
+/**
+ * Reducer to handle Actions on the format property in the currentitems object.
+ * @param {object} [state=null] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const format = (state = null, action) => {
+    switch (action.type) {
+        case 'SET_ODATAOPTIONS':
+            if (action.options.format) {
+                return action.options.format
+            } else {
+                return state
+            }
+        default:
+            return state
+    }
+}
+/**
+ * Reducer to handle Actions on the inlinecount property in the currentitems object.
+ * @param {object} [state=null] Represents the current state.
+ * @param {object} action Represents an action that is called.
+ * @returns {object} state. Returns the next state based on the action.
+ */
+export const inlinecount = (state = null, action) => {
+    switch (action.type) {
+        case 'SET_ODATAOPTIONS':
+            if (action.options.inlinecount) {
+                return action.options.inlinecount
+            } else {
+                return state
+            }
+        default:
+            return state
+    }
+}
+
 const odataOptions: Reducer<OdataOptions> = combineReducers<OdataOptions>({
     top,
     skip,
@@ -612,11 +625,14 @@ const odataOptions: Reducer<OdataOptions> = combineReducers<OdataOptions>({
     select,
     expand,
     scenario,
+    metadata,
+    format,
+    inlinecount,
 })
 /**
- * Reducer combining ids, entities, isFetching, actions, error, top, skip, query, order, filter, select and isOpened into a single object, ```children```.
+ * Reducer combining ids, entities, isFetching, actions, error, top, skip, query, order, filter, select and isOpened into a single object, ```currentitems```.
  */
-const children: Reducer<ChildrenStateType> = combineReducers<ChildrenStateType>({
+const currentitems: Reducer<ChildrenStateType> = combineReducers<ChildrenStateType>({
     ids,
     entities,
     isFetching,
@@ -896,12 +912,12 @@ const batchResponses: Reducer<BatchResponseStateType> = combineReducers<BatchRes
 })
 
 /**
- * Reducer combining session, children, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
+ * Reducer combining session, currentitems, currentcontent and selected into a single object, ```sensenet``` which will be the top-level one.
  */
 export const sensenet: Reducer<SensenetStateType> = combineReducers<SensenetStateType>({
     session,
-    children,
     currentcontent,
+    currentitems,
     selected,
     batchResponses,
 })
@@ -981,7 +997,7 @@ export const getOpenedContent = (state) => {
     return state.isOpened
 }
 /**
- * Method to get the list of actions of the children items.
+ * Method to get the list of actions of the currentitems items.
  * @param {object} state Current state object.
  * @returns {any[]} Returns the list of actions.
  */
@@ -997,7 +1013,7 @@ export const getCurrentContent = (state) => {
     return state.currentcontent.content
 }
 /**
- * Method to get the children items.
+ * Method to get the currentitems items.
  * @param {object} state Current state object.
  * @returns {object} Returns the content items as an object.
  */
