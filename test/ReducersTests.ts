@@ -1,7 +1,7 @@
 import { IODataCollectionResponse, IODataParams, LoginState, Repository } from '@sensenet/client-core'
 import { GenericContent, IActionModel, Status, Task, Workspace } from '@sensenet/default-content-types'
 import * as Chai from 'chai'
-import * as Reducers from '../src/Reducers'
+import * as Reducers from '../src/reducers'
 const expect = Chai.expect
 
 const defaultAction = {
@@ -957,7 +957,7 @@ describe('Reducers', () => {
             expect(Reducers.contentactions(undefined, defaultAction)).to.deep.equal([])
         })
         it('should return an array with actions', () => {
-            expect(Reducers.contentactions(null, action)).to.deep.equal([{ Name: 'aaa' }, { Name: 'bbb' }])
+            expect(Reducers.contentactions(undefined, action)).to.deep.equal([{ Name: 'aaa' }, { Name: 'bbb' }])
         })
     })
     describe('fields reducer', () => {
@@ -1275,7 +1275,7 @@ describe('Reducers', () => {
     })
     describe('options reducer', () => {
         it('should return the initial state', () => {
-            expect(Reducers.options(undefined, defaultAction)).to.deep.equal({})
+            expect(Reducers.options(undefined, defaultAction)).to.equal(null)
         })
         it('should return the given option object', () => {
             const options = {
@@ -1319,7 +1319,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the content from the state by the given id', () => {
-            expect(Reducers.getContent(state.entities.collection, 5145)).to.be.deep.eq(
+            expect(Reducers.getContent(state.entities.collection as any, 5145)).to.be.deep.eq(
                 {
                     Id: 5145,
                     DisplayName: 'Some Article',
@@ -1377,7 +1377,7 @@ describe('Reducers', () => {
             },
         }
         it('should return true if the user is authenticated state', () => {
-            expect(Reducers.getAuthenticationStatus(state)).to.be.eq(LoginState.Authenticated)
+            expect(Reducers.getAuthenticationStatus(state as any)).to.be.eq(LoginState.Authenticated)
         })
     })
 
@@ -1388,7 +1388,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the value of errorMessage from the current state', () => {
-            expect(Reducers.getAuthenticationError(state)).to.be.eq('error')
+            expect(Reducers.getAuthenticationError(state as any)).to.be.eq('error')
         })
     })
     describe('getRepositoryUrl', () => {
@@ -1400,7 +1400,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the value of RepositoryUrl from the current state', () => {
-            expect(Reducers.getRepositoryUrl(state)).to.be.eq('https://dmsservice.demo.sensenet.com')
+            expect(Reducers.getRepositoryUrl(state as any)).to.be.eq('https://dmsservice.demo.sensenet.com')
         })
     })
     describe('getSelectedContentIds', () => {
@@ -1420,7 +1420,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the value of the selected reducers current state, an array with two items', () => {
-            expect(Reducers.getSelectedContentIds(state)).to.be.deep.equal([1, 2])
+            expect(Reducers.getSelectedContentIds(state as any)).to.be.deep.equal([1, 2])
         })
     })
     describe('getSelectedContentItems', () => {
@@ -1440,7 +1440,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the value of the selected reducers current state, an array with two items', () => {
-            expect(Reducers.getSelectedContentItems(state)).to.be.deep.equal({
+            expect(Reducers.getSelectedContentItems(state as any)).to.be.deep.equal({
                 1: {
                     DisplaName: 'aaa',
                     Id: 1,
@@ -1457,7 +1457,7 @@ describe('Reducers', () => {
             isOpened: 1,
         }
         it('should return 1 as the opened items id', () => {
-            expect(Reducers.getOpenedContent(state)).to.be.eq(1)
+            expect(Reducers.getOpenedContent(state as any)).to.be.eq(1)
         })
     })
     describe('getChildrenActions', () => {
@@ -1469,7 +1469,7 @@ describe('Reducers', () => {
             ],
         }
         it('should return 1 as the opened items id', () => {
-            expect(Reducers.getChildrenActions(state)).to.be.deep.equal([{ ActionName: 'Rename' }])
+            expect(Reducers.getChildrenActions(state as any)).to.be.deep.equal([{ ActionName: 'Rename' }])
         })
     })
     describe('getCurrentContent', () => {
@@ -1481,7 +1481,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the content', () => {
-            expect(Reducers.getCurrentContent(state)).to.be.deep.equal({ DisplayName: 'my content' })
+            expect(Reducers.getCurrentContent(state as any)).to.be.deep.equal({ DisplayName: 'my content' })
         })
     })
     describe('getChildren', () => {
@@ -1500,7 +1500,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the currentitems object', () => {
-            expect(Reducers.getChildren(state)).to.be.deep.equal({
+            expect(Reducers.getChildren(state as any)).to.be.deep.equal({
                 5145: {
                     Id: 5145,
                     DisplayName: 'Some Article',
@@ -1523,7 +1523,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the list of the fields that were changed', () => {
-            expect(Reducers.getFields(state)).to.be.deep.equal({
+            expect(Reducers.getFields(state as any)).to.be.deep.equal({
                 Name: 'aaa',
             })
         })
@@ -1537,7 +1537,7 @@ describe('Reducers', () => {
             },
         }
         it('should return the schema of the current content', () => {
-            expect(Reducers.getSchema(state)).to.be.deep.equal({
+            expect(Reducers.getSchema(state as any)).to.be.deep.equal({
                 Name: 'aaa',
             })
         })

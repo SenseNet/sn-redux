@@ -1,0 +1,43 @@
+import { IODataBatchResponse } from '@sensenet/client-core'
+import { GenericContent } from '@sensenet/default-content-types'
+import { combineReducers, Reducer } from 'redux'
+
+/**
+ * Reducer to handle Actions on the OdataBatchResponse object.
+ * @param state Represents the current state.
+ * @param action Represents an action that is called.
+ * @returns state. Returns the next state based on the action.
+ */
+export const odataBatchResponse: Reducer<IODataBatchResponse<GenericContent> | null> = (state = null, action) => {
+    switch (action.type) {
+        case 'DELETE_BATCH_SUCCESS':
+        case 'COPY_BATCH_SUCCESS':
+        case 'MOVE_BATCH_SUCCESS':
+            return action.payload
+        default:
+            return { ...state }
+    }
+}
+/**
+ * Reducer to handle Actions on the batchResponseError object.
+ * @param  state Represents the current state.
+ * @param  action Represents an action that is called.
+ * @returns  state. Returns the next state based on the action.
+ */
+export const batchResponseError: Reducer<string> = (state = '', action) => {
+    switch (action.type) {
+        case 'DELETE_BATCH_FAILURE':
+        case 'COPY_BATCH_FAILURE':
+        case 'MOVE_BATCH_FAILURE':
+            return action.payload.message
+        default:
+            return state
+    }
+}
+/**
+ * Reducer combining response and error into a single object, ```batchResponses```.
+ */
+export const batchResponses = combineReducers({
+    response: odataBatchResponse,
+    error: batchResponseError,
+})
