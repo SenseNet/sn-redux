@@ -1,5 +1,5 @@
 import { IODataCollectionResponse, IODataParams, LoginState, Repository } from '@sensenet/client-core'
-import { GenericContent, IActionModel, Status, Task } from '@sensenet/default-content-types'
+import { GenericContent, IActionModel, Status, Task, Workspace } from '@sensenet/default-content-types'
 import * as Chai from 'chai'
 import * as Reducers from '../src/Reducers'
 const expect = Chai.expect
@@ -1283,6 +1283,22 @@ describe('Reducers', () => {
                 skip: 0,
             } as IODataParams<GenericContent>
             expect(Reducers.options(undefined, { type: 'SET_ODATAOPTIONS', options })).to.deep.equal({ top: 0, skip: 0 })
+        })
+    })
+    describe('currentworkspace reducer', () => {
+        it('should return the initial state', () => {
+            expect(Reducers.currentworkspace(undefined, defaultAction)).to.deep.equal(null)
+        })
+        it('should return the given Workspace object', () => {
+            expect(Reducers.currentworkspace(undefined, {
+                type: 'LOAD_CONTENT_SUCCESS', payload: {
+                    d: {
+                        Workspace: {
+                            Id: 1,
+                        } as Workspace,
+                    },
+                },
+            })).to.deep.equal({ Id: 1 })
         })
     })
     describe('getContent', () => {
