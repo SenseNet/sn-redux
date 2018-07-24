@@ -226,7 +226,7 @@ describe('Reducers', () => {
 
     describe('entities reducer', () => {
         it('should return the initial state', () => {
-            expect(Reducers.entities(undefined, defaultAction)).to.be.deep.equal(undefined)
+            expect(Reducers.entities(undefined, defaultAction)).to.be.deep.equal(null)
         })
         it('should return a new state with the given response', () => {
             expect(Reducers.entities(undefined, { type: '', payload: { entities: { entities: { a: 0, b: 2 } } } }))
@@ -617,7 +617,7 @@ describe('Reducers', () => {
                         errors: [],
                     },
                 },
-            })).to.be.deep.equal(undefined)
+            })).to.be.deep.equal(null)
         })
     })
 
@@ -990,7 +990,7 @@ describe('Reducers', () => {
     })
     describe('schema reducer', () => {
         it('should return the initial state', () => {
-            expect(Reducers.schema(undefined, defaultAction)).to.deep.equal(undefined)
+            expect(Reducers.schema(undefined, defaultAction)).to.deep.equal(null)
         })
         it('should return schema of the given content type', () => {
 
