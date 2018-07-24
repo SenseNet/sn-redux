@@ -146,15 +146,15 @@ export const loadContent = <T extends GenericContent = GenericContent>(idOrPath:
     type: 'LOAD_CONTENT',
     // tslint:disable:completed-docs
     async payload(repository: Repository): Promise<IODataResponse<T>> {
-        const o = options
+        const o = {} as  IODataParams<T>
         switch (typeof options.expand) {
-            case undefined:
+            case 'undefined':
                 o.expand = 'Workspace'
             case 'string':
                 if (options.expand === 'Workspace') {
                     o.expand = 'Workspace'
                 } else {
-                    o.expand = [...options.expand as string[], 'Workspace'] as ODataFieldParameter<T>
+                    o.expand = [options.expand, 'Workspace'] as ODataFieldParameter<T>
                 }
             default:
                 options.expand !== undefined ? o.expand = [...options.expand as string[], 'Workspace'] as ODataFieldParameter<GenericContent> : o.expand = ['Workspace']
