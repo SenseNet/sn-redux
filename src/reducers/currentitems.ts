@@ -11,7 +11,7 @@ import { combineReducers, Reducer } from 'redux'
 export const ids: Reducer<number[]> = (state = [], action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_SUCCESS':
-            return action.payload.result
+            return (action.payload as GenericContent[]).map((content) => content.Id)
         case 'CREATE_CONTENT_SUCCESS':
             return [...state, action.payload.Id]
         case 'UPLOAD_CONTENT_SUCCESS':

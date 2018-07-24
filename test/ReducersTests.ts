@@ -108,23 +108,16 @@ describe('Reducers', () => {
             expect(Reducers.ids([],
                 {
                     type: 'FETCH_CONTENT_SUCCESS',
-                    payload: {
-                        result: [5145, 5146],
-                        entities: {
-                            collection: {
-                                5145: {
-                                    Id: 5145,
-                                    DisplayName: 'Some Article',
-                                    Status: ['Active'],
-                                },
-                                5146: {
-                                    Id: 5146,
-                                    Displayname: 'Other Article',
-                                    Status: ['Completed'],
-                                },
-                            },
-                        },
+                    payload: [{
+                        Id: 5145,
+                        DisplayName: 'Some Article',
+                        Status: ['Active'],
+                    }, {
+                        Id: 5146,
+                        Displayname: 'Other Article',
+                        Status: ['Completed'],
                     },
+                    ],
                     filter: '?$select=Id,Type&metadata=no',
                 }))
                 .to.be.deep.equal([5145, 5146])
