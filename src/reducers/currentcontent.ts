@@ -1,5 +1,4 @@
-import { IContent } from '@sensenet/client-core'
-import { IActionModel, Schema } from '@sensenet/default-content-types'
+import { GenericContent, IActionModel, Schema } from '@sensenet/default-content-types'
 import { combineReducers, Reducer } from 'redux'
 import { contentState } from './contentstate'
 
@@ -90,7 +89,7 @@ export const fields: Reducer<{}> = (state = {}, action) => {
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const content: Reducer<IContent | null> = (state = null, action) => {
+export const content: Reducer<GenericContent | null> = (state = null, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
             return action.payload.d
