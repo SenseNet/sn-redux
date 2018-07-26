@@ -1,4 +1,4 @@
-import { IContent, IODataCollectionResponse, IODataParams } from '@sensenet/client-core'
+import { IContent, IODataParams } from '@sensenet/client-core'
 import { GenericContent, IActionModel } from '@sensenet/default-content-types'
 import { combineReducers, Reducer } from 'redux'
 
@@ -44,23 +44,23 @@ export const ids: Reducer<number[]> = (state = [], action) => {
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const entities: Reducer<IODataCollectionResponse<GenericContent> | null> = (state = null, action) => {
-    if (action.payload && (
-        action.type !== 'USER_LOGIN_FAILURE' &&
-        action.type !== 'USER_LOGIN_BUFFER' &&
-        action.type !== 'LOAD_CONTENT_SUCCESS' &&
-        action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
-        action.type !== 'UPDATE_CONTENT_SUCCESS' &&
-        action.type !== 'UPLOAD_CONTENT_SUCCESS' &&
-        action.type !== 'DELETE_BATCH_SUCCESS' &&
-        action.type !== 'COPY_CONTENT_SUCCESS' &&
-        action.type !== 'COPY_BATCH_SUCCESS' &&
-        action.type !== 'MOVE_CONTENT_SUCCESS' &&
-        action.type !== 'MOVE_BATCH_SUCCESS')) {
-        if (action.payload.entities !== undefined && action.payload.entities.entities !== undefined) {
-            return (Object as any).assign({}, state, action.payload.entities.entities)
-        }
-    }
+export const entities: Reducer<GenericContent[]> = (state = [], action) => {
+    // if (action.payload && (
+    //     action.type !== 'USER_LOGIN_FAILURE' &&
+    //     action.type !== 'USER_LOGIN_BUFFER' &&
+    //     action.type !== 'LOAD_CONTENT_SUCCESS' &&
+    //     action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
+    //     action.type !== 'UPDATE_CONTENT_SUCCESS' &&
+    //     action.type !== 'UPLOAD_CONTENT_SUCCESS' &&
+    //     action.type !== 'DELETE_BATCH_SUCCESS' &&
+    //     action.type !== 'COPY_CONTENT_SUCCESS' &&
+    //     action.type !== 'COPY_BATCH_SUCCESS' &&
+    //     action.type !== 'MOVE_CONTENT_SUCCESS' &&
+    //     action.type !== 'MOVE_BATCH_SUCCESS')) {
+    //     if (action.payload.entities !== undefined && action.payload.entities.entities !== undefined) {
+    //         return (Object as any).assign({}, state, action.payload.entities.entities)
+    //     }
+    // }
     switch (action.type) {
         case 'DELETE_CONTENT_SUCCESS':
         case 'DELETE_BATCH_SUCCESS':
@@ -68,47 +68,26 @@ export const entities: Reducer<IODataCollectionResponse<GenericContent> | null> 
             const deletedIds = (action.payload.d.results as IContent[]).map((item) => {
                 return item.Id
             })
-            return {
-                ...state,
-                d: {
-                    ...state && state.d,
-                    ...{
-                        __count: state && state.d.__count - action.payload.d.results.length,
-                        results: state && state.d.results.filter((item) => deletedIds.indexOf(item.Id) === -1),
-                    },
-                },
-            }
+            return [...state.filter((item) => deletedIds.indexOf(item.Id) === -1)]
         case 'UPDATE_CONTENT_SUCCESS':
-            return {
-                ...state,
-                d: {
-                    ...state && state.d,
-                    ...{
-                        results: state && state.d.results.map((c) => {
-                            if (c.Id === action.payload.Id) {
-                                return action.payload
-                            }
-                            return c
-                        }),
-                    },
-                },
-            }
+            return [
+                state.map((c) => {
+                    if (c.Id === action.payload.Id) {
+                        return action.payload
+                    }
+                    return c
+                })]
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPLOAD_CONTENT_SUCCESS':
+            return [state.find((item) => item.Id === action.payload.Id) !== undefined ? state.map((c) => {
+                if (c.Id === action.payload.Id) {
+                    return action.payload
+                }
+                return c
+            }) : [action.payload, ...state]]
+        case 'FETCH_CONTENT_SUCCESS':
             return {
-                ...state,
-                d: {
-                    ...(state && state.d),
-                    ...{
-                        __count: state && state.d.results.find((item) => item.Id === action.payload.Id) !== undefined ? state.d.__count : state && state.d.__count + 1,
-                        results: state && state.d.results.find((item) => item.Id === action.payload.Id) !== undefined ? state.d.results.map((c) => {
-                            if (c.Id === action.payload.Id) {
-                                return action.payload
-                            }
-                            return c
-                        }) : [action.payload, ...(state && state.d && state.d.results as GenericContent[] || [])],
-                    },
-                },
+                ...action.payload,
             }
         default:
             return state

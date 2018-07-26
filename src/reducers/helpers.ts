@@ -1,5 +1,4 @@
-import { IODataBatchResponse, LoginState } from '@sensenet/client-core'
-import { GenericContent } from '@sensenet/default-content-types'
+import { LoginState } from '@sensenet/client-core'
 import { currentitems } from './currentitems'
 import { sensenet } from './sensenet'
 
@@ -99,8 +98,8 @@ export const getCurrentContent = (state: ReturnType<typeof sensenet>) => {
  * @param state Current state object.
  * @returns Returns the content items as an object.
  */
-export const getChildren = <T extends GenericContent = GenericContent>(state: ReturnType<typeof currentitems>) => {
-    return state.entities as IODataBatchResponse<T>
+export const getChildren = (state: ReturnType<typeof currentitems>) => {
+    return state.entities
 }
 /**
  * Method to get the list of current content's chanegd fields and their values.
