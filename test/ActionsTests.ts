@@ -227,7 +227,7 @@ describe('Actions', () => {
 
         describe('serviceChecks()', () => {
             context('Given repository.post() resolves', () => {
-                let data: IODataResponse<IContent>
+                let data: Task
                 const expectedResult = { d: { Name: 'DefaultSite' } }
                 beforeEach(async () => {
                     data = await Actions.createContent(path, content, 'Task').payload(repo)

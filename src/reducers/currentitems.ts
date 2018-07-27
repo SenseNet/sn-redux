@@ -1,6 +1,8 @@
-import { IContent, IODataParams } from '@sensenet/client-core'
+import { IODataParams } from '@sensenet/client-core'
 import { GenericContent, IActionModel } from '@sensenet/default-content-types'
+import { PromiseMiddlewareFailedAction, PromiseMiddlewareSucceededAction } from '@sensenet/redux-promise-middleware'
 import { combineReducers, Reducer } from 'redux'
+import { createContent, deleteContent, moveBatch, PromiseReturns, requestContent, updateContent, uploadRequest } from '../Actions'
 
 /**
  * Reducer to handle Actions on the ids array in the currentitems object.
@@ -8,27 +10,28 @@ import { combineReducers, Reducer } from 'redux'
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const ids: Reducer<number[]> = (state = [], action) => {
+export const ids: Reducer<number[], PromiseMiddlewareSucceededAction<any>> = (state = [], action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_SUCCESS':
-            return (action.payload as GenericContent[]).map((content) => content.Id)
+            return (action.result as PromiseReturns<typeof requestContent>).map((content) => content.Id)
         case 'CREATE_CONTENT_SUCCESS':
-            return [...state, action.payload.Id]
+            return [...state, action.result.Id]
         case 'UPLOAD_CONTENT_SUCCESS':
-            if (state.indexOf(action.payload.Id) === -1) {
-                return [...state, action.payload.Id]
+            if (state.indexOf(action.result.Id) === -1) {
+                return [...state, action.result.Id]
             } else {
                 return state
             }
         case 'DELETE_CONTENT_SUCCESS':
-            return [...state.slice(0, action.index), ...state.slice(action.index + 1)]
+            const deletedIds = (action.result as PromiseReturns<typeof deleteContent>).d.results.map((d) => d.Id)
+            return [...state.filter((id) => !deletedIds.includes(id))]
         case 'DELETE_BATCH_SUCCESS':
         case 'MOVE_BATCH_SUCCESS':
-            if (action.payload.d.results.length > 0) {
+            if (action.result.d.results.length > 0) {
                 const newIds = []
-                const deletedIds = (action.payload.d.results as IContent[]).map((result) => result.Id)
+                const movedIds = (action.result as PromiseReturns<typeof moveBatch>).d.results.map((result) => result.Id)
                 for (const id of state) {
-                    if (deletedIds.indexOf(id) === -1) {
+                    if (movedIds.indexOf(id) === -1) {
                         newIds.push(id)
                     }
                 }
@@ -44,8 +47,8 @@ export const ids: Reducer<number[]> = (state = [], action) => {
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const entities: Reducer<GenericContent[]> = (state = [], action) => {
-    // if (action.payload && (
+export const entities: Reducer<GenericContent[], PromiseMiddlewareSucceededAction<any>> = (state: GenericContent[] = [], action) => {
+    // if (action.result && (
     //     action.type !== 'USER_LOGIN_FAILURE' &&
     //     action.type !== 'USER_LOGIN_BUFFER' &&
     //     action.type !== 'LOAD_CONTENT_SUCCESS' &&
@@ -57,38 +60,36 @@ export const entities: Reducer<GenericContent[]> = (state = [], action) => {
     //     action.type !== 'COPY_BATCH_SUCCESS' &&
     //     action.type !== 'MOVE_CONTENT_SUCCESS' &&
     //     action.type !== 'MOVE_BATCH_SUCCESS')) {
-    //     if (action.payload.entities !== undefined && action.payload.entities.entities !== undefined) {
-    //         return (Object as any).assign({}, state, action.payload.entities.entities)
+    //     if (action.result.entities !== undefined && action.result.entities.entities !== undefined) {
+    //         return (Object as any).assign({}, state, action.result.entities.entities)
     //     }
     // }
     switch (action.type) {
         case 'DELETE_CONTENT_SUCCESS':
         case 'DELETE_BATCH_SUCCESS':
         case 'MOVE_BATCH_SUCCESS':
-            const deletedIds = (action.payload.d.results as IContent[]).map((item) => {
-                return item.Id
-            })
-            return [...state.filter((item) => deletedIds.indexOf(item.Id) === -1)]
+            const deletedIds = (action.result as PromiseReturns<typeof deleteContent>).d.results.map((i) => i.Id)
+            return [...state.filter((item) => !deletedIds.includes(item.Id))]
         case 'UPDATE_CONTENT_SUCCESS':
-            return [
-                state.map((c) => {
-                    if (c.Id === action.payload.Id) {
-                        return action.payload
-                    }
-                    return c
-                })]
-        case 'CREATE_CONTENT_SUCCESS':
-        case 'UPLOAD_CONTENT_SUCCESS':
-            return [state.find((item) => item.Id === action.payload.Id) !== undefined ? state.map((c) => {
-                if (c.Id === action.payload.Id) {
-                    return action.payload
+            return state.map((c) => {
+                if (c.Id === (action.result as PromiseReturns<typeof updateContent>).d.Id) {
+                    return action.result
                 }
                 return c
-            }) : [action.payload, ...state]]
+            })
+        case 'CREATE_CONTENT_SUCCESS':
+        case 'UPLOAD_CONTENT_SUCCESS':
+            const newContent = (action.result as PromiseReturns<typeof uploadRequest> | PromiseReturns<typeof createContent>) as GenericContent
+            return state.find((item) => item.Id === action.result.Id) !== undefined ? state.map((c) => {
+                if (c.Id === newContent.Id) {
+                    return newContent
+                }
+                return c
+            }) : [newContent, ...state]
         case 'FETCH_CONTENT_SUCCESS':
-            return {
-                ...action.payload,
-            }
+            return [
+                ...(action.result as PromiseReturns<typeof requestContent>) as GenericContent[],
+            ]
         default:
             return state
     }
@@ -117,10 +118,10 @@ export const isFetching: Reducer<boolean> = (state = false, action) => {
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const childrenerror: Reducer<object | null> = (state = null, action) => {
+export const childrenerror: Reducer<object | null, PromiseMiddlewareFailedAction<any> | PromiseMiddlewareSucceededAction<any>> = (state = null, action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_FAILURE':
-            return action.payload.message
+            return (action as PromiseMiddlewareFailedAction<any>).error.message
         case 'FETCH_CONTENT_SUCCESS':
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPDATE_CONTENT_SUCCESS':
@@ -147,7 +148,7 @@ export const childrenerror: Reducer<object | null> = (state = null, action) => {
 export const childrenactions: Reducer<IActionModel[]> = (state = [], action) => {
     switch (action.type) {
         case 'REQUEST_CONTENT_ACTIONS_SUCCESS':
-            return action.payload
+            return action.result
         default:
             return state
     }
