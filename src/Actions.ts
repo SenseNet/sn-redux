@@ -131,13 +131,10 @@ export type PromiseReturns<T> = T extends ((...args: any[]) => PromiseMiddleware
  */
 export const requestContent = (path: string, options?: IODataParams<GenericContent>) => ({
     type: 'FETCH_CONTENT',
-    payload: async (repository: Repository) => {
-        const data = await repository.loadCollection({
-            path,
-            oDataOptions: options,
-        })
-        return data.d.results
-    },
+    payload: (repository: Repository) => repository.loadCollection({
+        path,
+        oDataOptions: options,
+    }),
 })
 
 /**
@@ -185,7 +182,7 @@ export const loadContentActions = (idOrPath: number | string, scenario?: string)
  */
 export const createContent = <T extends IContent = IContent>(parentPath: string, content: T, contentType: string) => ({
     type: 'CREATE_CONTENT',
-    payload: async (repository: Repository) => (await repository.post<T>({ parentPath, content, contentType })).d,
+    payload: (repository: Repository) => repository.post<T>({ parentPath, content, contentType }),
 })
 /**
  * Action creator for creating a Content in the Content Repository.
@@ -456,8 +453,7 @@ export const uploadRequest = <T extends IContent>(parentPath: string, file: File
             parentPath,
             body,
         })
-        const content = await repository.load<T>({ idOrPath: data.Id })
-        return content.d
+        return await repository.load<T>({ idOrPath: data.Id })
     },
 })
 /**

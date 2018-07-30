@@ -1,6 +1,6 @@
 import { GoogleOauthProvider } from '@sensenet/authentication-google'
 import { JwtService } from '@sensenet/authentication-jwt'
-import { IContent, IODataBatchResponse, IODataResponse, LoginState, Repository } from '@sensenet/client-core'
+import { IContent, IODataBatchResponse, IODataCollectionResponse, IODataResponse, LoginState, Repository } from '@sensenet/client-core'
 import { GenericContent, IActionModel, Task, User } from '@sensenet/default-content-types'
 import { expect } from 'chai'
 import * as Actions from '../src/Actions'
@@ -107,13 +107,13 @@ describe('Actions', () => {
 
         describe('serviceChecks()', () => {
             context('Given repository.loadCollection() resolves', () => {
-                let data: GenericContent[]
-                let dataWithoutOptions: GenericContent[]
+                let data: IODataCollectionResponse<GenericContent>
+                let dataWithoutOptions: IODataCollectionResponse<GenericContent>
                 let mockCollectionResponseData: ReturnType<typeof collectionMockResponse['json']>
                 beforeEach(async () => {
                     data = await Actions.requestContent(path, { scenario: '' }).payload(repo)
                     dataWithoutOptions = await Actions.requestContent(path).payload(repo)
-                    mockCollectionResponseData = (await collectionMockResponse.json()).d.results
+                    mockCollectionResponseData = (await collectionMockResponse.json())
                 })
                 it('should return a FETCH_CONTENT action', () => {
                     expect(Actions.requestContent(path, { scenario: '' })).to.have.property(
@@ -227,7 +227,7 @@ describe('Actions', () => {
 
         describe('serviceChecks()', () => {
             context('Given repository.post() resolves', () => {
-                let data: Task
+                let data: IODataResponse<Task>
                 const expectedResult = { d: { Name: 'DefaultSite' } }
                 beforeEach(async () => {
                     data = await Actions.createContent(path, content, 'Task').payload(repo)
@@ -748,7 +748,7 @@ describe('Actions', () => {
 
         describe('serviceChecks()', () => {
             context('Given Upload.file() resolves', () => {
-                let data: IContent
+                let data: IODataResponse<IContent>
                 beforeEach(async () => {
                     data = await Actions.uploadRequest('Root/Example', { size: 65535000, slice: (..._args: any[]) => '' } as any as File, 'Binary').payload(repo)
 
@@ -760,7 +760,9 @@ describe('Actions', () => {
                 })
                 it('should return mockdata', () => {
                     expect(data).to.deep.equal({
-                        Name: 'DefaultSite',
+                        d: {
+                            Name: 'DefaultSite',
+                        },
                     })
                 })
             })
