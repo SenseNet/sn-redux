@@ -1,5 +1,6 @@
 import { GenericContent, IActionModel, Schema } from '@sensenet/default-content-types'
-import { combineReducers, Reducer } from 'redux'
+import { Action, combineReducers, Reducer } from 'redux'
+import { loadContent, loadContentActions, PromiseReturns } from '../Actions'
 import { contentState } from './contentstate'
 
 /**
@@ -21,7 +22,7 @@ export const contenterror: Reducer<object | null> = (state = null, action) => {
         case 'UNDOCHECKOUT_CONTENT_FAILURE':
         case 'FORCEUNDOCHECKOUT_CONTENT_FAILURE':
         case 'RESTOREVERSION_CONTENT_FAILURE':
-            return action.payload.message
+            return action.error.message
         case 'FETCH_CONTENT':
         case 'FETCH_CONTENT_FAILURE':
         case 'CREATE_CONTENT':
@@ -60,7 +61,7 @@ export const contenterror: Reducer<object | null> = (state = null, action) => {
 export const contentactions: Reducer<IActionModel[]> = (state = [], action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_ACTIONS_SUCCESS':
-            return action.payload.d.Actions
+            return ((action.result as PromiseReturns<typeof loadContentActions>).d as any as { Actions: IActionModel[] }).Actions
         default:
             return state
     }
@@ -92,7 +93,7 @@ export const fields: Reducer<{}> = (state = {}, action) => {
 export const content: Reducer<GenericContent | null> = (state = null, action) => {
     switch (action.type) {
         case 'LOAD_CONTENT_SUCCESS':
-            return action.payload.d
+            return (action.result as PromiseReturns<typeof loadContent>).d
         default:
             return state
     }
@@ -103,10 +104,10 @@ export const content: Reducer<GenericContent | null> = (state = null, action) =>
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const schema: Reducer<Schema | null> = (state = null, action) => {
+export const schema: Reducer<Schema | null, Action & { result: Schema }> = (state = null, action) => {
     switch (action.type) {
         case 'GET_SCHEMA':
-            return action.payload
+            return action.result as Schema
         default:
             return state
     }

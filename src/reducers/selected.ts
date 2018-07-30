@@ -1,4 +1,5 @@
 import { combineReducers, Reducer } from 'redux'
+import { clearSelection, deSelectContent, selectContent } from '../Actions'
 
 /**
  * Reducer to handle Actions on the selected array.
@@ -25,15 +26,16 @@ export const selectedIds: Reducer<number[]> = (state = [], action) => {
  * @param action Represents an action that is called.
  * @returns state. Returns the next state based on the action.
  */
-export const selectedContentItems: Reducer<object> = (state = {}, action) => {
+export const selectedContentItems: Reducer<any, ReturnType<typeof selectContent | typeof deSelectContent | typeof clearSelection>> = (state = {}, action) => {
     switch (action.type) {
         case 'DESELECT_CONTENT':
             const res: any = Object.assign({}, state)
-            delete res[action.content.Id]
+            delete res[(action as ReturnType<typeof deSelectContent>).content.Id]
             return res
         case 'SELECT_CONTENT':
             const obj: any = {}
-            obj[action.content.Id] = action.content
+            const content = (action as ReturnType<typeof selectContent>).content
+            obj[content.Id] = content
             return (Object as any).assign({}, state, obj)
         case 'CLEAR_SELECTION':
             return {}

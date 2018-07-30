@@ -1,6 +1,7 @@
 import { IODataBatchResponse } from '@sensenet/client-core'
 import { GenericContent } from '@sensenet/default-content-types'
 import { combineReducers, Reducer } from 'redux'
+import { copyBatch, deleteBatch, PromiseReturns } from '../Actions'
 
 /**
  * Reducer to handle Actions on the OdataBatchResponse object.
@@ -13,9 +14,9 @@ export const odataBatchResponse: Reducer<IODataBatchResponse<GenericContent> | n
         case 'DELETE_BATCH_SUCCESS':
         case 'COPY_BATCH_SUCCESS':
         case 'MOVE_BATCH_SUCCESS':
-            return action.payload
+            return (action.result as PromiseReturns<typeof deleteBatch | typeof copyBatch | typeof copyBatch>)
         default:
-            return { ...state }
+            return state
     }
 }
 /**
@@ -29,7 +30,7 @@ export const batchResponseError: Reducer<string> = (state = '', action) => {
         case 'DELETE_BATCH_FAILURE':
         case 'COPY_BATCH_FAILURE':
         case 'MOVE_BATCH_FAILURE':
-            return action.payload.message
+            return action.error.message
         default:
             return state
     }

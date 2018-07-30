@@ -13,12 +13,12 @@ import { createContent, deleteContent, moveBatch, PromiseReturns, requestContent
 export const ids: Reducer<number[], PromiseMiddlewareSucceededAction<any>> = (state = [], action) => {
     switch (action.type) {
         case 'FETCH_CONTENT_SUCCESS':
-            return (action.result as PromiseReturns<typeof requestContent>).map((content) => content.Id)
+            return (action.result as PromiseReturns<typeof requestContent>).d.results.map((content) => content.Id)
         case 'CREATE_CONTENT_SUCCESS':
-            return [...state, action.result.Id]
+            return [...state, (action.result as PromiseReturns<typeof createContent>).d.Id]
         case 'UPLOAD_CONTENT_SUCCESS':
-            if (state.indexOf(action.result.Id) === -1) {
-                return [...state, action.result.Id]
+            if (state.indexOf((action.result as PromiseReturns<typeof uploadRequest>).d.Id) === -1) {
+                return [...state, action.result.d.Id]
             } else {
                 return state
             }
@@ -48,22 +48,6 @@ export const ids: Reducer<number[], PromiseMiddlewareSucceededAction<any>> = (st
  * @returns state. Returns the next state based on the action.
  */
 export const entities: Reducer<GenericContent[], PromiseMiddlewareSucceededAction<any>> = (state: GenericContent[] = [], action) => {
-    // if (action.result && (
-    //     action.type !== 'USER_LOGIN_FAILURE' &&
-    //     action.type !== 'USER_LOGIN_BUFFER' &&
-    //     action.type !== 'LOAD_CONTENT_SUCCESS' &&
-    //     action.type !== 'REQUEST_CONTENT_ACTIONS_SUCCESS' &&
-    //     action.type !== 'UPDATE_CONTENT_SUCCESS' &&
-    //     action.type !== 'UPLOAD_CONTENT_SUCCESS' &&
-    //     action.type !== 'DELETE_BATCH_SUCCESS' &&
-    //     action.type !== 'COPY_CONTENT_SUCCESS' &&
-    //     action.type !== 'COPY_BATCH_SUCCESS' &&
-    //     action.type !== 'MOVE_CONTENT_SUCCESS' &&
-    //     action.type !== 'MOVE_BATCH_SUCCESS')) {
-    //     if (action.result.entities !== undefined && action.result.entities.entities !== undefined) {
-    //         return (Object as any).assign({}, state, action.result.entities.entities)
-    //     }
-    // }
     switch (action.type) {
         case 'DELETE_CONTENT_SUCCESS':
         case 'DELETE_BATCH_SUCCESS':
@@ -73,14 +57,14 @@ export const entities: Reducer<GenericContent[], PromiseMiddlewareSucceededActio
         case 'UPDATE_CONTENT_SUCCESS':
             return state.map((c) => {
                 if (c.Id === (action.result as PromiseReturns<typeof updateContent>).d.Id) {
-                    return action.result
+                    return action.result.d
                 }
                 return c
             })
         case 'CREATE_CONTENT_SUCCESS':
         case 'UPLOAD_CONTENT_SUCCESS':
-            const newContent = (action.result as PromiseReturns<typeof uploadRequest> | PromiseReturns<typeof createContent>) as GenericContent
-            return state.find((item) => item.Id === action.result.Id) !== undefined ? state.map((c) => {
+            const newContent = (action.result as PromiseReturns<typeof uploadRequest> | PromiseReturns<typeof createContent>).d as GenericContent
+            return state.find((item) => item.Id === newContent.Id) !== undefined ? state.map((c) => {
                 if (c.Id === newContent.Id) {
                     return newContent
                 }
@@ -88,7 +72,7 @@ export const entities: Reducer<GenericContent[], PromiseMiddlewareSucceededActio
             }) : [newContent, ...state]
         case 'FETCH_CONTENT_SUCCESS':
             return [
-                ...(action.result as PromiseReturns<typeof requestContent>) as GenericContent[],
+                ...(action.result as PromiseReturns<typeof requestContent>).d.results as GenericContent[],
             ]
         default:
             return state
