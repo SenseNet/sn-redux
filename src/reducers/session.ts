@@ -129,7 +129,12 @@ export const userAvatarPath: Reducer<string, ReturnType<typeof userChanged>> = (
 /**
  * Reducer combining userName, fullName, userLanguage, userAvatarPath into a single object, ```user```.
  */
-const user = combineReducers({
+const user = combineReducers<{
+    userName: ReturnType<typeof userName>,
+    fullName: ReturnType<typeof fullName>,
+    userLanguage: ReturnType<typeof userLanguage>,
+    userAvatarPath: ReturnType<typeof userAvatarPath>,
+}>({
     userName,
     fullName,
     userLanguage,
@@ -152,11 +157,19 @@ export const repository: Reducer<RepositoryConfiguration | null, ReturnType<type
 /**
  * Reducer combining country, language, loginState, error, user and repository into a single object, ```session```.
  */
-export const session = combineReducers({
-    country,
-    language,
-    loginState,
-    error: loginError,
-    user,
-    repository,
-})
+export const session = combineReducers<{
+    country: ReturnType<typeof country>,
+    language: ReturnType<typeof language>,
+    loginState: ReturnType<typeof loginState>,
+    error: ReturnType<typeof loginError>,
+    user: ReturnType<typeof user>,
+    repository: ReturnType<typeof repository>,
+}>
+    ({
+        country,
+        language,
+        loginState,
+        error: loginError,
+        user,
+        repository,
+    })
