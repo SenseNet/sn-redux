@@ -30,7 +30,7 @@
  */
 import { Repository } from '@sensenet/client-core'
 import { promiseMiddleware } from '@sensenet/redux-promise-middleware'
-import { applyMiddleware, compose, createStore, Middleware, Reducer, Store, StoreEnhancer } from 'redux'
+import { applyMiddleware, compose, createStore, DeepPartial, Middleware, Reducer, Store, StoreEnhancer } from 'redux'
 import { createLogger } from 'redux-logger'
 import * as Actions from './Actions'
 
@@ -86,7 +86,7 @@ export interface CreateStoreOptions<T> {
     /**
      * Initial state of the store
      */
-    persistedState?: T,
+    persistedState?: DeepPartial<T>,
     /**
      * Array of additional enhancers
      */
@@ -106,7 +106,7 @@ export interface CreateStoreOptions<T> {
  * @returns store {Store} Returns a preconfigured Redux store.
  */
 export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T> = <T>(options: CreateStoreOptions<T>) => {
-    let middlewareArray = []
+    let middlewareArray: Array<Middleware<any>> = []
     let enhancerArray: Array<StoreEnhancer<any>> = []
     if (typeof options.middlewares === 'undefined' || options.middlewares === null) {
         // middlewareArray.push(epicMiddleware)
@@ -125,11 +125,11 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     }
 
     // tslint:disable-next-line:no-string-literal
-    const composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
+    const composeEnhancers = (window as any)['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] && options.devTools ? (window as any)['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] : compose
 
-    const store = createStore<T>(
+    const store = createStore(
         options.rootReducer,
-        options.persistedState || {} as T,
+        options.persistedState || {},
         composeEnhancers(
             applyMiddleware(...middlewareArray),
             ...enhancerArray,
@@ -137,8 +137,13 @@ export const createSensenetStore: <T>(options: CreateStoreOptions<T>) => Store<T
     )
 
     const repo: Repository = options.repository
-    options.repository.authentication.currentUser.subscribe((user) => {
-        store.dispatch(Actions.loadRepository(repo.configuration))
+    store.dispatch(Actions.loadRepository(repo.configuration))
+
+    repo.authentication.state.subscribe((state) => {
+        store.dispatch(Actions.loginStateChanged(state))
+    }, true)
+
+    repo.authentication.currentUser.subscribe((user) => {
         store.dispatch(Actions.userChanged(user))
     }, true)
     return store
